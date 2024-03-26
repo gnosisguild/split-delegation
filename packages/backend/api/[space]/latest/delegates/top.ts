@@ -12,37 +12,30 @@ export default async function getTopDelegates(
   if (handleCors(request, response)) return
 
   const space = request.query.space as string
-  const by: "count" | "weight" =
-    request.query.by === "weight" ? "weight" : "count"
+  let orderBy
+  if (request.query.by === "weight") {
+    orderBy = "delegated_amount"
+  } else if (request.query.by === "count") {
+    orderBy = "number_of_delegations"
+  } else {
+    throw new Error("Error: invalid 'by' parameter.")
+  }
 
   const limit = Number(request.query.limit) || 100
   const offset = Number(request.query.offset) || 0
 
   let topDelegates
-  if (by === "count") {
-    topDelegates = await db
-      .selectFrom("delegation_snapshot")
-      .where("context", "=", space)
-      .where("main_chain_block_number", "is", null)
-      .groupBy("to_address")
-      .select(["to_address", count("to_address").as("number_of_delegations")])
-      .orderBy("number_of_delegations", "desc")
-      .limit(limit)
-      .offset(offset)
-      .execute()
-  } else if (by === "weight") {
-    topDelegates = await db
-      .selectFrom("delegation_snapshot")
-      .where("context", "=", space)
-      .where("main_chain_block_number", "is", null)
-      .groupBy("to_address")
-      .select(["to_address", sum("delegated_amount").as("delegated_amount")])
-      .orderBy("delegated_amount", "desc")
-      .limit(limit)
-      .execute()
-  } else {
-    throw new Error("Error: invalid 'by' parameter.")
-  }
+  topDelegates = await db
+    .selectFrom("delegation_snapshot")
+    .where("context", "=", space)
+    .where("main_chain_block_number", "is", null)
+    .groupBy("to_address")
+    .select(["to_address", count("to_address").as("number_of_delegations")])
+    .select(["to_address", sum("delegated_amount").as("delegated_amount")])
+    .orderBy(orderBy, "desc")
+    .limit(limit)
+    .offset(offset)
+    .execute()
 
   if (topDelegates.length === 0) {
     console.log("No delegations found for space context", space)
