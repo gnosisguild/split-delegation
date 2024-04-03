@@ -3,15 +3,15 @@
   "functions": {
     "api/update-all.ts": {
       "includeFiles": "lib/**/*.ts",
-      "maxDuration": 60
+      "maxDuration": 120
     },
     "api/[space]/latest/update.ts": {
       "includeFiles": "lib/**/*.ts",
-      "maxDuration": 60
+      "maxDuration": 120
     },
     "api/[space]/snapshot/[blocknumber]/strategy-formatted-vote-weights.ts": {
       "includeFiles": "lib/**/*.ts",
-      "maxDuration": 60
+      "maxDuration": 120
     }
   },
   "crons": [
