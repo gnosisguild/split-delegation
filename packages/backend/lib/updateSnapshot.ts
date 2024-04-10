@@ -171,9 +171,6 @@ export const createDelegationSnapshot = async ({
 
   // console.log("delegatedVoteWeightByAccount:", delegatedVoteWeightByAccount)
 
-  console.log("delegatedVoteWeight:")
-  console.log(delegatedVoteWeight)
-
   const delegatedVoteWeightByAccountScaled =
     convertDelegatedVoteWeightByAccount(delegatedVoteWeightByAccount)
 
@@ -215,8 +212,10 @@ export const createDelegationSnapshot = async ({
       1000
     } seconds`,
   )
-  console.log(`[${spaceName}] Snapshot to be written to the DB:`)
-  console.log(snapshot)
+  console.log(
+    `[${spaceName}] Snapshot to be written to the DB (Count of delegations):`,
+    snapshot.length,
+  )
 
   if (snapshot.length === 0) {
     if (
