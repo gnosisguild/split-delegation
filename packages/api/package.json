@@ -1,0 +1,30 @@
+{
+  "name": "delegate-registry-api",
+  "version": "1.0.0",
+  "license": "LGPL-3.0+",
+  "description": "For computing vote weight for voters in Snapshot proposals",
+  "repository": "https://github.com/gnosis/delegate-registry",
+  "scripts": {
+    "start": "vercel dev ../..",
+    "deploy": "vercel deploy",
+    "format": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,graphql}\" --write",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:prod": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@prisma/client": "5.10.2",
+    "@vercel/node": "3.0.26",
+    "prisma": "5.10.2",
+    "vercel": "34.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "prettier": "3.2.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.4.5"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  }
+}
