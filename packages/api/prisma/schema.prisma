@@ -1,0 +1,45 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Event {
+    id   String    @id
+    kind EventKind
+
+    chainId        Int
+    blockNumber    Int
+    blockTimestamp Int
+    logIndex       Int
+
+    space   String
+    account String
+
+    delegates  String[]
+    ratios     String[]
+    optOut     Boolean?
+    expiration Int?
+
+    @@index([space])
+    @@index([account])
+}
+
+model Checkpoint {
+    chainId        Int
+    contract       String
+    blockNumber    Int
+    blockTimestamp Int
+
+    @@id([chainId, contract])
+}
+
+enum EventKind {
+    Set
+    Clear
+    Expiration
+    OptOut
+}
