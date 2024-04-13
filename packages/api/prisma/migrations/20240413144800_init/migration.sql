@@ -2,20 +2,20 @@
 CREATE TYPE "EventKind" AS ENUM ('Set', 'Clear', 'Expiration', 'OptOut');
 
 -- CreateTable
-CREATE TABLE "Event" (
+CREATE TABLE "RegistryV2Event" (
     "id" TEXT NOT NULL,
     "chainId" INTEGER NOT NULL,
     "registry" TEXT NOT NULL,
     "blockNumber" INTEGER NOT NULL,
-    "blockTimestamp" INTEGER NOT NULL,
+    "transactionIndex" INTEGER NOT NULL,
     "logIndex" INTEGER NOT NULL,
+    "blockTimestamp" INTEGER NOT NULL,
     "space" TEXT NOT NULL,
     "account" TEXT NOT NULL,
-    "kind" "EventKind" NOT NULL,
     "topics" TEXT[],
-    "data" TEXT[],
+    "data" TEXT NOT NULL,
 
-    CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "RegistryV2Event_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -29,7 +29,7 @@ CREATE TABLE "Checkpoint" (
 );
 
 -- CreateIndex
-CREATE INDEX "Event_space_idx" ON "Event"("space");
+CREATE INDEX "RegistryV2Event_space_idx" ON "RegistryV2Event"("space");
 
 -- CreateIndex
-CREATE INDEX "Event_account_idx" ON "Event"("account");
+CREATE INDEX "RegistryV2Event_account_idx" ON "RegistryV2Event"("account");

@@ -7,21 +7,20 @@ generator client {
     provider = "prisma-client-js"
 }
 
-model Event {
+model RegistryV2Event {
     id String @id
 
-    chainId        Int
-    registry       String
-    blockNumber    Int
-    blockTimestamp Int
-    logIndex       Int
+    chainId          Int
+    registry         String
+    blockNumber      Int
+    transactionIndex Int
+    logIndex         Int
+    blockTimestamp   Int
 
     space   String
     account String
-    kind    EventKind
-
-    topics String[]
-    data   String[]
+    topics  String[]
+    data    String
 
     @@index([space])
     @@index([account])
