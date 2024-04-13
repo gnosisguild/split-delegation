@@ -1,6 +1,5 @@
 import { describe, test } from '@jest/globals'
 
-import logs from '../../logs.json'
 import {
   isDelegationCleared,
   isDelegationUpdated,
@@ -8,7 +7,7 @@ import {
   isOptOut,
 } from './logTopics'
 import { Log, getAddress } from 'viem'
-import { parseDelegationUpdated, parseOptOut } from './parseLogs'
+import { parseDelegationUpdated, parseOptOut } from './parse'
 
 describe('parseLogs', () => {
   test('event ExpirationUpdated', () => {

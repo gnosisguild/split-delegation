@@ -21,8 +21,9 @@ import {
   isExpirationUpdated,
   isOptOut,
 } from './logTopics'
+import { DelegationEvent } from 'src/types'
 
-export default function parseLogs(
+export default function toRows(
   entries: { chainId: number; block: Block; log: Log }[]
 ): RegistryV2Event[] {
   return entries.map(({ chainId, block, log }) => {
@@ -44,17 +45,33 @@ export default function parseLogs(
   })
 }
 
-function parse({ topics, data }: { topics: string[]; data: string }) {
-  if (isDelegationUpdated({ topics, data })) {
-    return parseDelegationUpdated({ topics, data })
-  }
-  if (isDelegationCleared({ topics, data })) {
-    return parseDelegationCleared({ topics, data })
-  }
-  if (isExpirationUpdated({ topics, data })) {
-    return parseExpirationUpdated({ topics, data })
-  }
-  return parseOptOut({ topics, data })
+export function toEvents(rows: RegistryV2Event[]): DelegationEvent[] {
+  return rows.map((row) => {
+    const { chainId, registry, space, account } = row
+
+    const base = {
+      chainId,
+      registry: registry as Address,
+      space,
+      account: account as Address,
+    }
+
+    if (isDelegationUpdated(row)) {
+      const { delegation, expiration } = parseDelegationUpdated(row)
+      return { set: { ...base, delegation, expiration } }
+    }
+    if (isDelegationCleared(row)) {
+      return { clear: { ...base } }
+    }
+
+    if (isExpirationUpdated(row)) {
+      const { expiration } = parseExpirationUpdated(row)
+      return { expiresAt: { ...base, expiration } }
+    }
+
+    const { optOut } = parseOptOut(row)
+    return { optOut: { ...base, value: optOut } }
+  })
 }
 
 export function parseDelegationUpdated({
@@ -83,7 +100,7 @@ export function parseDelegationUpdated({
       delegate: getAddress(delegate),
       ratio,
     })),
-    expiration,
+    expiration: capExpiration(expiration),
   }
 }
 
@@ -130,7 +147,7 @@ export function parseExpirationUpdated({
   return {
     account,
     space: context,
-    expiration,
+    expiration: capExpiration(expiration),
   }
 }
 
@@ -156,6 +173,25 @@ export function parseOptOut({
     space: context,
     optOut,
   }
+}
+
+function capExpiration(expiration: bigint): number {
+  return expiration > BigInt(Number.MAX_SAFE_INTEGER)
+    ? Number.MAX_SAFE_INTEGER
+    : Number(expiration)
+}
+
+function parse({ topics, data }: { topics: string[]; data: string }) {
+  if (isDelegationUpdated({ topics, data })) {
+    return parseDelegationUpdated({ topics, data })
+  }
+  if (isDelegationCleared({ topics, data })) {
+    return parseDelegationCleared({ topics, data })
+  }
+  if (isExpirationUpdated({ topics, data })) {
+    return parseExpirationUpdated({ topics, data })
+  }
+  return parseOptOut({ topics, data })
 }
 
 export function withEventId(
