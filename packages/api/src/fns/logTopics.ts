@@ -1,14 +1,5 @@
 import assert from 'assert'
-import {
-  Hash,
-  Hex,
-  decodeAbiParameters,
-  isHash,
-  isHex,
-  keccak256,
-  parseAbiParameters,
-  toBytes,
-} from 'viem'
+import { isHash, isHex, keccak256, toBytes } from 'viem'
 
 /*
  * event DelegationUpdated(address indexed account, string context, Delegation[] previousDelegation, Delegation[] delegation, uint256 expirationTimestamp);
@@ -55,35 +46,6 @@ export function isExpirationUpdated({
   return hash == EXPIRATION_SIGNATURE
 }
 
-export function parseDelegationUpdated({
-  topics,
-  data,
-}: {
-  topics: string[]
-  data: string
-}) {
-  assert(isDelegationUpdated({ topics, data }))
-
-  const [, accountAsTopic] = topics as Hash[]
-
-  const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const result = decodeAbiParameters(
-    parseAbiParameters([
-      'string',
-      '(address,uint256)[]',
-      '(address,uint256)[]',
-      'uint256',
-    ]),
-    data as Hex
-  )
-
-  console.log(result)
-  return {
-    account,
-    space: context,
-  }
-}
-
 export function isDelegationUpdated({
   topics,
   data,
@@ -120,33 +82,3 @@ export function isOptOut({ topics, data }: { topics: string[]; data: string }) {
   const [hash] = topics
   return hash == OPT_OUT_SIGNATURE
 }
-
-export function parseOptOut({
-  topics,
-  data,
-}: {
-  topics: string[]
-  data: string
-}) {
-  assert(isOptOut({ topics, data }))
-
-  const [, accountAsTopic] = topics as Hash[]
-
-  const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const [context] = decodeAbiParameters([{ type: 'string' }], data as Hex)
-  return {
-    account,
-    space: context,
-  }
-}
-
-/**
- * About Topic Filters:
- *
- * - []: Any topics allowed.
- * - [A]: A in the first position (and anything after).
- * - [null, B]: Anything in the first position and B in the second position (and anything after).
- * - [A, B]: A in the first position and B in the second position (and anything after).
- * - [[A, B], [A, B]]: (A or B) in the first position and (A or B) in the second position (and anything after).
- *
- */
