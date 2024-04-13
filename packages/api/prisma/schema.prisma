@@ -8,21 +8,20 @@ generator client {
 }
 
 model Event {
-    id   String    @id
-    kind EventKind
+    id String @id
 
     chainId        Int
+    registry       String
     blockNumber    Int
     blockTimestamp Int
     logIndex       Int
 
     space   String
     account String
+    kind    EventKind
 
-    delegates  String[]
-    ratios     String[]
-    optOut     Boolean?
-    expiration Int?
+    topics String[]
+    data   String[]
 
     @@index([space])
     @@index([account])
@@ -30,11 +29,11 @@ model Event {
 
 model Checkpoint {
     chainId        Int
-    contract       String
+    registry       String
     blockNumber    Int
     blockTimestamp Int
 
-    @@id([chainId, contract])
+    @@id([chainId, registry])
 }
 
 enum EventKind {
