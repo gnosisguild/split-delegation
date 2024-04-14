@@ -10,7 +10,7 @@ import { DAG } from './types'
  * @returns {boolean} Returns cycle if one detected, otherwise null.
  */
 
-export function findCycle<T>(dag: DAG<T>): string[] | null {
+export default function findCycle<T>(dag: DAG<T>): string[] | null {
   const visited = new Set<string>()
   const path: string[] = []
 

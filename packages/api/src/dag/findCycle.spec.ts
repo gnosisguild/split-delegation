@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals'
 
-import { findCycle } from './findCycle'
+import findCycle from './findCycle'
 
 import { DAG } from './types'
 
