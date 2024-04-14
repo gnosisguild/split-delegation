@@ -1,21 +1,21 @@
 import assert from 'assert'
 import findCycle from './findCycle'
-import { DAG } from './types'
+import { Graph } from './types'
 
-export default function toAcyclic<T>(dag: DAG<T>): DAG<T> {
+export default function toDAG<T>(graph: Graph<T>): Graph<T> {
   while (true) {
-    const cycle = findCycle(dag)
+    const cycle = findCycle(graph)
     if (!cycle) {
-      return dag
+      return graph
     }
 
     assert(cycle.length > 1)
     const [from, to] = cycle
-    dag = removeEdge(dag, from, to)
+    graph = removeEdge(graph, from, to)
   }
 }
 
-function removeEdge<T>(dag: DAG<T>, from: string, to: string): DAG<T> {
+function removeEdge<T>(dag: Graph<T>, from: string, to: string): Graph<T> {
   return {
     ...dag,
     [from]: Object.keys(dag[from])

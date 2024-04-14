@@ -1,4 +1,4 @@
-import { DAG } from './types'
+import { Graph } from './types'
 
 /**
  * Detects cycles in a directed graph using Depth First Search (DFS).
@@ -10,12 +10,12 @@ import { DAG } from './types'
  * @returns {boolean} Returns cycle if one detected, otherwise null.
  */
 
-export default function findCycle<T>(dag: DAG<T>): string[] | null {
+export default function findCycle<T>(graph: Graph<T>): string[] | null {
   const visited = new Set<string>()
   const path: string[] = []
 
-  for (const node of Object.keys(dag)) {
-    const cycle = dfs(dag, node, visited, path)
+  for (const node of Object.keys(graph)) {
+    const cycle = dfs(graph, node, visited, path)
     if (cycle) return cycle
   }
 
@@ -23,7 +23,7 @@ export default function findCycle<T>(dag: DAG<T>): string[] | null {
 }
 
 function dfs<T>(
-  dag: DAG<T>,
+  graph: Graph<T>,
   node: string,
   visited: Set<string>,
   path: string[]
@@ -35,8 +35,8 @@ function dfs<T>(
   visited.add(node)
   path.push(node)
 
-  for (const neighbor of neighbors(dag, node)) {
-    const cycle = dfs(dag, neighbor, visited, path)
+  for (const neighbor of neighbors(graph, node)) {
+    const cycle = dfs(graph, neighbor, visited, path)
     if (cycle) {
       return cycle
     }
@@ -50,6 +50,6 @@ function dfs<T>(
   return null
 }
 
-function neighbors<T>(dag: DAG<T>, node: string): string[] {
-  return Object.keys(dag[node] || {})
+function neighbors<T>(graph: Graph<T>, node: string): string[] {
+  return Object.keys(graph[node] || {})
 }

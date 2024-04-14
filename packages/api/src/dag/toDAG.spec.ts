@@ -1,12 +1,12 @@
 import { describe, test } from '@jest/globals'
 
-import toAcyclic from './toAcyclic'
+import toDAG from './toDAG'
 
-import { DAG } from './types'
+import { Graph } from './types'
 
-describe('toAcyclic', () => {
+describe('toDAG', () => {
   test('one cycle in the graph', () => {
-    const dag: DAG<number> = {
+    const dag: Graph<number> = {
       A: {
         B: 0,
         C: 0,
@@ -19,7 +19,7 @@ describe('toAcyclic', () => {
       },
     }
 
-    expect(toAcyclic(dag)).toEqual({
+    expect(toDAG(dag)).toEqual({
       A: {},
       B: {
         C: 0,
@@ -31,7 +31,7 @@ describe('toAcyclic', () => {
   })
 
   test('two cycles in the graph', () => {
-    const dag: DAG<number> = {
+    const dag: Graph<number> = {
       A: {
         B: 0,
       },
@@ -52,7 +52,7 @@ describe('toAcyclic', () => {
       },
     }
 
-    expect(toAcyclic(dag)).toEqual({
+    expect(toDAG(dag)).toEqual({
       A: {},
       B: {
         C: 0,
@@ -71,7 +71,7 @@ describe('toAcyclic', () => {
   })
 
   test('one node makes two cycles in the graph', () => {
-    const dag: DAG<number> = {
+    const dag: Graph<number> = {
       A: {
         B: 0,
         C: 0,
@@ -84,7 +84,7 @@ describe('toAcyclic', () => {
       },
     }
 
-    expect(toAcyclic(dag)).toEqual({
+    expect(toDAG(dag)).toEqual({
       A: {},
       B: {
         C: 0,
