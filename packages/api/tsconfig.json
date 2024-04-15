@@ -1,7 +1,4 @@
 {
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  },
   "compilerOptions": {
     "target": "esnext",
     "lib": ["esnext"],
@@ -20,7 +17,10 @@
     "plugins": [],
     "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "src/*": ["./src/*"]
+    }
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
