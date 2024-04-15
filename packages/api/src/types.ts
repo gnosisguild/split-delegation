@@ -1,19 +1,18 @@
 import { Address } from 'viem'
 
-type Base = {
+export enum EventKind {
+  SET,
+  CLEAR,
+  EXPIRATION,
+  OPT_OUT,
+}
+export type DelegationEvent = {
+  kind: EventKind
   chainId: number
   registry: Address
   space: string
   account: Address
+  delegation?: { delegate: Address; ratio: bigint }[]
+  expiration?: number
+  optOut?: boolean
 }
-
-export type DelegationEvent =
-  | {
-      set: Base & {
-        delegation: { delegate: Address; ratio: bigint }[]
-        expiration: number
-      }
-    }
-  | { clear: Base }
-  | { expiresAt: Base & { expiration: number } }
-  | { optOut: Base & { value: boolean } }
