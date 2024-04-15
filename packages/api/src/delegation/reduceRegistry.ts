@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { Address } from 'viem'
 
-import { DelegationEvent, EventKind } from 'src/types'
+import { DelegationEvent } from 'src/types'
 
 export default function (
   events: DelegationEvent[],
@@ -20,8 +20,8 @@ function reduceEvent(
   event: DelegationEvent
 ): Record<Address, Slice> {
   const account = event.account
-  const venueId = `${event.chainId}-${event.registry}`
 
+  const venueId = `${event.chainId}-${event.registry}`
   const slice = state[account] || {
     venueId,
     venues: {},
@@ -33,18 +33,39 @@ function reduceEvent(
     optOut: false,
   }
 
-  const sliceNext = {
-    ...slice,
-    venueId: event.kind == EventKind.SET ? venueId : slice.venueId,
-    venues: {
-      ...slice.venues,
-      [venueId]: { ...venue, ...event },
-    },
+  let nextVenueId = slice.venueId
+  let overrides
+  if ('set' in event) {
+    nextVenueId = venueId
+    overrides = {
+      delegation: event.set.delegation,
+      expiration: event.set.expiration,
+    }
+  } else if ('clear' in event) {
+    overrides = {
+      delegation: [],
+      expiration: 0,
+    }
+  } else if ('expire' in event) {
+    overrides = {
+      expiration: event.expire.expiration,
+    }
+  } else {
+    assert('opt' in event)
+    overrides = {
+      optOut: event.opt.optOut,
+    }
   }
 
   return {
     ...state,
-    [account]: sliceNext,
+    [account]: {
+      venueId: nextVenueId,
+      venues: {
+        ...slice.venues,
+        [venueId]: { ...venue, ...overrides },
+      },
+    },
   }
 }
 
@@ -93,17 +114,17 @@ function filterExpired(
   registry: Record<string, RegistryEntry>,
   now: number
 ): Record<string, RegistryEntry> {
-  return Object.keys(registry).reduce((result, key) => {
-    const { expiration } = registry[key]
-
-    if (expiration != 0 && now > expiration) {
-      return result
-    }
-    return {
-      ...result,
-      [key]: registry[key],
-    }
-  }, {})
+  return Object.keys(registry)
+    .filter(
+      (key) => registry[key].expiration == 0 || registry[key].expiration < now
+    )
+    .reduce(
+      (result, key) => ({
+        ...result,
+        [key]: registry[key],
+      }),
+      {}
+    )
 }
 
 export type RegistryEntry = {

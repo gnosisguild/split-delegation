@@ -21,7 +21,7 @@ import {
   isExpirationUpdated,
   isOptOut,
 } from './logTopics'
-import { DelegationEvent, EventKind } from '../types'
+import { DelegationEvent } from '../types'
 
 export default function toRows(
   entries: { chainId: number; block: Block; log: Log }[]
@@ -58,19 +58,19 @@ export function toEvents(rows: RegistryV2Event[]): DelegationEvent[] {
 
     if (isDelegationUpdated(row)) {
       const { delegation, expiration } = parseDelegationUpdated(row)
-      return { ...base, kind: EventKind.SET, delegation, expiration }
+      return { ...base, set: { delegation, expiration } }
     }
     if (isDelegationCleared(row)) {
-      return { ...base, kind: EventKind.CLEAR, delegation: [] }
+      return { ...base, clear: {} }
     }
 
     if (isExpirationUpdated(row)) {
       const { expiration } = parseExpirationUpdated(row)
-      return { ...base, kind: EventKind.EXPIRATION, expiration }
+      return { ...base, expire: { expiration } }
     }
 
     const { optOut } = parseOptOut(row)
-    return { ...base, kind: EventKind.OPT_OUT, value: optOut }
+    return { ...base, opt: { optOut } }
   })
 }
 
