@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals'
 
-import toDAG from './toDAG'
+import toDAG from './toAcyclical'
 
 import { Graph } from './types'
 

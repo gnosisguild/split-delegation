@@ -2,7 +2,7 @@ import assert from 'assert'
 import findCycle from './findCycle'
 import { Graph } from './types'
 
-export default function toDAG<T>(graph: Graph<T>): Graph<T> {
+export default function toAcyclical<T>(graph: Graph<T>): Graph<T> {
   while (true) {
     const cycle = findCycle(graph)
     if (!cycle) {
