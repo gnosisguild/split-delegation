@@ -1,27 +1,33 @@
 import assert from 'assert'
 import kahn from '../graph/sort'
 import { Graph } from '../graph/types'
+import distributeProportionally from '../fns/distributeProportionally'
 
 /**
- * Starts with a delegator graph, and returns the delegates graph
+ * Goes from delegatorDAG -> delegatesDAG
  *
- * The graph input is guaranteed to be an acyclic graph, and weights
- * and transitively propagated via edges, until the leafs exist
+ * Builds the voting leafs, which is what remains after all transitivity
  *
+ * The graph input is guaranteed to be an acyclic graph, and weights are
+ * propagated via edges
  */
-export default function (delegatorGraph: Graph<bigint>): Graph<bigint> {
-  const order = kahn(delegatorGraph)
+export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
+  const order = kahn(delegatorDAG)
 
   let result: Graph<bigint> = {}
   for (const node of order) {
-    const delegatedByNode = delegatorGraph[node]
+    const delegatedByNode = delegatorDAG[node]
     if (!delegatedByNode) {
+      // if its a leaf we exit
       continue
     }
 
     assert(Object.keys(delegatedByNode).length > 0)
 
-    const own = sum(Object.values(delegatorGraph[node] || {}))
+    const own = Object.values(delegatorDAG[node] || {}).reduce(
+      (p, n) => p + n,
+      0n
+    )
     const delegatedToNode = {
       ...(result[node] || {}),
       ...(own > 0 ? { [node]: own } : {}),
@@ -29,10 +35,17 @@ export default function (delegatorGraph: Graph<bigint>): Graph<bigint> {
 
     for (const delegator of Object.keys(delegatedToNode)) {
       const valueIn = delegatedToNode[delegator]
-      const distribution = calcDistribution(delegatedByNode, valueIn)
+      const valuesOut = distributeProportionally(
+        valueIn,
+        Object.values(delegatedByNode)
+      )
 
-      for (const delegate of Object.keys(distribution)) {
-        const valueOut = distribution[delegate]
+      const out = Object.keys(delegatedByNode).map((delegate, index) => ({
+        delegate,
+        valueOut: valuesOut[index],
+      }))
+
+      for (const { delegate, valueOut } of out) {
         result = merge(result, {
           delegator,
           delegate,
@@ -41,40 +54,10 @@ export default function (delegatorGraph: Graph<bigint>): Graph<bigint> {
       }
     }
 
-    // only keep the leafs
-    if (Object.keys(delegatedByNode).length > 0) {
-      delete result[node]
-    }
+    delete result[node]
   }
 
   return result
-}
-
-function calcDistribution(
-  config: Record<string, bigint>,
-  valueIn: bigint
-): Record<string, bigint> {
-  const delegates = Object.keys(config)
-  const ratios = Object.values(config)
-  const scale = sum(ratios)
-
-  let valuesOut = ratios.map((ratio) => (ratio * valueIn) / scale)
-  const adjustment = valueIn - sum(valuesOut)
-
-  valuesOut = [
-    ...valuesOut.slice(0, -1),
-    valuesOut[valuesOut.length - 1] + adjustment,
-  ]
-
-  assert(valueIn == sum(valuesOut))
-
-  return delegates.reduce(
-    (result, delegate, index) => ({
-      ...result,
-      [delegate]: valuesOut[index],
-    }),
-    {}
-  )
 }
 
 function merge(
@@ -94,8 +77,4 @@ function merge(
         value,
     },
   }
-}
-
-function sum(values: bigint[]): bigint {
-  return values.reduce((p, n) => p + n, BigInt(0))
 }
