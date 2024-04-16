@@ -1,7 +1,9 @@
 import assert from 'assert'
-import kahn from '../graph/sort'
-import { Graph } from '../graph/types'
-import distributeProportionally from '../fns/distributeProportionally'
+
+import kahn from 'src/graph/sort'
+import proportionally from 'src/fns/proportionally'
+
+import { Graph } from 'src/graph/types'
 
 /**
  * Goes from delegatorDAG -> delegatesDAG
@@ -35,10 +37,7 @@ export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
 
     for (const delegator of Object.keys(delegatedToNode)) {
       const valueIn = delegatedToNode[delegator]
-      const valuesOut = distributeProportionally(
-        valueIn,
-        Object.values(delegatedByNode)
-      )
+      const valuesOut = proportionally(valueIn, Object.values(delegatedByNode))
 
       const out = Object.keys(delegatedByNode).map((delegate, index) => ({
         delegate,
