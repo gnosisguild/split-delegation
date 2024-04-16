@@ -1,16 +1,16 @@
+import assert from 'assert'
 import { Address, PublicClient, getAddress } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { rangeToStints } from 'src/fns/rangeToStints'
 import { timerEnd, timerStart } from 'src/fns/timer'
-
-import loadLogs from 'src/loaders/loadEntries'
-import createClient from 'src/loaders/createClient'
-
-import prisma from '../../prisma/singleton'
-import config from '../../config.json'
-import assert from 'assert'
 import parseLogs from 'src/fns/parseLogs'
+
+import createClient from 'src/loaders/createClient'
+import loadEntries from 'src/loaders/loadEntries'
+
+import config from '../../config.json'
+import prisma from '../../prisma/singleton'
 
 const networks = [mainnet, gnosis]
 
@@ -71,7 +71,7 @@ async function _sync({
   const stints = rangeToStints(fromBlock, toBlock)
 
   for (const { fromBlock, toBlock, verbose, count, perc } of stints) {
-    const entries = await loadLogs({ contracts, fromBlock, toBlock, client })
+    const entries = await loadEntries({ contracts, fromBlock, toBlock, client })
 
     const rows = parseLogs(entries)
 
