@@ -3,7 +3,7 @@ import aggregateRpc from './aggregateRpc'
 
 import { Address, Block, PublicClient } from 'viem'
 
-const PARALLELISM = 25
+const PARALLELISM = 15
 
 export default async function ({
   contracts,
