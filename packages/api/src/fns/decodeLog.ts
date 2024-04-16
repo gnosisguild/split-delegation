@@ -4,8 +4,6 @@ import {
   Hex,
   decodeAbiParameters,
   getAddress,
-  isHash,
-  isHex,
   keccak256,
   parseAbiParameters,
   toBytes,
@@ -57,67 +55,39 @@ export const OPT_OUT_SIGNATURE = keccak256(
 )
 
 export function isSetDelegate({ topics }: { topics: string[] }) {
-  assert(topics.every(isHash))
-  assert(topics.length == 4)
+  if (topics.length !== 4) {
+    return false
+  }
   const [hash] = topics
   return hash == SET_DELEGATE_SIGNATURE
 }
 
 export function isClearDelegate({ topics }: { topics: string[] }) {
-  assert(topics.every(isHash))
-  assert(topics.length == 4)
+  if (topics.length !== 4) {
+    return false
+  }
   const [hash] = topics
   return hash == CLEAR_DELEGATE_SIGNATURE
 }
 
-export function isExpirationUpdated({
-  topics,
-  data,
-}: {
-  topics: string[]
-  data: string
-}) {
-  assert(topics.every(isHash))
-  assert(isHex(data))
-
+export function isExpirationUpdated({ topics }: { topics: string[] }) {
   const [hash] = topics
 
   return hash == EXPIRATION_SIGNATURE
 }
 
-export function isDelegationUpdated({
-  topics,
-  data,
-}: {
-  topics: string[]
-  data: string
-}) {
-  assert(topics.every(isHash))
-  assert(isHex(data))
-
+export function isDelegationUpdated({ topics }: { topics: string[] }) {
   const [hash] = topics
 
   return hash == DELEGATION_UPDATED_SIGNATURE
 }
 
-export function isDelegationCleared({
-  topics,
-  data,
-}: {
-  topics: string[]
-  data: string
-}) {
-  assert(topics.every(isHash))
-  assert(isHex(data))
-
+export function isDelegationCleared({ topics }: { topics: string[] }) {
   const [hash] = topics
   return hash == DELEGATION_CLEARED_SIGNATURE
 }
 
 export function isOptOut({ topics, data }: { topics: string[]; data: string }) {
-  assert(topics.every(isHash))
-  assert(isHex(data))
-
   const [hash] = topics
   return hash == OPT_OUT_SIGNATURE
 }
@@ -130,16 +100,16 @@ export function decodeLog({
   data: string
 }) {
   if (isSetDelegate({ topics }) || isClearDelegate({ topics })) {
-    return decodeDelegationUpdated({ topics, data })
+    return decodeSetClearDelegate({ topics })
   }
 
-  if (isDelegationUpdated({ topics, data })) {
+  if (isDelegationUpdated({ topics })) {
     return decodeDelegationUpdated({ topics, data })
   }
-  if (isDelegationCleared({ topics, data })) {
+  if (isDelegationCleared({ topics })) {
     return decodeDelegationCleared({ topics, data })
   }
-  if (isExpirationUpdated({ topics, data })) {
+  if (isExpirationUpdated({ topics })) {
     return decodeExpirationUpdated({ topics, data })
   }
   return decodeOptOut({ topics, data })
@@ -168,7 +138,7 @@ export function decodeDelegationUpdated({
   topics: string[]
   data: string
 }) {
-  assert(isDelegationUpdated({ topics, data }))
+  assert(isDelegationUpdated({ topics }))
 
   const [, accountAsTopic] = topics as Hash[]
 
@@ -198,7 +168,7 @@ export function decodeDelegationCleared({
   topics: string[]
   data: string
 }) {
-  assert(isDelegationCleared({ topics, data }))
+  assert(isDelegationCleared({ topics }))
 
   const [, accountAsTopic] = topics as Hash[]
 
@@ -221,7 +191,7 @@ export function decodeExpirationUpdated({
   topics: string[]
   data: string
 }) {
-  assert(isExpirationUpdated({ topics, data }))
+  assert(isExpirationUpdated({ topics }))
 
   const [, accountAsTopic] = topics as Hash[]
 

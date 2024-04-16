@@ -18,7 +18,7 @@ enum StintStatus {
   Done,
 }
 
-const PARALLELISM = 5
+const PARALLELISM = 10
 const MAX_RPC_BLOCK_RANGE = 3000
 
 export default async function aggregateRpc<T>(

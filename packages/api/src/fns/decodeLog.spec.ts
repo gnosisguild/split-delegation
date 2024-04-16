@@ -5,6 +5,7 @@ import spaceId from './spaceId'
 
 import {
   decodeDelegationUpdated,
+  decodeLog,
   decodeOptOut,
   isDelegationCleared,
   isDelegationUpdated,
@@ -13,6 +14,17 @@ import {
 } from './decodeLog'
 
 describe('decodeLog', () => {
+  test('from raw', () => {
+    const topics = [
+      '0xa9a7fd460f56bddb880a465a9c3e9730389c70bc53108148f16d55a87a6c468e',
+      '0x000000000000000000000000ef8305e140ac520225daf050e2f71d5fbcc543e7',
+      '0x676e6f7369730000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000004c7909d6f029b3a5798143c843f4f8e5341a3473',
+    ]
+
+    console.log(decodeLog({ topics, data: '0x' }))
+  })
+
   test('event DelegationUpdated', () => {
     const log = {
       address: '0xde1e8a7e184babd9f0e3af18f40634e9ed6f0905',
