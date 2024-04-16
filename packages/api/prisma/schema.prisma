@@ -7,7 +7,7 @@ generator client {
     provider = "prisma-client-js"
 }
 
-model RegistryV2Event {
+model DelegationEvent {
     id String @id
 
     chainId          Int
@@ -17,12 +17,12 @@ model RegistryV2Event {
     logIndex         Int
     blockTimestamp   Int
 
-    space   String
+    spaceId String
     account String
     topics  String[]
     data    String
 
-    @@index([space])
+    @@index([spaceId])
     @@index([account])
 }
 
