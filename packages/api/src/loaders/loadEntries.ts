@@ -1,4 +1,5 @@
 import assert from 'assert'
+import async from 'async'
 import aggregateRpc from './aggregateRpc'
 
 import { Address, Block, PublicClient } from 'viem'
@@ -26,27 +27,23 @@ export default async function ({
       })
   )
 
-  const blocks = new Map<bigint, Block>()
-  let todo = Array.from(new Set(logs.map((log) => log.blockNumber)))
-
-  while (todo.length) {
-    const result = await Promise.all(
-      todo
-        .slice(0, PARALLELISM)
-        .map((blockNumber) => client.getBlock({ blockNumber }))
-    )
-    for (const block of result) {
-      blocks.set(block.number, block)
+  const blocks = await async.mapLimit(
+    Array.from(new Set(logs.map((log) => log.blockNumber))),
+    PARALLELISM,
+    function (blockNumber, done: (err: any, result: Block) => void) {
+      client.getBlock({ blockNumber }).then((block) => done(null, block))
     }
-    todo = todo.slice(PARALLELISM)
-  }
+  )
 
   const chainId = client.chain?.id
   assert(typeof chainId == 'number')
 
   return logs.map((log) => ({
     chainId,
-    block: blocks.get(log.blockNumber) as Block,
+    blockTimestamp: Number(
+      blocks.find((block) => block.number == log.blockNumber)
+        ?.timestamp as bigint
+    ),
     log,
   }))
 }

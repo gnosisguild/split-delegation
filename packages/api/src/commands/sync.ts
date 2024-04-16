@@ -43,7 +43,7 @@ export default async function () {
 
     assert(typeof fromBlock == 'bigint')
 
-    const count = await _sync({
+    const count = await sync({
       contracts,
       fromBlock: Number(fromBlock),
       toBlock: Number(toBlock),
@@ -55,7 +55,7 @@ export default async function () {
   }
 }
 
-async function _sync({
+async function sync({
   contracts,
   fromBlock,
   toBlock,

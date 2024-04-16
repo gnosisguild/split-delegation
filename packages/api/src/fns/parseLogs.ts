@@ -1,7 +1,6 @@
 import assert from 'assert'
 import {
   Address,
-  Block,
   encodeAbiParameters,
   Hash,
   Hex,
@@ -15,17 +14,17 @@ import { DelegationEvent } from '@prisma/client'
 import { decodeLog } from './decodeLog'
 
 export default function parseLogs(
-  entries: { chainId: number; block: Block; log: Log }[]
+  entries: { chainId: number; blockTimestamp: number; log: Log }[]
 ): DelegationEvent[] {
-  return entries.map(({ chainId, block, log }) => {
+  return entries.map(({ chainId, blockTimestamp, log }) => {
     const { account, spaceId } = decodeLog(log)
     assert(typeof log.transactionIndex == 'number')
     assert(typeof log.logIndex == 'number')
     return withEventId({
       chainId,
       registry: log.address,
-      blockNumber: Number(block.number),
-      blockTimestamp: Number(block.timestamp),
+      blockNumber: Number(log.blockNumber),
+      blockTimestamp,
       transactionIndex: log.transactionIndex,
       logIndex: log.logIndex,
       spaceId,
