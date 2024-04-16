@@ -26,15 +26,3 @@ model DelegationEvent {
     @@index([spaceId])
     @@index([account])
 }
-
-model Checkpoint {
-    chainId     Int @id
-    blockNumber Int
-}
-
-enum EventKind {
-    Set
-    Clear
-    Expiration
-    OptOut
-}

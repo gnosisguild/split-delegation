@@ -1,14 +1,10 @@
 {
   "1": {
     "network": "mainnet",
-    "startBlock": 18413076
-  },
-  "5": {
-    "network": "goerli",
-    "startBlock": 8490384
+    "startBlock": 11225329
   },
   "100": {
     "network": "gnosis",
-    "startBlock": 26474496
+    "startBlock": 20274491
   }
 }

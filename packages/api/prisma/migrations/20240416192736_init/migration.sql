@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE "EventKind" AS ENUM ('Set', 'Clear', 'Expiration', 'OptOut');
-
 -- CreateTable
 CREATE TABLE "DelegationEvent" (
     "id" TEXT NOT NULL,
@@ -16,14 +13,6 @@ CREATE TABLE "DelegationEvent" (
     "data" TEXT NOT NULL,
 
     CONSTRAINT "DelegationEvent_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Checkpoint" (
-    "chainId" INTEGER NOT NULL,
-    "blockNumber" INTEGER NOT NULL,
-
-    CONSTRAINT "Checkpoint_pkey" PRIMARY KEY ("chainId")
 );
 
 -- CreateIndex
