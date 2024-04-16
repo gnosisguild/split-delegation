@@ -1,16 +1,18 @@
 import { describe, test } from '@jest/globals'
+import { Log, getAddress } from 'viem'
 
 import {
+  decodeDelegationUpdated,
+  decodeExpirationUpdated,
+  decodeOptOut,
   isDelegationCleared,
   isDelegationUpdated,
   isExpirationUpdated,
   isOptOut,
-} from './logTopics'
-import { Log, getAddress } from 'viem'
-import { parseDelegationUpdated, parseOptOut } from './parse'
+} from './decodeLog'
 
-describe('parseLogs', () => {
-  test('event ExpirationUpdated', () => {
+describe('decodeLog', () => {
+  test('event DelegationUpdated', () => {
     const log = {
       address: '0xde1e8a7e184babd9f0e3af18f40634e9ed6f0905',
       topics: [
@@ -34,7 +36,7 @@ describe('parseLogs', () => {
     expect(isOptOut(log)).toEqual(false)
 
     const { account, space, delegation, expiration } =
-      parseDelegationUpdated(log)
+      decodeDelegationUpdated(log)
 
     expect(account).toEqual(
       getAddress('0x67A16655c1c46f8822726e989751817c49f29054')
@@ -73,7 +75,7 @@ describe('parseLogs', () => {
     expect(isExpirationUpdated(log)).toEqual(false)
     expect(isOptOut(log)).toEqual(true)
 
-    const { account, space, optOut } = parseOptOut(log)
+    const { account, space, optOut } = decodeOptOut(log)
 
     expect(account).toEqual(
       getAddress('0x53bcfaed43441c7bb6149563ec11f756739c9f6a')
