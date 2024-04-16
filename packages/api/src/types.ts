@@ -12,7 +12,7 @@ export type DelegationEvent = {
         expiration: number
       }
     }
-  | { clear: {} }
+  | { clear: { delegation: []; expiration: 0 } }
   | { opt: { optOut: boolean } }
   | { expire: { expiration: number } }
 )

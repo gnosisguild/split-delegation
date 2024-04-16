@@ -61,7 +61,7 @@ export function toEvents(rows: RegistryV2Event[]): DelegationEvent[] {
       return { ...base, set: { delegation, expiration } }
     }
     if (isDelegationCleared(row)) {
-      return { ...base, clear: {} }
+      return { ...base, clear: { delegation: [], expiration: 0 } }
     }
 
     if (isExpirationUpdated(row)) {
