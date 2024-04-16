@@ -10,15 +10,15 @@ import {
   pad,
   toHex,
 } from 'viem'
-import { RegistryV2Event } from '@prisma/client'
+import { DelegationEvent } from '@prisma/client'
 
 import { decodeLog } from './decodeLog'
 
 export default function parseLogs(
   entries: { chainId: number; block: Block; log: Log }[]
-): RegistryV2Event[] {
+): DelegationEvent[] {
   return entries.map(({ chainId, block, log }) => {
-    const { account, space } = decodeLog(log)
+    const { account, spaceId } = decodeLog(log)
     assert(typeof log.transactionIndex == 'number')
     assert(typeof log.logIndex == 'number')
     return withEventId({
@@ -28,7 +28,7 @@ export default function parseLogs(
       blockTimestamp: Number(block.timestamp),
       transactionIndex: log.transactionIndex,
       logIndex: log.logIndex,
-      space,
+      spaceId,
       account,
       topics: log.topics,
       data: log.data,
@@ -36,7 +36,7 @@ export default function parseLogs(
   })
 }
 
-function withEventId(event: Omit<RegistryV2Event, 'id'>): RegistryV2Event {
+function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
   const {
     chainId,
     registry,
@@ -44,7 +44,7 @@ function withEventId(event: Omit<RegistryV2Event, 'id'>): RegistryV2Event {
     blockTimestamp,
     transactionIndex,
     logIndex,
-    space,
+    spaceId,
     account,
     topics,
     data,
@@ -59,7 +59,7 @@ function withEventId(event: Omit<RegistryV2Event, 'id'>): RegistryV2Event {
         { type: 'bytes32' },
         { type: 'bytes32' },
         { type: 'bytes32' },
-        { type: 'string' },
+        { type: 'bytes32' },
         { type: 'bytes32' },
         { type: 'bytes32[]' },
         { type: 'bytes' },
@@ -71,7 +71,7 @@ function withEventId(event: Omit<RegistryV2Event, 'id'>): RegistryV2Event {
         pad(toHex(blockTimestamp)),
         pad(toHex(transactionIndex)),
         pad(toHex(logIndex)),
-        space,
+        spaceId as Hex,
         pad(account as Address),
         topics as Hash[],
         data as Hex,

@@ -1,7 +1,9 @@
 import { describe, test } from '@jest/globals'
-import { DelegationEvent } from 'src/types'
 import { Address } from 'viem'
+
 import reduceRegistry from './createRegistry'
+
+import { DelegationAction } from 'src/types'
 
 describe('reduceRegistry', () => {
   const A = 'A' as Address
@@ -13,19 +15,18 @@ describe('reduceRegistry', () => {
   const REGISTRY_V2 = '0x02' as Address
 
   test('it sets a delegation', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         account: A,
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         set: {
           delegation: [{ delegate: B, ratio: 100n }],
           expiration: 0,
         },
       },
     ]
-    const result = reduceRegistry(events)
+    const result = reduceRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
@@ -37,11 +38,10 @@ describe('reduceRegistry', () => {
   })
 
   test('it clears a delegation', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         opt: {
           optOut: true,
@@ -50,7 +50,6 @@ describe('reduceRegistry', () => {
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [{ delegate: B, ratio: 100n }],
@@ -60,7 +59,6 @@ describe('reduceRegistry', () => {
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         clear: {
           delegation: [],
@@ -68,7 +66,7 @@ describe('reduceRegistry', () => {
         },
       },
     ]
-    const result = reduceRegistry(events)
+    const result = reduceRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
@@ -80,11 +78,10 @@ describe('reduceRegistry', () => {
   })
 
   test('NOOP: clearing out on a different network', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 100,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [{ delegate: B, ratio: 123n }],
@@ -94,7 +91,6 @@ describe('reduceRegistry', () => {
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [{ delegate: B, ratio: 345n }],
@@ -104,13 +100,12 @@ describe('reduceRegistry', () => {
       {
         chainId: 100,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         clear: { delegation: [], expiration: 0 },
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -120,11 +115,10 @@ describe('reduceRegistry', () => {
   })
 
   test('NOOP: clearing out on a different registry', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [{ delegate: B, ratio: 345n }],
@@ -134,13 +128,12 @@ describe('reduceRegistry', () => {
       {
         chainId: 1,
         registry: REGISTRY_V2,
-        space: 'test',
         account: A,
         clear: { delegation: [], expiration: 0 },
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -150,11 +143,10 @@ describe('reduceRegistry', () => {
   })
 
   test('it opts out of being a delegate', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [
@@ -167,13 +159,12 @@ describe('reduceRegistry', () => {
       {
         chainId: 100,
         registry: REGISTRY_V2,
-        space: 'test',
         account: B,
         opt: { optOut: true },
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -191,11 +182,10 @@ describe('reduceRegistry', () => {
   })
 
   test('NOOP: opting out on a different venue', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [
@@ -208,13 +198,12 @@ describe('reduceRegistry', () => {
       {
         chainId: 100,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         opt: { optOut: true },
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -227,11 +216,10 @@ describe('reduceRegistry', () => {
   })
 
   test('it sets expiration for a delegation', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         expire: {
           expiration: 123,
@@ -239,7 +227,7 @@ describe('reduceRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [],
         expiration: 123,
@@ -249,11 +237,10 @@ describe('reduceRegistry', () => {
   })
 
   test('setting expiration preserves delegates', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [
@@ -266,13 +253,12 @@ describe('reduceRegistry', () => {
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         expire: { expiration: 456 },
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -285,11 +271,10 @@ describe('reduceRegistry', () => {
   })
 
   test('NOOP: setting expiration for a delegation on a different venue', () => {
-    const events: DelegationEvent[] = [
+    const actions: DelegationAction[] = [
       {
         chainId: 1,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         set: {
           delegation: [
@@ -302,13 +287,12 @@ describe('reduceRegistry', () => {
       {
         chainId: 100,
         registry: REGISTRY_V1,
-        space: 'test',
         account: A,
         expire: { expiration: 456 },
       },
     ]
 
-    expect(reduceRegistry(events)).toEqual({
+    expect(reduceRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },

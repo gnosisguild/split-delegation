@@ -10,7 +10,23 @@ import {
   parseAbiParameters,
   toBytes,
 } from 'viem'
+import spaceId from './spaceId'
 
+// V1 events
+/*
+ * event SetDelegate(address indexed delegator, bytes32 indexed id, address indexed delegate);
+ */
+export const SET_DELEGATE_SIGNATURE = keccak256(
+  toBytes('SetDelegate(address,bytes32,address)')
+)
+/*
+ * event ClearDelegate(address indexed delegator, bytes32 indexed id, address indexed delegate);
+ */
+export const CLEAR_DELEGATE_SIGNATURE = keccak256(
+  toBytes('ClearDelegate(address,bytes32,address)')
+)
+
+// V2 events
 /*
  * event DelegationUpdated(address indexed account, string context, Delegation[] previousDelegation, Delegation[] delegation, uint256 expirationTimestamp);
  */
@@ -19,7 +35,6 @@ export const DELEGATION_UPDATED_SIGNATURE = keccak256(
     'DelegationUpdated(address,string,(bytes32,uint256)[],(bytes32,uint256)[],uint256)'
   )
 )
-
 /*
  * event DelegationCleared(address indexed account, string context, Delegation[] delegatesCleared);
  */
@@ -40,6 +55,20 @@ export const EXPIRATION_SIGNATURE = keccak256(
 export const OPT_OUT_SIGNATURE = keccak256(
   toBytes('OptOutStatusSet(address,string,bool)')
 )
+
+export function isSetDelegate({ topics }: { topics: string[] }) {
+  assert(topics.every(isHash))
+  assert(topics.length == 4)
+  const [hash] = topics
+  return hash == SET_DELEGATE_SIGNATURE
+}
+
+export function isClearDelegate({ topics }: { topics: string[] }) {
+  assert(topics.every(isHash))
+  assert(topics.length == 4)
+  const [hash] = topics
+  return hash == CLEAR_DELEGATE_SIGNATURE
+}
 
 export function isExpirationUpdated({
   topics,
@@ -100,6 +129,10 @@ export function decodeLog({
   topics: string[]
   data: string
 }) {
+  if (isSetDelegate({ topics }) || isClearDelegate({ topics })) {
+    return decodeDelegationUpdated({ topics, data })
+  }
+
   if (isDelegationUpdated({ topics, data })) {
     return decodeDelegationUpdated({ topics, data })
   }
@@ -110,6 +143,22 @@ export function decodeLog({
     return decodeExpirationUpdated({ topics, data })
   }
   return decodeOptOut({ topics, data })
+}
+
+export function decodeSetClearDelegate({ topics }: { topics: string[] }) {
+  assert(isSetDelegate({ topics }) || isClearDelegate({ topics }))
+
+  const [, accountAsTopic, spaceIdAsTopic, delegateAsTopic] = topics as Hash[]
+
+  const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
+  const [spaceId] = decodeAbiParameters([{ type: 'bytes32' }], spaceIdAsTopic)
+  const [delegate] = decodeAbiParameters([{ type: 'address' }], delegateAsTopic)
+
+  return {
+    account,
+    spaceId,
+    delegate,
+  }
 }
 
 export function decodeDelegationUpdated({
@@ -124,7 +173,7 @@ export function decodeDelegationUpdated({
   const [, accountAsTopic] = topics as Hash[]
 
   const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const [context, , delegation, expiration] = decodeAbiParameters(
+  const [space, , delegation, expiration] = decodeAbiParameters(
     parseAbiParameters(
       'string, (address,uint256)[], (address,uint256)[], uint256'
     ),
@@ -133,7 +182,7 @@ export function decodeDelegationUpdated({
 
   return {
     account,
-    space: context,
+    spaceId: spaceId(space),
     delegation: delegation.map(([delegate, ratio]) => ({
       delegate: getAddress(delegate),
       ratio,
@@ -154,14 +203,14 @@ export function decodeDelegationCleared({
   const [, accountAsTopic] = topics as Hash[]
 
   const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const [context] = decodeAbiParameters(
+  const [space] = decodeAbiParameters(
     parseAbiParameters('string, (address,uint256)[]'),
     data as Hex
   )
 
   return {
     account,
-    space: context,
+    spaceId: spaceId(space),
   }
 }
 
@@ -177,14 +226,14 @@ export function decodeExpirationUpdated({
   const [, accountAsTopic] = topics as Hash[]
 
   const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const [context, , expiration] = decodeAbiParameters(
+  const [space, , expiration] = decodeAbiParameters(
     parseAbiParameters('string, (address,uint256)[], uint256'),
     data as Hex
   )
 
   return {
     account,
-    space: context,
+    spaceId: spaceId(space),
     expiration: capExpiration(expiration),
   }
 }
@@ -201,14 +250,14 @@ export function decodeOptOut({
   const [, accountAsTopic] = topics as Hash[]
 
   const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const [context, optOut] = decodeAbiParameters(
+  const [space, optOut] = decodeAbiParameters(
     parseAbiParameters('string, bool'),
     data as Hex
   )
 
   return {
     account,
-    space: context,
+    spaceId: spaceId(space),
     optOut,
   }
 }

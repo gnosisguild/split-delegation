@@ -1,8 +1,8 @@
 import assert from 'assert'
 import { Address } from 'viem'
 
-import { DelegationEvent } from 'src/types'
 import { Registry } from './types'
+import { DelegationAction } from 'src/types'
 
 /**
  * Consolidates DelegationEvents into a unified registry view. These events can come
@@ -16,8 +16,8 @@ import { Registry } from './types'
  * @param {DelegationEvent[]} events - DelegationEvents sorted by source block timestamp.
  * @returns {Registry} - Unified registry view.
  */
-export default function (events: DelegationEvent[]): Registry {
-  const fullRegistry = events.reduce(reduceEvent, {})
+export default function (actions: DelegationAction[]): Registry {
+  const fullRegistry = actions.reduce(reducer, {})
   const registry = selectEffectiveVenue(fullRegistry)
   return registry
 }
@@ -39,10 +39,10 @@ type Venue = {
   optOut: boolean
 }
 
-function reduceEvent(state: State, event: DelegationEvent): State {
-  const account = event.account
+function reducer(state: State, action: DelegationAction): State {
+  const account = action.account
 
-  const venueId = `${event.chainId}-${event.registry}`
+  const venueId = `${action.chainId}-${action.registry}`
   const slice = state[account] || {
     venueId,
     venues: {},
@@ -56,16 +56,16 @@ function reduceEvent(state: State, event: DelegationEvent): State {
 
   let nextVenueId = slice.venueId
   let overrides
-  if ('set' in event) {
+  if ('set' in action) {
     nextVenueId = venueId
-    overrides = event.set
-  } else if ('clear' in event) {
-    overrides = event.clear
-  } else if ('expire' in event) {
-    overrides = event.expire
+    overrides = action.set
+  } else if ('clear' in action) {
+    overrides = action.clear
+  } else if ('expire' in action) {
+    overrides = action.expire
   } else {
-    assert('opt' in event)
-    overrides = event.opt
+    assert('opt' in action)
+    overrides = action.opt
   }
 
   return {

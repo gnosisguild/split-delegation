@@ -1,5 +1,4 @@
 import { describe, test } from '@jest/globals'
-import { DelegationEvent } from 'src/types'
 import { Address } from 'viem'
 
 import registryToGraph from './registryToGraph'

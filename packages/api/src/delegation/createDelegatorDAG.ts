@@ -3,13 +3,13 @@ import registryToGraph from './registryToGraph'
 import toAcyclical from 'src/graph/toAcyclical'
 
 import { Graph } from 'src/graph/types'
-import { DelegationEvent } from 'src/types'
+import { DelegationAction } from 'src/types'
 
 export default function (
-  events: DelegationEvent[],
+  actions: DelegationAction[],
   now: number
 ): Graph<bigint> {
-  const registry = createRegistry(events)
+  const registry = createRegistry(actions)
   const delegatorGraph = registryToGraph(registry, now)
   const delegatorDAG = toAcyclical(delegatorGraph)
   return delegatorDAG

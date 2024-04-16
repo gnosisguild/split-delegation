@@ -1,9 +1,10 @@
 import { describe, test } from '@jest/globals'
-import { Log, getAddress } from 'viem'
+import { Log, getAddress, stringToHex } from 'viem'
+
+import spaceId from './spaceId'
 
 import {
   decodeDelegationUpdated,
-  decodeExpirationUpdated,
   decodeOptOut,
   isDelegationCleared,
   isDelegationUpdated,
@@ -35,13 +36,13 @@ describe('decodeLog', () => {
     expect(isExpirationUpdated(log)).toEqual(false)
     expect(isOptOut(log)).toEqual(false)
 
-    const { account, space, delegation, expiration } =
+    const { account, spaceId, delegation, expiration } =
       decodeDelegationUpdated(log)
 
     expect(account).toEqual(
       getAddress('0x67A16655c1c46f8822726e989751817c49f29054')
     )
-    expect(space).toEqual('gnosis.eth')
+    expect(spaceId).toEqual(stringToHex('gnosis.eth', { size: 32 }))
     expect(delegation).toEqual([
       {
         delegate: getAddress('0x6cc5b30Cd0A93C1F85C7868f5F2620AB8c458190'),
@@ -75,12 +76,13 @@ describe('decodeLog', () => {
     expect(isExpirationUpdated(log)).toEqual(false)
     expect(isOptOut(log)).toEqual(true)
 
-    const { account, space, optOut } = decodeOptOut(log)
+    const { account, spaceId: _spaceId, optOut } = decodeOptOut(log)
 
     expect(account).toEqual(
       getAddress('0x53bcfaed43441c7bb6149563ec11f756739c9f6a')
     )
-    expect(space).toEqual('test')
+    expect(_spaceId).toEqual(stringToHex('test', { size: 32 }))
+    expect(_spaceId).toEqual(spaceId('test'))
     expect(optOut).toEqual(true)
   })
 })

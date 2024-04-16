@@ -1,9 +1,8 @@
 import { Address } from 'viem'
 
-export type DelegationEvent = {
+export type DelegationAction = {
   chainId: number
   registry: Address
-  space: string
   account: Address
 } & (
   | {

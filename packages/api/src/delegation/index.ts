@@ -1,13 +1,13 @@
-import { DelegationEvent } from 'src/types'
 import createDelegatorDAG from './createDelegatorDAG'
 import createDelegateDAG from './createDelegateDAG'
 import { Graph } from 'src/graph/types'
+import { DelegationAction } from 'src/types'
 
 export default function (
-  events: DelegationEvent[],
-  now: number
+  actions: DelegationAction[],
+  when: number
 ): Graph<bigint> {
-  const delegatorDAG = createDelegatorDAG(events, now)
+  const delegatorDAG = createDelegatorDAG(actions, when)
   const delegateDAG = createDelegateDAG(delegatorDAG)
   return delegateDAG
 }
