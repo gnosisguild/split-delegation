@@ -27,12 +27,8 @@ model DelegationEvent {
 }
 
 model Checkpoint {
-    chainId        Int
-    registry       String
-    blockNumber    Int
-    blockTimestamp Int
-
-    @@id([chainId, registry])
+    chainId     Int @id
+    blockNumber Int
 }
 
 enum EventKind {

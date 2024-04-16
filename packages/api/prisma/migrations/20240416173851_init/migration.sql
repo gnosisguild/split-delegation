@@ -21,11 +21,9 @@ CREATE TABLE "DelegationEvent" (
 -- CreateTable
 CREATE TABLE "Checkpoint" (
     "chainId" INTEGER NOT NULL,
-    "registry" TEXT NOT NULL,
     "blockNumber" INTEGER NOT NULL,
-    "blockTimestamp" INTEGER NOT NULL,
 
-    CONSTRAINT "Checkpoint_pkey" PRIMARY KEY ("chainId","registry")
+    CONSTRAINT "Checkpoint_pkey" PRIMARY KEY ("chainId")
 );
 
 -- CreateIndex
