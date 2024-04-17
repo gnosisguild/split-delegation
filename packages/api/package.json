@@ -4,7 +4,6 @@
   "license": "LGPL-3.0+",
   "description": "For computing vote weight for voters in Snapshot proposals",
   "repository": "https://github.com/gnosis/delegate-registry",
-  "type": "module",
   "scripts": {
     "test": "prisma generate && jest",
     "start": "vercel dev ../..",
