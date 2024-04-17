@@ -14,9 +14,9 @@ model DelegationEvent {
     chainId          Int
     registry         String
     blockNumber      Int
+    blockTimestamp   Int
     transactionIndex Int
     logIndex         Int
-    blockTimestamp   Int
 
     spaceId String
     account String
@@ -25,6 +25,8 @@ model DelegationEvent {
 
     @@index([spaceId])
     @@index([account])
+    @@index([blockNumber])
+    @@index([blockTimestamp])
 }
 
 model Checkpoint {
