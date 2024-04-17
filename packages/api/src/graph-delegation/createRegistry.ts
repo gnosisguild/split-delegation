@@ -40,20 +40,6 @@ function reducer(state: State, action: DelegationAction): State {
 
   const venueId = `${action.chainId}-${action.registry}`
 
-  let nextVenueId
-  let overrides
-  if ('set' in action) {
-    nextVenueId = venueId
-    overrides = action.set
-  } else if ('clear' in action) {
-    overrides = action.clear
-  } else if ('expire' in action) {
-    overrides = action.expire
-  } else {
-    assert('opt' in action)
-    overrides = action.opt
-  }
-
   // THIS IS SLOW
   // return {
   //   ...state,
@@ -80,8 +66,17 @@ function reducer(state: State, action: DelegationAction): State {
     }
   }
 
-  if (nextVenueId) {
-    state[account].venueId = nextVenueId
+  let overrides
+  if ('set' in action) {
+    state[account].venueId = venueId
+    overrides = action.set
+  } else if ('clear' in action) {
+    overrides = action.clear
+  } else if ('expire' in action) {
+    overrides = action.expire
+  } else {
+    assert('opt' in action)
+    overrides = action.opt
   }
 
   state[account].venues[venueId] = {
@@ -95,25 +90,29 @@ function reducer(state: State, action: DelegationAction): State {
 function selectEffectiveVenue(
   registry: Record<string, { venueId: string; venues: Record<string, Venue> }>
 ): Registry {
-  return Object.keys(registry).reduce(
-    (result, account) => {
-      const { venueId, venues } = registry[account as Address]
-      assert(venueId && venues[venueId])
+  // THIS IS SLOW
+  // return Object.keys(registry).reduce(
+  //   (result, account) => {
+  //     const { venueId, venues } = registry[account]
+  //     const { delegation, expiration, optOut } = venues[venueId]
 
-      const { delegation, expiration, optOut } = venues[venueId]
+  //     assert(Array.isArray(delegation))
+  //     assert(typeof expiration == 'number')
+  //     assert(typeof optOut == 'boolean')
 
-      assert(Array.isArray(delegation))
-      assert(typeof expiration == 'number')
-      assert(typeof optOut == 'boolean')
+  //     return {
+  //       ...result,
+  //       [account]: { delegation, expiration, optOut },
+  //     }
+  //   },
+  //   {} as Record<string, Venue>
+  // )
 
-      // THIS IS SLOW
-      // return {
-      //   ...result,
-      //   [account]: { delegation, expiration, optOut },
-      // }
-      result[account] = { delegation, expiration, optOut }
-      return result
-    },
-    {} as Record<string, Venue>
-  )
+  const result: Record<string, Venue> = {}
+  for (const account of Object.keys(registry)) {
+    const { venueId, venues } = registry[account]
+    const { delegation, expiration, optOut } = venues[venueId]
+    result[account] = { delegation, expiration, optOut }
+  }
+  return result
 }
