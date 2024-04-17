@@ -1,7 +1,8 @@
 {
   "functions": {
-    "api/v1/sync.ts": {
-      "maxDuration": 300
+    "api/**/*": {
+      "maxDuration": 300,
+      "includeFiles": "src/**/*"
     }
   },
   "crons": [
