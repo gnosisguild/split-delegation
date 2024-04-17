@@ -15,6 +15,14 @@ CREATE TABLE "DelegationEvent" (
     CONSTRAINT "DelegationEvent_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Checkpoint" (
+    "chainId" INTEGER NOT NULL,
+    "blockNumber" INTEGER NOT NULL,
+
+    CONSTRAINT "Checkpoint_pkey" PRIMARY KEY ("chainId")
+);
+
 -- CreateIndex
 CREATE INDEX "DelegationEvent_spaceId_idx" ON "DelegationEvent"("spaceId");
 

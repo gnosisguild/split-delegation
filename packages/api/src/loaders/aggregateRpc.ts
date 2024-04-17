@@ -19,7 +19,7 @@ export default async function aggregateRpc<T>(
         { from, to }: { from: number; to: number },
         done: (err: any, result: T[]) => void
       ) {
-        fetch(from, to).then((logs) => done(null, logs))
+        fetch(from, to).then((result) => done(null, result))
       }
     )
   ).flat()

@@ -26,3 +26,8 @@ model DelegationEvent {
     @@index([spaceId])
     @@index([account])
 }
+
+model Checkpoint {
+    chainId     Int @id
+    blockNumber Int
+}

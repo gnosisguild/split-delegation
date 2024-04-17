@@ -12,6 +12,7 @@ export default function (chain: Chain): PublicClient {
     })
   }
 
+  // Why is airlock so slow for gc?
   return createPublicClient({
     chain,
     transport: http(),
