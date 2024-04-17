@@ -7,7 +7,7 @@ import parseRows from 'src/fns/parseRows'
 import top from 'src/actions/top'
 import { syncTip as sync } from 'src/commands/sync'
 
-import setCORS from 'routes/setCORS'
+import setCORS from 'api/setCORS'
 
 import prisma from '../../../../../prisma/singleton'
 

@@ -1,17 +1,12 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "src/routes/update-all.ts": {
-      "includeFiles": "lib/**/*.ts",
-      "maxDuration": 120
-    },
-    "src/routes/[space]/latest/update.ts": {
-      "includeFiles": "lib/**/*.ts",
-      "maxDuration": 120
-    },
-    "src/routes/[space]/snapshot/[blocknumber]/strategy-formatted-vote-weights.ts": {
-      "includeFiles": "lib/**/*.ts",
-      "maxDuration": 120
+    "api/v1/sync.ts": {
+      "maxDuration": 300
+    }
+  },
+  "crons": {
+    "api/v1/sync.ts": {
+      "schedule": "0 * * * *"
     }
   }
 }

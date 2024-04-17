@@ -23,7 +23,7 @@
     "sourceMap": true,
     "paths": {
       "src/*": ["./src/*"],
-      "routes/*": ["./routes/*"]
+      "routes/*": ["api/*"]
     }
   },
   "include": ["**/*.ts"],
