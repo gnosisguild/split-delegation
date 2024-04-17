@@ -109,7 +109,7 @@ async function _sync({
 
     if (verbose) {
       console.info(
-        `${prefix('Sync')} ${count} blocks ${perc} (wrote ${total} rows) `
+        `${prefix('Sync')} ${count} blocks ${perc} (wrote ${writeCount} rows) `
       )
     }
 

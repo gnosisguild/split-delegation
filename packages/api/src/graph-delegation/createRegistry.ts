@@ -30,10 +30,6 @@ type Slice = {
 }
 
 type Venue = {
-  chainId: number
-  registry: Address
-  space: string
-  account: Address
   delegation: { delegate: Address; ratio: bigint }[]
   expiration: number
   optOut: boolean
@@ -43,18 +39,8 @@ function reducer(state: State, action: DelegationAction): State {
   const account = action.account
 
   const venueId = `${action.chainId}-${action.registry}`
-  const slice = state[account] || {
-    venueId,
-    venues: {},
-  }
 
-  const venue = slice.venues[venueId] || {
-    delegation: [],
-    expiration: 0,
-    optOut: false,
-  }
-
-  let nextVenueId = slice.venueId
+  let nextVenueId
   let overrides
   if ('set' in action) {
     nextVenueId = venueId
@@ -68,33 +54,66 @@ function reducer(state: State, action: DelegationAction): State {
     overrides = action.opt
   }
 
-  return {
-    ...state,
-    [account]: {
-      venueId: nextVenueId,
-      venues: {
-        ...slice.venues,
-        [venueId]: { ...venue, ...overrides },
-      },
-    },
+  // THIS IS SLOW
+  // return {
+  //   ...state,
+  //   [account]: {
+  //     venueId: nextVenueId,
+  //     venues: {
+  //       ...slice.venues,
+  //       [venueId]: { ...venue, ...overrides },
+  //     },
+  //   },
+  // }
+
+  if (!state[account]) {
+    state[account] = {
+      venueId,
+      venues: {},
+    }
   }
+  if (!state[account].venues[venueId]) {
+    state[account].venues[venueId] = {
+      delegation: [],
+      expiration: 0,
+      optOut: false,
+    }
+  }
+
+  if (nextVenueId) {
+    state[account].venueId = nextVenueId
+  }
+
+  state[account].venues[venueId] = {
+    ...state[account].venues[venueId],
+    ...overrides,
+  }
+
+  return state
 }
 
 function selectEffectiveVenue(
   registry: Record<string, { venueId: string; venues: Record<string, Venue> }>
 ): Registry {
-  return Object.keys(registry).reduce((result, account) => {
-    const { venueId, venues } = registry[account as Address]
-    assert(venueId && venues[venueId])
+  return Object.keys(registry).reduce(
+    (result, account) => {
+      const { venueId, venues } = registry[account as Address]
+      assert(venueId && venues[venueId])
 
-    const { delegation, expiration, optOut } = venues[venueId]
+      const { delegation, expiration, optOut } = venues[venueId]
 
-    assert(Array.isArray(delegation))
-    assert(typeof expiration == 'number')
-    assert(typeof optOut == 'boolean')
-    return {
-      ...result,
-      [account]: { delegation, expiration, optOut },
-    }
-  }, {})
+      assert(Array.isArray(delegation))
+      assert(typeof expiration == 'number')
+      assert(typeof optOut == 'boolean')
+
+      // THIS IS SLOW
+      // return {
+      //   ...result,
+      //   [account]: { delegation, expiration, optOut },
+      // }
+      result[account] = { delegation, expiration, optOut }
+      return result
+    },
+    {} as Record<string, Venue>
+  )
 }
