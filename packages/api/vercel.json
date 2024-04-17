@@ -4,9 +4,10 @@
       "maxDuration": 300
     }
   },
-  "crons": {
-    "api/v1/sync.ts": {
+  "crons": [
+    {
+      "path": "api/v1/sync.ts",
       "schedule": "0 * * * *"
     }
-  }
+  ]
 }
