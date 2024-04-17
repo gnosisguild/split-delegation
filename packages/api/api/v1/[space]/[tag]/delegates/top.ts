@@ -1,13 +1,11 @@
 import { BlockTag } from 'viem'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest } from '@vercel/node'
 
 import spaceId from 'src/fns/spaceId'
 import parseRows from 'src/fns/parseRows'
 
 import top from 'src/actions/top'
 import { syncTip as sync } from 'src/commands/sync'
-
-import setCORS from 'api/setCORS'
 
 import prisma from '../../../../../prisma/singleton'
 
@@ -42,9 +40,7 @@ type DelegateResponse = {
   // TODO votingPower: number
 }
 
-export const GET = async (req: VercelRequest, res: VercelResponse) => {
-  if (setCORS(req, res)) return
-
+export const GET = async (req: VercelRequest) => {
   const space = req.query.space as string
   const tag = req.query.space as BlockTag
 
@@ -53,8 +49,7 @@ export const GET = async (req: VercelRequest, res: VercelResponse) => {
   const orderBy = req.query.by
 
   if (orderBy != 'count' && orderBy != 'weight') {
-    res.status(400).json({ error: 'invalid orderBy' })
-    return
+    return new Response('invalid orderBy', { status: 400 })
   }
 
   // weight caching will come in here
@@ -76,5 +71,5 @@ export const GET = async (req: VercelRequest, res: VercelResponse) => {
 
   const response = { delegates: result } as TopResponse
 
-  res.json(response)
+  return new Response(JSON.stringify(response))
 }

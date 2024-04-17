@@ -1,7 +1,9 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { RequestContext } from '@vercel/edge'
+import type { VercelRequest } from '@vercel/node'
 import sync from 'src/commands/sync'
 
-export const GET = async (req: VercelRequest, res: VercelResponse) => {
-  await sync()
-  return res.send('Sync successful.')
+export const GET = async (req: VercelRequest, context: RequestContext) => {
+  context.waitUntil(sync())
+
+  return new Response('Syncing...')
 }

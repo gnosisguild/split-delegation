@@ -1051,6 +1051,11 @@
   resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-7.11.0.tgz#98d052c215033221ae87572fd97be6dc2884e500"
   integrity sha512-UFrx1hNIjNJJkd0NZrYfaOrmcWhQmrVsbKe9o3L9jX9J1iufG685wIZ9tFCKKC0Fa2HWbNDNzNxrE5SCAS2lyA==
 
+"@vercel/edge@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@vercel/edge/-/edge-1.1.1.tgz#9b2fc0081dfe95db8b4c3598275721b1ad85e43f"
+  integrity sha512-NtKiIbn9Cq6HWGy+qRudz28mz5nxfOJWls5Pnckjw1yCfSX8rhXdvY/il3Sy3Zd5n/sKCM2h7VSCCpJF/oaDrQ==
+
 "@vercel/error-utils@2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@vercel/error-utils/-/error-utils-2.0.2.tgz#d75ccce100dbdfc9cb85700767b59d4257a91113"
