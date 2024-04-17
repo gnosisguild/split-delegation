@@ -26,10 +26,7 @@ export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
 
     assert(Object.keys(delegatedByNode).length > 0)
 
-    const own = Object.values(delegatorDAG[node] || {}).reduce(
-      (p, n) => p + n,
-      0n
-    )
+    const own = Object.values(delegatedByNode).reduce((p, n) => p + n, 0n)
     const delegatedToNode = {
       ...(result[node] || {}),
       ...(own > 0 ? { [node]: own } : {}),
@@ -39,27 +36,24 @@ export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
       const valueIn = delegatedToNode[delegator]
       const valuesOut = proportionally(valueIn, Object.values(delegatedByNode))
 
-      const out = Object.keys(delegatedByNode).map((delegate, index) => ({
-        delegate,
-        valueOut: valuesOut[index],
-      }))
-
-      for (const { delegate, valueOut } of out) {
-        result = merge(result, {
+      const delegates = Object.keys(delegatedByNode)
+      for (let i = 0; i < delegates.length; i++) {
+        result = set(result, {
+          delegate: delegates[i],
           delegator,
-          delegate,
-          value: valueOut,
+          value: valuesOut[i],
         })
       }
     }
 
+    // if we're here its not a leaf. delete all non leafs
     delete result[node]
   }
 
   return result
 }
 
-function merge(
+function set(
   result: Graph<bigint>,
   {
     delegate,
@@ -67,13 +61,35 @@ function merge(
     value,
   }: { delegate: string; delegator: string; value: bigint }
 ) {
-  return {
-    ...result,
-    [delegate]: {
-      ...(result[delegate] || {}),
-      [delegator]:
-        ((result[delegate] && result[delegate][delegator]) || BigInt(0)) +
-        value,
-    },
+  if (!result[delegate]) {
+    result[delegate] = {}
   }
+
+  if (!result[delegate][delegator]) {
+    result[delegate][delegator] = 0n
+  }
+
+  result[delegate][delegator] += value
+
+  return result
 }
+
+// THIS
+// function set(
+//   result: Graph<bigint>,
+//   {
+//     delegate,
+//     delegator,
+//     value,
+//   }: { delegate: string; delegator: string; value: bigint }
+// ) {
+//   return {
+//     ...result,
+//     [delegate]: {
+//       ...(result[delegate] || {}),
+//       [delegator]:
+//         ((result[delegate] && result[delegate][delegator]) || BigInt(0)) +
+//         value,
+//     },
+//   }
+// }
