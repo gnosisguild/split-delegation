@@ -22,7 +22,7 @@ describe('decodeLog', () => {
       '0x0000000000000000000000004c7909d6f029b3a5798143c843f4f8e5341a3473',
     ]
 
-    console.log(decodeLog({ topics, data: '0x' }))
+    expect(decodeLog({ topics, data: '0x' })).not.toThrow
   })
 
   test('event DelegationUpdated', () => {
