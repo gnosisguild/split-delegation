@@ -1,4 +1,5 @@
 import createRegistry from './createRegistry'
+import filterNoEdge from 'src/graph/filterNoEdge'
 import registryToGraph from './registryToGraph'
 import toAcyclical from 'src/graph/toAcyclical'
 
@@ -12,5 +13,5 @@ export default function (
   const registry = createRegistry(actions)
   const delegatorGraph = registryToGraph(registry, now)
   const delegatorDAG = toAcyclical(delegatorGraph)
-  return delegatorDAG
+  return filterNoEdge(delegatorDAG)
 }
