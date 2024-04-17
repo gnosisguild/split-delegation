@@ -22,7 +22,8 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "paths": {
-      "src/*": ["./src/*"]
+      "src/*": ["./src/*"],
+      "routes/*": ["./routes/*"]
     }
   },
   "include": ["**/*.ts"],
