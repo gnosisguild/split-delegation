@@ -3,5 +3,5 @@ import sync from 'src/commands/sync'
 
 export const GET = async (req: VercelRequest, res: VercelResponse) => {
   await sync()
-  res.status(200).send('Sync successful.')
+  return res.send('Sync successful.')
 }
