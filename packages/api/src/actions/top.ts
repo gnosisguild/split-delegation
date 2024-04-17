@@ -10,7 +10,7 @@ export default function top(
     limit,
     offset,
   }: {
-    orderBy: 'count'
+    orderBy: 'count' | 'weight'
     limit: number
     offset: number
   }

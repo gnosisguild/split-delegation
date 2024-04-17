@@ -48,6 +48,15 @@ export const GET = async (req: VercelRequest, res: VercelResponse) => {
   const space = req.query.space as string
   const tag = req.query.space as BlockTag
 
+  const limit = Number(req.query.limit) || 100
+  const offset = Number(req.query.offset) || 0
+  const orderBy = req.query.by
+
+  if (orderBy != 'count' && orderBy != 'weight') {
+    res.status(400).json({ error: 'invalid orderBy' })
+    return
+  }
+
   // weight caching will come in here
 
   await sync(tag)
@@ -60,12 +69,12 @@ export const GET = async (req: VercelRequest, res: VercelResponse) => {
   )
 
   const result = await top(actions, Date.now(), {
-    limit: 20,
-    offset: 0,
-    orderBy: 'count',
+    limit,
+    offset,
+    orderBy,
   })
 
-  const response = { delegates: result }
+  const response = { delegates: result } as TopResponse
 
   res.json(response)
 }
