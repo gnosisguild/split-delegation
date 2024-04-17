@@ -142,6 +142,32 @@ function prefix(venue: 'Sync') {
   return `[${ts()} ${venue}]`
 }
 
+async function blockRange(
+  blockTag: BlockTag,
+  client: PublicClient
+): Promise<{ fromBlock: number; toBlock: number }> {
+  const blockNumber = await blockTagToNumber(blockTag, client)
+
+  const chainId = client.chain?.id
+  assert(chainId == 1 || chainId == 100)
+
+  const entry = await prisma.checkpoint.findFirst({
+    where: { chainId },
+  })
+
+  if (!entry) {
+    return {
+      fromBlock: config[chainId].startBlock,
+      toBlock: blockNumber,
+    }
+  } else {
+    return {
+      fromBlock: entry.blockNumber,
+      toBlock: Math.max(entry.blockNumber, blockNumber),
+    }
+  }
+}
+
 async function shouldSync(
   blockTag: BlockTag,
   client: PublicClient
@@ -168,32 +194,6 @@ async function shouldSync(
   }
 
   return { inSync: true, fromBlock: 0, toBlock: 0 }
-}
-
-async function blockRange(
-  blockTag: BlockTag,
-  client: PublicClient
-): Promise<{ fromBlock: number; toBlock: number }> {
-  const blockNumber = await blockTagToNumber(blockTag, client)
-
-  const chainId = client.chain?.id
-  assert(chainId == 1 || chainId == 100)
-
-  const entry = await prisma.checkpoint.findFirst({
-    where: { chainId },
-  })
-
-  if (!entry) {
-    return {
-      fromBlock: config[chainId].startBlock,
-      toBlock: blockNumber,
-    }
-  } else {
-    return {
-      fromBlock: entry.blockNumber,
-      toBlock: Math.max(entry.blockNumber, blockNumber),
-    }
-  }
 }
 
 async function blockTagToNumber(
