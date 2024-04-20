@@ -5,24 +5,91 @@ import spaceId from './spaceId'
 
 import {
   decodeDelegationUpdated,
-  decodeLog,
   decodeOptOut,
+  decodeSetClearDelegate,
+  isClearDelegate,
   isDelegationCleared,
   isDelegationUpdated,
   isExpirationUpdated,
   isOptOut,
+  isSetDelegate,
 } from './decodeLog'
 
 describe('decodeLog', () => {
-  test('from raw', () => {
-    const topics = [
-      '0xa9a7fd460f56bddb880a465a9c3e9730389c70bc53108148f16d55a87a6c468e',
-      '0x000000000000000000000000ef8305e140ac520225daf050e2f71d5fbcc543e7',
-      '0x676e6f7369730000000000000000000000000000000000000000000000000000',
-      '0x0000000000000000000000004c7909d6f029b3a5798143c843f4f8e5341a3473',
-    ]
+  test('event SetDelegate', () => {
+    const log = {
+      address: '0x469788fe6e9e9681c6ebf3bf78e7fd26fc015446',
+      topics: [
+        '0xa9a7fd460f56bddb880a465a9c3e9730389c70bc53108148f16d55a87a6c468e',
+        '0x000000000000000000000000c8381ca290c198f5ab739a1841ce8aedb0b330d5',
+        '0x6c69646f2d736e617073686f742e657468000000000000000000000000000000',
+        '0x000000000000000000000000f138823639686a85a43971dd9a2c8f6c15279b2e',
+      ],
+      data: '0x',
+      blockNumber: 11855791n,
+      transactionHash:
+        '0x8fff6707bcbd53e93970cf12c5f317ce37ea24dfe28f707b2fa45dfc7a7ddcc5',
+      transactionIndex: 19,
+      blockHash:
+        '0x25f53cc86f3ed4d29bde95c46678dae3e87861863eef520b4906ec34aecefb3a',
+      logIndex: 28,
+      removed: false,
+    }
 
-    expect(decodeLog({ topics, data: '0x' })).not.toThrow
+    expect(isSetDelegate(log)).toEqual(true)
+    expect(isClearDelegate(log)).toEqual(false)
+
+    expect(isDelegationUpdated(log)).toEqual(false)
+    expect(isDelegationCleared(log)).toEqual(false)
+    expect(isExpirationUpdated(log)).toEqual(false)
+    expect(isOptOut(log)).toEqual(false)
+
+    const { account, spaceId, delegate } = decodeSetClearDelegate(log)
+
+    expect(spaceId).toEqual(stringToHex('lido-snapshot.eth', { size: 32 }))
+    expect(account).toEqual(
+      getAddress('0xc8381ca290c198f5ab739a1841ce8aedb0b330d5')
+    )
+    expect(delegate).toEqual(
+      getAddress('0xf138823639686a85a43971dd9a2c8f6c15279b2e')
+    )
+  })
+  test('event ClearDelegate', () => {
+    const log = {
+      address: '0x469788fe6e9e9681c6ebf3bf78e7fd26fc015446',
+      topics: [
+        '0x9c4f00c4291262731946e308dc2979a56bd22cce8f95906b975065e96cd5a064',
+        '0x00000000000000000000000056bb3a51c2d20c60fed183d930ac6297d0101bfa',
+        '0x6376782e65746800000000000000000000000000000000000000000000000000',
+        '0x000000000000000000000000947b7742c403f20e5faccdac5e092c943e7d0277',
+      ],
+      data: '0x',
+      blockNumber: 13627420n,
+      transactionHash:
+        '0x5a60cf8f8d42bec44dd0dd47a810a36d3165703ecec7a3bec49a82622d5c6e69',
+      transactionIndex: 188,
+      blockHash:
+        '0xfc83ff352ef3c526d91be4015533efb25fb44da6c57b01e025543404422dda45',
+      logIndex: 257,
+      removed: false,
+    }
+
+    expect(isSetDelegate(log)).toEqual(false)
+    expect(isClearDelegate(log)).toEqual(true)
+
+    expect(isDelegationUpdated(log)).toEqual(false)
+    expect(isDelegationCleared(log)).toEqual(false)
+    expect(isExpirationUpdated(log)).toEqual(false)
+    expect(isOptOut(log)).toEqual(false)
+
+    const { account, spaceId, delegate } = decodeSetClearDelegate(log)
+    expect(spaceId).toEqual(stringToHex('cvx.eth', { size: 32 }))
+    expect(account).toEqual(
+      getAddress('0x56bb3a51c2d20c60fed183d930ac6297d0101bfa')
+    )
+    expect(delegate).toEqual(
+      getAddress('0x947b7742c403f20e5faccdac5e092c943e7d0277')
+    )
   })
 
   test('event DelegationUpdated', () => {
@@ -61,6 +128,7 @@ describe('decodeLog', () => {
         ratio: BigInt(40),
       },
     ])
+    expect(expiration).toEqual(1876538446)
   })
   describe.skip('event DelegationUpdated', () => {})
   describe.skip('event DelegationCleared', () => {})

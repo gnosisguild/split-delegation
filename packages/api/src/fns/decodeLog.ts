@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
   Hash,
   Hex,
@@ -87,7 +86,7 @@ export function isDelegationCleared({ topics }: { topics: string[] }) {
   return hash == DELEGATION_CLEARED_SIGNATURE
 }
 
-export function isOptOut({ topics, data }: { topics: string[]; data: string }) {
+export function isOptOut({ topics }: { topics: string[]; data: string }) {
   const [hash] = topics
   return hash == OPT_OUT_SIGNATURE
 }
@@ -116,12 +115,10 @@ export function decodeLog({
 }
 
 export function decodeSetClearDelegate({ topics }: { topics: string[] }) {
-  assert(isSetDelegate({ topics }) || isClearDelegate({ topics }))
+  // assert(isSetDelegate({ topics }) || isClearDelegate({ topics }))
 
-  const [, accountAsTopic, spaceIdAsTopic, delegateAsTopic] = topics as Hash[]
-
+  const [, accountAsTopic, spaceId, delegateAsTopic] = topics as Hash[]
   const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
-  const [spaceId] = decodeAbiParameters([{ type: 'bytes32' }], spaceIdAsTopic)
   const [delegate] = decodeAbiParameters([{ type: 'address' }], delegateAsTopic)
 
   return {
@@ -138,15 +135,13 @@ export function decodeDelegationUpdated({
   topics: string[]
   data: string
 }) {
-  assert(isDelegationUpdated({ topics }))
+  // assert(isDelegationUpdated({ topics }))
 
   const [, accountAsTopic] = topics as Hash[]
 
   const [account] = decodeAbiParameters([{ type: 'address' }], accountAsTopic)
   const [space, , delegation, expiration] = decodeAbiParameters(
-    parseAbiParameters(
-      'string, (address,uint256)[], (address,uint256)[], uint256'
-    ),
+    parseAbiParameters('string, bytes32, (address,uint256)[], uint256'),
     data as Hex
   )
 
@@ -168,7 +163,7 @@ export function decodeDelegationCleared({
   topics: string[]
   data: string
 }) {
-  assert(isDelegationCleared({ topics }))
+  // assert(isDelegationCleared({ topics }))
 
   const [, accountAsTopic] = topics as Hash[]
 
@@ -191,7 +186,7 @@ export function decodeExpirationUpdated({
   topics: string[]
   data: string
 }) {
-  assert(isExpirationUpdated({ topics }))
+  // assert(isExpirationUpdated({ topics }))
 
   const [, accountAsTopic] = topics as Hash[]
 
@@ -215,7 +210,7 @@ export function decodeOptOut({
   topics: string[]
   data: string
 }) {
-  assert(isOptOut({ topics, data }))
+  // assert(isOptOut({ topics, data }))
 
   const [, accountAsTopic] = topics as Hash[]
 

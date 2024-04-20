@@ -19,27 +19,34 @@ export default function parseRows(rows: DelegationEvent[]): DelegationAction[] {
   return rows.map((row) => {
     const { chainId, registry, account } = row
 
+    if (isSetDelegate(row)) {
+      const { delegate } = decodeSetClearDelegate(row)
+      return {
+        chainId,
+        registry: registry as Address,
+        account: account as Address,
+        set: { delegation: [{ delegate, ratio: 100n }], expiration: 0 },
+      }
+    }
+
+    if (isClearDelegate(row)) {
+      return {
+        chainId,
+        registry: registry as Address,
+        account: account as Address,
+        clear: { delegation: [], expiration: 0 },
+      }
+    }
+
     const base = {
       chainId,
       registry: registry as Address,
       account: account as Address,
     }
 
-    if (isSetDelegate(row)) {
-      const { delegate } = decodeSetClearDelegate(row)
-      return {
-        ...base,
-        set: { delegation: [{ delegate, ratio: 100n }], expiration: 0 },
-      }
-    }
-
     if (isDelegationUpdated(row)) {
       const { delegation, expiration } = decodeDelegationUpdated(row)
       return { ...base, set: { delegation, expiration } }
-    }
-
-    if (isClearDelegate(row)) {
-      return { ...base, clear: { delegation: [], expiration: 0 } }
     }
 
     if (isDelegationCleared(row)) {
