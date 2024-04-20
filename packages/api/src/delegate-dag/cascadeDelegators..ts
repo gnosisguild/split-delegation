@@ -1,9 +1,9 @@
 import assert from 'assert'
 
-import kahn from 'src/graph/sort'
+import kahn from 'src/delegate-dag/graph/sort'
 import proportionally from 'src/fns/proportionally'
 
-import { Graph } from 'src/graph/types'
+import { Graph } from 'src/delegate-dag/graph/types'
 
 /**
  * Goes from delegatorDAG -> delegatesDAG

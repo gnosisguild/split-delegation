@@ -1,8 +1,8 @@
 import { describe, test } from '@jest/globals'
-import createDelegateDAG from './createDelegateDAG'
-import { Graph } from 'src/graph/types'
+import cascadeDelegators from './cascadeDelegators.'
+import { Graph } from 'src/delegate-dag/graph/types'
 
-describe('createDelegateDAG', () => {
+describe('cascadeDelegators', () => {
   test('simple linear delegation', () => {
     const dag: Graph<bigint> = {
       A: {
@@ -13,7 +13,7 @@ describe('createDelegateDAG', () => {
       },
     }
 
-    expect(createDelegateDAG(dag)).toEqual({
+    expect(cascadeDelegators(dag)).toEqual({
       C: {
         A: BigInt(3),
         B: BigInt(100),
@@ -33,7 +33,7 @@ describe('createDelegateDAG', () => {
       },
     }
 
-    expect(createDelegateDAG(dag)).toEqual({
+    expect(cascadeDelegators(dag)).toEqual({
       C: { A: 99n, B: 1000000000000n },
       D: { A: 1n, B: 1n },
     })

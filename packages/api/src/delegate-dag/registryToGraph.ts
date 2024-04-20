@@ -1,4 +1,4 @@
-import { Graph } from 'src/graph/types'
+import { Graph } from 'src/delegate-dag/graph/types'
 import { Registry } from './types'
 
 export default function (registry: Registry, when: number): Graph<bigint> {
