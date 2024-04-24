@@ -1,8 +1,8 @@
 import assert from 'assert'
 import async from 'async'
-import aggregateRpc from './aggregateRpc'
-
 import { Address, Block, PublicClient } from 'viem'
+
+import aggregateRpc from './aggregateRpc'
 
 const PARALLELISM = 15
 

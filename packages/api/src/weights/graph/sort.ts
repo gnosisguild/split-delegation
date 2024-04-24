@@ -47,14 +47,22 @@ export default function kahn<T>(dag: Graph<T>): string[] {
 }
 
 function all<T>(dag: Graph<T>): string[] {
-  return Array.from(
-    new Set(
-      Object.keys(dag).reduce(
-        (prev, node) => [...prev, node, ...Object.keys(dag[node])],
-        [] as string[]
-      )
-    )
-  )
+  // THIS IS SLOW
+  // return Array.from(
+  //   new Set(
+  //     Object.keys(dag).reduce(
+  //       (prev, node) => [...prev, node, ...Object.keys(dag[node])],
+  //       [] as string[]
+  //     )
+  //   )
+  // )
+
+  const set = new Set<string>()
+  Object.keys(dag).forEach((node) => {
+    set.add(node)
+    Object.keys(dag[node]).forEach((neighbor) => set.add(neighbor))
+  })
+  return Array.from(set)
 }
 
 function neighbors<T>(dag: Graph<T>, node: string): string[] {

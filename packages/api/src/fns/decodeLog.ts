@@ -1,4 +1,5 @@
 import {
+  Address,
   Hash,
   Hex,
   decodeAbiParameters,
@@ -122,8 +123,10 @@ export function decodeSetClearDelegate({ topics }: { topics: string[] }) {
   const [delegate] = decodeAbiParameters([{ type: 'address' }], delegateAsTopic)
 
   return {
-    account,
     spaceId,
+    //account: `0x${accountAsTopic.slice(-40)}` as Address,
+    account,
+    //delegate: `0x${delegateAsTopic.slice(-40)}` as Address,
     delegate,
   }
 }

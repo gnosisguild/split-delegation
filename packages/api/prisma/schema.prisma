@@ -24,7 +24,6 @@ model DelegationEvent {
     data    String
 
     @@index([spaceId])
-    @@index([account])
     @@index([blockNumber])
     @@index([blockTimestamp])
 }

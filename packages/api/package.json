@@ -12,11 +12,11 @@
     "lint:check": "tsc --noEmit && eslint  'src/**/*.ts'",
     "format": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,graphql}\" --write",
     "migrate:dev": "prisma migrate dev",
-    "migrate:prod": "prisma migrate deploy",
-    "sync": "prisma generate && ts-node src/commands sync"
+    "migrate:prod": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "5.12.1",
+    "@snapshot-labs/snapshot.js": "^0.11.18",
     "@vercel/edge": "^1.1.1",
     "@vercel/node": "3.0.26",
     "async": "^3.2.5",

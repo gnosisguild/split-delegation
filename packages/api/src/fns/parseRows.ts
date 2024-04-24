@@ -1,5 +1,4 @@
-import { Address, Hash } from 'viem'
-import { DelegationEvent } from '@prisma/client'
+import { Address } from 'viem'
 
 import {
   decodeDelegationUpdated,
@@ -15,7 +14,15 @@ import {
 
 import { DelegationAction } from 'src/types'
 
-export default function parseRows(rows: DelegationEvent[]): DelegationAction[] {
+export default function parseRows(
+  rows: {
+    chainId: number
+    registry: string
+    account: string
+    topics: string[]
+    data: string
+  }[]
+): DelegationAction[] {
   return rows.map((row) => {
     const { chainId, registry, account } = row
 

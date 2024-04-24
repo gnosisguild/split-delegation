@@ -1,9 +1,18 @@
-import createDelegateDAG from 'src/delegate-dag'
 import { DelegationAction } from 'src/types'
+import { Graph } from 'src/weights/graph/types'
 
 export default function top(
-  actions: DelegationAction[],
-  when: number,
+  {
+    delegatorWeights,
+    delegatorScores,
+    delegateWeights,
+    delegateScores,
+  }: {
+    delegatorWeights: Graph<bigint>
+    delegatorScores: Record<string, number>
+    delegateWeights: Graph<bigint>
+    delegateScores: Record<string, number>
+  },
   {
     limit,
     offset,
@@ -13,12 +22,10 @@ export default function top(
     offset: number
   }
 ) {
-  const delegateDAG = createDelegateDAG(actions, when)
-
-  return Object.keys(delegateDAG)
+  return Object.keys(delegateWeights)
     .map((address) => ({
       address,
-      delegatorCount: Object.keys(delegateDAG[address]).length,
+      delegatorCount: Object.keys(delegateWeights[address]).length,
     }))
     .sort((a, b) => (a.delegatorCount > b.delegatorCount ? -1 : 1))
     .slice(offset, offset + limit)

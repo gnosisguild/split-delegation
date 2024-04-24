@@ -1,13 +1,14 @@
 import { BlockTag } from 'viem'
+import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
-import spaceId from 'src/fns/spaceId'
-import parseRows from 'src/fns/parseRows'
-
+import { syncTip } from 'src/commands/sync'
+import blockTagToNumber from 'src/actions/blockTagToNumber'
 import top from 'src/actions/top'
-import { syncTip as sync } from 'src/commands/sync'
 
-import prisma from '../../../../../prisma/singleton'
+import createClient from 'src/loaders/createClient'
+import loadDelegates from 'src/loaders/loadDelegates'
+import loadDelegators from 'src/loaders/loadDelegators'
 
 // /api/v1/safe.ggtest.eth/latest/delegates/top
 
@@ -44,6 +45,12 @@ export const GET = async (req: VercelRequest) => {
   const space = req.query.space as string
   const tag = req.query.space as BlockTag
 
+  const {
+    options: { strategies, network },
+  } = req.body
+
+  // TODO CACHING
+
   const limit = Number(req.query.limit) || 100
   const offset = Number(req.query.offset) || 0
   const orderBy = req.query.by
@@ -52,23 +59,38 @@ export const GET = async (req: VercelRequest) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  // weight caching will come in here
+  const blockNumber = await blockTagToNumber(tag, createClient(mainnet))
 
-  await sync(tag)
+  await syncTip(space, blockNumber)
 
-  const actions = parseRows(
-    await prisma.delegationEvent.findMany({
-      where: { spaceId: spaceId(space) },
-      orderBy: { blockTimestamp: 'asc' },
+  const { weights: delegatorWeights, scores: delegatorScores } =
+    await loadDelegators({
+      space,
+      strategies,
+      network,
+      blockNumber,
     })
+
+  const { weights: delegateWeights, scores: delegateScores } =
+    await loadDelegates({
+      delegatorWeights,
+      delegatorScores,
+      addresses: [],
+    })
+
+  const result = await top(
+    {
+      delegatorWeights,
+      delegatorScores,
+      delegateWeights,
+      delegateScores,
+    },
+    {
+      limit,
+      offset,
+      orderBy,
+    }
   )
-
-  const result = await top(actions, Date.now(), {
-    limit,
-    offset,
-    orderBy,
-  })
-
   const response = { delegates: result } as TopResponse
 
   return new Response(JSON.stringify(response))

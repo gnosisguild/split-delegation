@@ -1,8 +1,8 @@
 import { describe, test } from '@jest/globals'
-import cascadeDelegators from './cascadeDelegators.'
-import { Graph } from 'src/delegate-dag/graph/types'
+import cascadeDelegators from './cascadeWeights'
+import { Graph } from 'src/weights/graph/types'
 
-describe('cascadeDelegators', () => {
+describe('cascadeWeights', () => {
   test('simple linear delegation', () => {
     const dag: Graph<bigint> = {
       A: {

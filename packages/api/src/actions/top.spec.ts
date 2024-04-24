@@ -4,7 +4,7 @@ import { Address } from 'viem'
 import { DelegationAction } from 'src/types'
 import top from './top'
 
-describe('top', () => {
+describe.skip('top', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address

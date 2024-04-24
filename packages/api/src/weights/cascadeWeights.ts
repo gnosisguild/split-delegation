@@ -1,9 +1,9 @@
 import assert from 'assert'
 
-import kahn from 'src/delegate-dag/graph/sort'
+import kahn from 'src/weights/graph/sort'
 import proportionally from 'src/fns/proportionally'
 
-import { Graph } from 'src/delegate-dag/graph/types'
+import { Graph } from 'src/weights/graph/types'
 
 /**
  * Goes from delegatorDAG -> delegatesDAG
@@ -27,10 +27,13 @@ export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
     assert(Object.keys(delegatedByNode).length > 0)
 
     const own = Object.values(delegatedByNode).reduce((p, n) => p + n, 0n)
-    const delegatedToNode = {
-      ...(result[node] || {}),
-      ...(own > 0 ? { [node]: own } : {}),
-    }
+    const delegatedToNode =
+      own > 0
+        ? {
+            ...(result[node] || {}),
+            [node]: own,
+          }
+        : result[node] || {}
 
     for (const delegator of Object.keys(delegatedToNode)) {
       const valueIn = delegatedToNode[delegator]

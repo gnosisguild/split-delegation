@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { formatUnits, parseUnits } from 'viem'
 
 /**
  * Distributes a value proportionally based on the provided ratios.
@@ -7,10 +8,21 @@ import assert from 'assert'
  * @param {bigint} value - The input value to distribute.
  * @returns {bigint[]} The distributed values based on the ratios.
  */
-export default function distributeProportionally(
-  value: bigint,
+export default function proportionally<T extends number | bigint>(
+  _value: T,
   ratios: bigint[]
-): bigint[] {
+): T[] {
+  const value =
+    typeof _value == 'bigint' ? _value : parseUnits(String(_value), 18)
+
+  const _result = _proportionally(value, ratios)
+
+  return (
+    typeof _value == 'bigint' ? _result : _result.map((e) => formatUnits(e, 18))
+  ) as T[]
+}
+
+function _proportionally(value: bigint, ratios: bigint[]): bigint[] {
   const scale = sum(ratios)
 
   const result = ratios
@@ -18,7 +30,7 @@ export default function distributeProportionally(
     // we exclude the last entry, and just make it the remainder
     .slice(0, -1)
 
-  assert(sum(result) < value)
+  assert(sum(result) <= value)
 
   return [...result, value - sum(result)]
 }

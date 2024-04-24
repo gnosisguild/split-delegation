@@ -6,6 +6,8 @@ import { rangeToStints } from 'src/fns/rangeToStints'
 import { timerEnd, timerStart } from 'src/fns/timer'
 import parseLogs from 'src/fns/parseLogs'
 
+import blockTagToNumber from 'src/actions/blockTagToNumber'
+
 import createClient from 'src/loaders/createClient'
 import loadEntries from 'src/loaders/loadEntries'
 
@@ -53,12 +55,12 @@ export default async function sync() {
 /*
  * Called before servicing a request
  */
-export async function syncTip(blockTag: BlockTag) {
+export async function syncTip(space: string, blockNumber: number) {
   const clientMainnet = createClient(mainnet)
   const clientGnosis = createClient(gnosis)
 
   const { inSync, fromBlock, toBlock } = await shouldSync(
-    blockTag,
+    blockNumber,
     clientMainnet
   )
 
@@ -155,21 +157,26 @@ async function blockRange(
     where: { chainId },
   })
 
-  if (!entry) {
-    return {
-      fromBlock: config[chainId].startBlock,
-      toBlock: blockNumber,
-    }
-  } else {
-    return {
-      fromBlock: entry.blockNumber,
-      toBlock: Math.max(entry.blockNumber, blockNumber),
-    }
+  return {
+    fromBlock: config[chainId].startBlock,
+    toBlock: blockNumber,
   }
+
+  // if (!entry) {
+  //   return {
+  //     fromBlock: config[chainId].startBlock,
+  //     toBlock: blockNumber,
+  //   }
+  // } else {
+  //   return {
+  //     fromBlock: entry.blockNumber,
+  //     toBlock: Math.max(entry.blockNumber, blockNumber),
+  //   }
+  // }
 }
 
 async function shouldSync(
-  blockTag: BlockTag,
+  blockTag: BlockTag | number,
   client: PublicClient
 ): Promise<{ inSync: boolean; fromBlock: number; toBlock: number }> {
   const blockNumber = await blockTagToNumber(blockTag, client)
@@ -194,16 +201,4 @@ async function shouldSync(
   }
 
   return { inSync: true, fromBlock: 0, toBlock: 0 }
-}
-
-async function blockTagToNumber(
-  blockTag: BlockTag,
-  client: PublicClient
-): Promise<number> {
-  if (!isNaN(Number(blockTag))) {
-    return Number(blockTag)
-  }
-
-  const { number } = await client.getBlock({ blockTag })
-  return Number(number)
 }
