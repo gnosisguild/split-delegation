@@ -1,13 +1,13 @@
 {
   "functions": {
-    "api/**/*": {
+    "routes/**/*": {
       "maxDuration": 300,
       "includeFiles": "src/**/*"
     }
   },
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/routes/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "*" },
@@ -24,7 +24,7 @@
   ],
   "crons": [
     {
-      "path": "/api/v1/sync",
+      "path": "/routes/v1/sync",
       "schedule": "0 * * * *"
     }
   ]
