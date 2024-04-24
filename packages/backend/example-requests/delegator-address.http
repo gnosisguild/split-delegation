@@ -1,4 +1,0 @@
-// Get info for a spesific delegator,
-// like the delegations etc.
-
-curl -v -X GET "http://localhost:3000/api/gnosisdaotest.eth/latest/delegators/0x86C62a0DD8690fa2Ba6e3E3D9A18D021dBd2565A"
