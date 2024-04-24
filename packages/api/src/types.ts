@@ -15,3 +15,13 @@ export type DelegationAction = {
   | { opt: { optOut: boolean } }
   | { expire: { expiration: number } }
 )
+
+export type Weights<W> = {
+  [key: string]: {
+    [key: string]: W
+  }
+}
+
+export type Scores = {
+  [key: string]: number
+}

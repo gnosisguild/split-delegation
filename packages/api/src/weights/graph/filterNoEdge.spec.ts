@@ -1,11 +1,12 @@
 import { describe, test } from '@jest/globals'
 
-import { Graph } from './types'
 import filterNoEdge from './filterNoEdge'
+
+import { Weights } from 'src/types'
 
 describe('filterNoEdge', () => {
   test('nothing to remove', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
       },
@@ -24,7 +25,7 @@ describe('filterNoEdge', () => {
     })
   })
   test('removes a node', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
       },

@@ -1,10 +1,10 @@
 import { describe, test } from '@jest/globals'
 import cascadeDelegators from './cascadeWeights'
-import { Graph } from 'src/weights/graph/types'
+import { Weights } from 'src/types'
 
 describe('cascadeWeights', () => {
   test('simple linear delegation', () => {
-    const dag: Graph<bigint> = {
+    const dag: Weights<bigint> = {
       A: {
         B: BigInt(3),
       },
@@ -22,7 +22,7 @@ describe('cascadeWeights', () => {
   })
 
   test('C gets A from two differences become properly combined', () => {
-    const dag: Graph<bigint> = {
+    const dag: Weights<bigint> = {
       A: {
         B: BigInt(50),
         C: BigInt(50),

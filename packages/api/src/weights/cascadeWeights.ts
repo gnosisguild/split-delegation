@@ -2,8 +2,7 @@ import assert from 'assert'
 
 import kahn from 'src/weights/graph/sort'
 import proportionally from 'src/fns/proportionally'
-
-import { Graph } from 'src/weights/graph/types'
+import { Weights } from 'src/types'
 
 /**
  * Goes from delegatorDAG -> delegatesDAG
@@ -13,10 +12,10 @@ import { Graph } from 'src/weights/graph/types'
  * The graph input is guaranteed to be an acyclic graph, and weights are
  * propagated via edges
  */
-export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
+export default function (delegatorDAG: Weights<bigint>): Weights<bigint> {
   const order = kahn(delegatorDAG)
 
-  let result: Graph<bigint> = {}
+  let result: Weights<bigint> = {}
   for (const node of order) {
     const delegatedByNode = delegatorDAG[node]
     if (!delegatedByNode) {
@@ -57,7 +56,7 @@ export default function (delegatorDAG: Graph<bigint>): Graph<bigint> {
 }
 
 function set(
-  result: Graph<bigint>,
+  result: Weights<bigint>,
   {
     delegate,
     delegator,
@@ -79,7 +78,7 @@ function set(
 
 // THIS
 // function set(
-//   result: Graph<bigint>,
+//   result: Weights<bigint>,
 //   {
 //     delegate,
 //     delegator,

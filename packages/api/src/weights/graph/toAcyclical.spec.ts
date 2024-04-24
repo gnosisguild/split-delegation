@@ -1,12 +1,11 @@
 import { describe, test } from '@jest/globals'
 
 import toDAG from './toAcyclical'
-
-import { Graph } from './types'
+import { Weights } from 'src/types'
 
 describe('toDAG', () => {
   test('one cycle in the graph', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
         C: 0,
@@ -31,7 +30,7 @@ describe('toDAG', () => {
   })
 
   test('two cycles in the graph', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
       },
@@ -71,7 +70,7 @@ describe('toDAG', () => {
   })
 
   test('one node makes two cycles in the graph', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
         C: 0,

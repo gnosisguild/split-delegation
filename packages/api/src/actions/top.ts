@@ -1,5 +1,4 @@
-import { DelegationAction } from 'src/types'
-import { Graph } from 'src/weights/graph/types'
+import { Weights } from 'src/types'
 
 export default function top(
   {
@@ -8,9 +7,9 @@ export default function top(
     delegateWeights,
     delegateScores,
   }: {
-    delegatorWeights: Graph<bigint>
+    delegatorWeights: Weights<bigint>
     delegatorScores: Record<string, number>
-    delegateWeights: Graph<bigint>
+    delegateWeights: Weights<bigint>
     delegateScores: Record<string, number>
   },
   {

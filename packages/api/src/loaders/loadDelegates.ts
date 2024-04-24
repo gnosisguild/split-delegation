@@ -1,16 +1,18 @@
 import assert from 'assert'
+import { Address } from 'viem'
+
 import proportionally from 'src/fns/proportionally'
 import { toDelegateWeights } from 'src/weights'
-import { Graph } from 'src/weights/graph/types'
-import { Address } from 'viem'
+
+import { Scores, Weights } from 'src/types'
 
 export default function loadDelegates({
   delegatorWeights,
   delegatorScores,
   addresses,
 }: {
-  delegatorWeights: Graph<bigint>
-  delegatorScores: Record<string, number>
+  delegatorWeights: Weights<bigint>
+  delegatorScores: Scores
   addresses: Address[]
 }) {
   // remove delegators that have voted
@@ -31,11 +33,11 @@ export default function loadDelegates({
 }
 
 function delegateScores(
-  outWeights: Graph<bigint>,
-  delegatorScores: Record<string, number>,
-  inWeights: Graph<bigint>
+  outWeights: Weights<bigint>,
+  delegatorScores: Scores,
+  inWeights: Weights<bigint>
 ) {
-  const bag: Graph<number> = {}
+  const bag: Weights<number> = {}
 
   function calcDistribution(delegator: string) {
     if (bag[delegator]) {

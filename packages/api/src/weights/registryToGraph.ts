@@ -1,7 +1,7 @@
-import { Graph } from 'src/weights/graph/types'
 import { Registry } from './types'
+import { Weights } from 'src/types'
 
-export default function (registry: Registry, when: number): Graph<bigint> {
+export default function (registry: Registry, when: number): Weights<bigint> {
   const [graph] = [registry]
     .map((registry) => filterExpired(registry, when))
     .map((registry) => filterOptOuts(registry))
@@ -73,7 +73,7 @@ function filterOptOuts(registry: Registry): Registry {
   return registry
 }
 
-function toGraph(registry: Registry): Graph<bigint> {
+function toGraph(registry: Registry): Weights<bigint> {
   // THIS IS SLOW
   // return Object.keys(registry).reduce((result, account) => {
   //   const { delegation } = registry[account]
@@ -87,7 +87,7 @@ function toGraph(registry: Registry): Graph<bigint> {
   // }, {})
 
   // THIS IS FASTER
-  const graph: Graph<bigint> = {}
+  const graph: Weights<bigint> = {}
   for (const key of Object.keys(registry)) {
     graph[key] = {}
     for (const { delegate, ratio } of registry[key].delegation) {

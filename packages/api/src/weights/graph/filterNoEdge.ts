@@ -1,6 +1,6 @@
-import { Graph } from './types'
+import { Weights } from 'src/types'
 
-export default function filterNoEdge<T>(graph: Graph<T>): Graph<T> {
+export default function filterNoEdge<T>(graph: Weights<T>): Weights<T> {
   let result
   for (const node of Object.keys(graph)) {
     if (Object.keys(graph[node]).length > 0) {

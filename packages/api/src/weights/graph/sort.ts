@@ -1,15 +1,15 @@
 import assert from 'assert'
-import { Graph } from './types'
+import { Weights } from 'src/types'
 
 /**
  * Performs a topological sort using Kahn's algorithm on a directed acyclic
  * graph (DAG).
  *
- * @param {Graph<T>} dag - The directed acyclic graph to be sorted.
+ * @param {Weights<T>} dag - The directed acyclic graph to be sorted.
  * @returns {string[]} - An array containing the sorted nodes of the DAG.
  */
 
-export default function kahn<T>(dag: Graph<T>): string[] {
+export default function kahn<T>(dag: Weights<T>): string[] {
   const inDegree = new Map<string, number>()
   const nodes = all(dag)
   for (const node of nodes) {
@@ -46,7 +46,7 @@ export default function kahn<T>(dag: Graph<T>): string[] {
   return result
 }
 
-function all<T>(dag: Graph<T>): string[] {
+function all<T>(dag: Weights<T>): string[] {
   // THIS IS SLOW
   // return Array.from(
   //   new Set(
@@ -65,6 +65,6 @@ function all<T>(dag: Graph<T>): string[] {
   return Array.from(set)
 }
 
-function neighbors<T>(dag: Graph<T>, node: string): string[] {
+function neighbors<T>(dag: Weights<T>, node: string): string[] {
   return Object.keys(dag[node] || {})
 }

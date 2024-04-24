@@ -3,12 +3,6 @@ import { Address } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 import { merge } from 'src/fns/bag'
 
-// function cacheGet() {
-//   return null
-// }
-
-// function cachePut() {}
-
 export default async function loadScores({
   space,
   strategies,

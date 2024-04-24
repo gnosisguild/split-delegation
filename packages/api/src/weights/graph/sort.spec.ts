@@ -2,11 +2,11 @@ import { describe, test } from '@jest/globals'
 
 import kahn from './sort'
 
-import { Graph } from './types'
+import { Weights } from 'src/types'
 
 describe('sort', () => {
   test('no cycles', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         C: 0,
         B: 0,
@@ -27,7 +27,7 @@ describe('sort', () => {
   })
 
   test('with partition', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
       },
@@ -55,7 +55,7 @@ describe('sort', () => {
   })
 
   test('throws on cycle', () => {
-    const dag: Graph<number> = {
+    const dag: Weights<number> = {
       A: {
         B: 0,
         C: 0,

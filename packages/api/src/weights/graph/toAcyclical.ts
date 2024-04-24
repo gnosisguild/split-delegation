@@ -1,8 +1,8 @@
 import assert from 'assert'
 import findCycle from './findCycle'
-import { Graph } from './types'
+import { Weights } from 'src/types'
 
-export default function toAcyclical<T>(graph: Graph<T>): Graph<T> {
+export default function toAcyclical<T>(graph: Weights<T>): Weights<T> {
   while (true) {
     const cycle = findCycle(graph)
     if (!cycle) {
@@ -15,7 +15,7 @@ export default function toAcyclical<T>(graph: Graph<T>): Graph<T> {
   }
 }
 
-function removeEdge<T>(dag: Graph<T>, from: string, to: string): Graph<T> {
+function removeEdge<T>(dag: Weights<T>, from: string, to: string): Weights<T> {
   return {
     ...dag,
     [from]: Object.keys(dag[from])
