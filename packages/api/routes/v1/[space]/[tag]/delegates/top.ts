@@ -29,18 +29,6 @@ import loadDelegators from 'src/loaders/loadDelegators'
 // - offset: number
 // - by: 'weight' | 'count'
 
-type TopResponse = {
-  delegates: DelegateResponse[]
-}
-
-type DelegateResponse = {
-  address: string
-  delegatorCount: number
-  // TODO percentOfDelegators: number
-  // TODO percentOfVotes: number
-  // TODO votingPower: number
-}
-
 export const GET = async (req: VercelRequest) => {
   const space = req.query.space as string
   const tag = req.query.space as BlockTag
@@ -80,8 +68,6 @@ export const GET = async (req: VercelRequest) => {
 
   const result = await top(
     {
-      delegatorWeights,
-      delegatorScores,
       delegateWeights,
       delegateScores,
     },
@@ -91,7 +77,7 @@ export const GET = async (req: VercelRequest) => {
       orderBy,
     }
   )
-  const response = { delegates: result } as TopResponse
+  const response = { delegates: result }
 
   return new Response(JSON.stringify(response))
 }
