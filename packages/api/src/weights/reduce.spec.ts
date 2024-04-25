@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import reduceRegistry from './createRegistry'
+import reduceRegistry from './reduce'
 
 import { DelegationAction } from 'src/types'
 

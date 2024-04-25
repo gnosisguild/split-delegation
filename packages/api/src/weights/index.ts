@@ -1,6 +1,6 @@
-import createRegistry from './createRegistry'
-import registryToGraph from './registryToGraph'
-import cascadeWeights from './cascadeWeights'
+import reduceActions from './reduce'
+import filterRegistry from './filter'
+import cascadeWeights from './cascade'
 
 import filterNoEdge from 'src/weights/graph/filterNoEdge'
 import toAcyclical from 'src/weights/graph/toAcyclical'
@@ -11,7 +11,7 @@ export function createDelegatorWeights(
   actions: DelegationAction[],
   when: number
 ): Weights<bigint> {
-  return registryToGraph(createRegistry(actions), when)
+  return filterRegistry(reduceActions(actions), when)
 }
 
 export function toDelegateWeights(

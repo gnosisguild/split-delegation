@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import registryToGraph from './registryToGraph'
+import registryToGraph from './filter'
 import { Registry } from './types'
 
 // Allow BigInt to be serialized to JSON
