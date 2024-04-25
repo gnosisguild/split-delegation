@@ -3,7 +3,7 @@ import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
 import { syncTip } from 'src/commands/sync'
-import blockTagToNumber from 'src/actions/blockTagToNumber'
+import blockTagToNumber from 'src/loaders/loadBlockTag'
 
 import createClient from 'src/loaders/createClient'
 import loadDelegates from 'src/loaders/loadDelegates'

@@ -1,7 +1,8 @@
 import { sum } from 'src/fns/bag'
 import { Weights } from 'src/types'
+import { Address } from 'viem'
 
-type Result = {
+export type DelegateStats = {
   address: string
   delegatorCount: number
   percentOfDelegators: number
@@ -9,27 +10,21 @@ type Result = {
   percentOfVotingPower: number
 }
 
-export default function top(
-  {
-    delegateWeights,
-    delegateScores,
-  }: {
-    delegateWeights: Weights<bigint>
-    delegateScores: Record<string, number>
-  },
-  {
-    limit,
-    offset,
-  }: {
-    orderBy: 'count' | 'weight'
-    limit: number
-    offset: number
-  }
-): Result[] {
+export default function delegateStats({
+  address,
+  delegateWeights,
+  delegateScores,
+}: {
+  address?: Address
+  delegateWeights: Weights<bigint>
+  delegateScores: Record<string, number>
+}): DelegateStats[] {
   const totalDelegatorCount = Object.keys(delegateWeights).length
   const totalVotingPower = sum(delegateScores)
 
-  return Object.keys(delegateWeights)
+  const computeFor = address ? [address] : Object.keys(delegateWeights)
+
+  return computeFor
     .map((address) => ({
       address,
       delegatorCount: Object.keys(delegateWeights[address]).length,
@@ -42,8 +37,6 @@ export default function top(
       votingPower,
       percentOfVotingPower: bps(votingPower, totalVotingPower),
     }))
-    .sort((a, b) => (a.delegatorCount > b.delegatorCount ? -1 : 1))
-    .slice(offset, offset + limit)
 }
 
 function bps(score: number, total: number) {

@@ -1,6 +1,6 @@
 import { BlockTag, PublicClient } from 'viem'
 
-export default async function blockTagToNumber(
+export default async function loadBlockTag(
   blockTag: BlockTag | number,
   client: PublicClient
 ): Promise<number> {
