@@ -38,4 +38,30 @@ describe('cascade', () => {
       D: { A: 1n, B: 1n },
     })
   })
+
+  test('three level delegation', () => {
+    const dag: Weights<bigint> = {
+      A: {
+        B: BigInt(50),
+        C: BigInt(50),
+        D: BigInt(33),
+      },
+      D: {
+        E: BigInt(97),
+        F: BigInt(3),
+      },
+      E: {
+        G: BigInt(2),
+        H: BigInt(2),
+      },
+    }
+
+    expect(cascadeDelegators(dag)).toEqual({
+      B: { A: 50n },
+      C: { A: 50n },
+      F: { A: 1n, D: 3n },
+      G: { A: 16n, D: 48n, E: 2n },
+      H: { A: 16n, D: 49n, E: 2n },
+    })
+  })
 })

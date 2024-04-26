@@ -12,27 +12,24 @@ import { Weights } from 'src/types'
  * The graph input is guaranteed to be an acyclic graph, and weights are
  * propagated via edges
  */
-export default function (delegatorDAG: Weights<bigint>): Weights<bigint> {
-  const order = kahn(delegatorDAG)
+export default function (delegatorWeights: Weights<bigint>): Weights<bigint> {
+  const order = kahn(delegatorWeights)
 
-  let result: Weights<bigint> = {}
+  let result: Weights<bigint> = Object.fromEntries(
+    Object.entries(delegatorWeights)
+      .map(([k, v]) => [k, sumValues(v)])
+      .filter(([, v]) => (v as bigint) > 0n)
+      .map(([k, v]) => [k, { [k as string]: v }])
+  )
+
   for (const node of order) {
-    const delegatedByNode = delegatorDAG[node]
-    if (!delegatedByNode) {
-      // if its a leaf we exit
+    const isLeaf = Object.keys(delegatorWeights[node] || {}).length == 0
+    if (isLeaf) {
       continue
     }
 
-    assert(Object.keys(delegatedByNode).length > 0)
-
-    const own = Object.values(delegatedByNode).reduce((p, n) => p + n, 0n)
-    const delegatedToNode =
-      own > 0
-        ? {
-            ...(result[node] || {}),
-            [node]: own,
-          }
-        : result[node] || {}
+    const delegatedByNode = delegatorWeights[node]
+    const delegatedToNode = result[node]
 
     for (const delegator of Object.keys(delegatedToNode)) {
       const valueIn = delegatedToNode[delegator]
@@ -95,3 +92,7 @@ function set(
 //     },
 //   }
 // }
+
+function sumValues(bag: Record<string, bigint>) {
+  return Object.values(bag).reduce((p, v) => p + v, 0n)
+}
