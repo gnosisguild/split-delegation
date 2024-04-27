@@ -5,6 +5,7 @@ import proportionally from 'src/fns/proportionally'
 import { toDelegateWeights } from 'src/weights'
 
 import { Scores, Weights } from 'src/types'
+import insideOut from 'src/fns/insideOut'
 
 export default function loadDelegates({
   delegatorWeights,
@@ -22,56 +23,54 @@ export default function loadDelegates({
     )
   )
 
-  const weights = toDelegateWeights(delegatorWeights)
-  const scores = delegateScores(
-    delegatorWeights,
-    delegatorScores,
-    delegatorWeights
-  )
+  const delegateWeights = toDelegateWeights(delegatorWeights)
 
-  return { weights, scores }
+  return {
+    weights: delegateWeights,
+    power: delegatePower(delegatorScores, delegateWeights),
+  }
 }
 
-function delegateScores(
-  outWeights: Weights<bigint>,
+function delegatePower(
   delegatorScores: Scores,
-  inWeights: Weights<bigint>
+  delegateWeights: Weights<bigint>
 ) {
-  const bag: Weights<number> = {}
+  const finalDelegatorWeights = insideOut(delegateWeights)
 
-  function calcDistribution(delegator: string) {
-    if (bag[delegator]) {
-      // already calculated
-      return
-    }
+  const distributions: Weights<number> = {}
 
-    const score = delegatorScores[delegator]
-    const delegates = Object.keys(outWeights[delegator])
-    const ratios = Object.values(inWeights[delegator])
-    const values = proportionally(score, ratios)
-    assert(delegates.length == values.length)
-    bag[delegator] = Object.fromEntries(
-      delegates.map((delegate, index) => [delegate, values[index]])
-    )
-  }
+  function calcPower(delegate: string) {
+    const score = Object.keys(delegateWeights[delegate]).reduce(
+      (power, delegator) => {
+        if (!distributions[delegator]) {
+          // already calculated
+          distributions[delegator] = distribute(
+            finalDelegatorWeights[delegator],
+            delegatorScores[delegator]
+          )
+        }
 
-  function calcScore(delegate: string) {
-    const score = Object.keys(inWeights[delegate]).reduce(
-      (score, delegator) => {
-        calcDistribution(delegator)
-
-        const part = bag[delegator][delegate]
+        const part = distributions[delegator][delegate]
         assert(typeof part == 'number')
-
-        return score + part
+        return power + part
       },
       0
     )
     return score
   }
 
-  const delegates = Object.keys(inWeights)
+  const delegates = Object.keys(delegateWeights).sort()
   return Object.fromEntries(
-    delegates.map((delegate) => [delegate, calcScore(delegate)])
+    delegates.map((delegate) => [delegate, calcPower(delegate)])
   )
+}
+
+function distribute(
+  bag: Record<string, bigint>,
+  value: number
+): Record<string, number> {
+  const keys = Object.keys(bag).sort()
+  const weights = keys.map((key) => bag[key])
+  const result = proportionally(value, weights)
+  return Object.fromEntries(keys.map((key, i) => [key, result[i]]))
 }
