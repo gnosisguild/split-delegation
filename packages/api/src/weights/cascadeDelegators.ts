@@ -12,32 +12,20 @@ export default function (delegatorWeights: Weights<bigint>): Weights<bigint> {
   const result: Weights<bigint> = {}
 
   for (const delegator of Object.keys(delegatorWeights)) {
-    result[delegator] = cascadeDelegator(delegatorWeights, delegator)
+    result[delegator] = Object.entries(delegatorWeights[delegator])
+      .flatMap(([delegate, weight]) =>
+        flowUntilLeaf(delegatorWeights, delegate, weight)
+      )
+      .reduce((result: Record<string, bigint>, [delegate, weight]) => {
+        result[delegate] = (result[delegate] || 0n) + weight
+        return result
+      }, {})
   }
 
   return result
 }
 
-function cascadeDelegator(
-  weights: Weights<bigint>,
-  delegator: string
-): Record<string, bigint> {
-  const result: Record<string, bigint> = {}
-
-  Object.entries(weights[delegator])
-    .map(([delegate, weight]) => toLeaves(weights, delegate, weight))
-    .flat()
-    .forEach(([delegate, weight]) => {
-      if (!result[delegate]) {
-        result[delegate] = 0n
-      }
-      result[delegate] += weight
-    })
-
-  return result
-}
-
-function toLeaves(
+function flowUntilLeaf(
   weights: Weights<bigint>,
   edge: string,
   value: bigint
@@ -46,9 +34,9 @@ function toLeaves(
     return [[edge, value]]
   }
 
-  return distribute(weights[edge], value)
-    .map(([edge, value]) => toLeaves(weights, edge, value))
-    .flat()
+  return distribute(weights[edge], value).flatMap(([edge, value]) =>
+    flowUntilLeaf(weights, edge, value)
+  )
 }
 
 function distribute(
