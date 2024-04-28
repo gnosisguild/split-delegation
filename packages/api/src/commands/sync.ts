@@ -157,22 +157,17 @@ async function blockRange(
     where: { chainId },
   })
 
-  return {
-    fromBlock: config[chainId].startBlock,
-    toBlock: blockNumber,
+  if (!entry) {
+    return {
+      fromBlock: config[chainId].startBlock,
+      toBlock: blockNumber,
+    }
+  } else {
+    return {
+      fromBlock: entry.blockNumber,
+      toBlock: Math.max(entry.blockNumber, blockNumber),
+    }
   }
-
-  // if (!entry) {
-  //   return {
-  //     fromBlock: config[chainId].startBlock,
-  //     toBlock: blockNumber,
-  //   }
-  // } else {
-  //   return {
-  //     fromBlock: entry.blockNumber,
-  //     toBlock: Math.max(entry.blockNumber, blockNumber),
-  //   }
-  // }
 }
 
 async function shouldSync(
