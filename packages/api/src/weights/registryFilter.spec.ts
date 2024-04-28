@@ -1,16 +1,8 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import registryFilter from './registryFilter'
 import { Registry } from './types'
-
-// Allow BigInt to be serialized to JSON
-Object.defineProperty(BigInt.prototype, 'toJSON', {
-  get() {
-    'use strict'
-    return () => String(this)
-  },
-})
+import { filterExpired, filterOptOuts } from './registryFilter'
 
 describe('filterRegistry', () => {
   const A = 'A' as Address
@@ -31,12 +23,18 @@ describe('filterRegistry', () => {
       },
     }
 
-    const result = registryFilter(registry, 2024)
+    const result = filterExpired(registry, 2024)
 
     expect(result).toEqual({
-      [A]: {},
+      [A]: {
+        delegation: [],
+        expiration: 2023,
+        optOut: false,
+      },
       [B]: {
-        [C]: 200n,
+        delegation: [{ delegate: C, ratio: 200n }],
+        expiration: 2030,
+        optOut: false,
       },
     })
   })
@@ -58,12 +56,18 @@ describe('filterRegistry', () => {
       },
     }
 
-    const result = registryFilter(registry, 2024)
+    const result = filterOptOuts(registry)
 
     expect(result).toEqual({
-      [A]: {},
+      [A]: {
+        delegation: [{ delegate: C, ratio: 50n }],
+        expiration: 2023,
+        optOut: false,
+      },
       [B]: {
-        [C]: 200n,
+        delegation: [{ delegate: C, ratio: 200n }],
+        expiration: 2030,
+        optOut: true,
       },
     })
   })
@@ -85,13 +89,19 @@ describe('filterRegistry', () => {
       },
     }
 
-    const result = registryFilter(registry, 2024)
+    const result = filterExpired(filterOptOuts(registry), 2024)
 
     expect(result).toEqual({
       [A]: {
-        [C]: 50n,
+        delegation: [{ delegate: C, ratio: 50n }],
+        expiration: 0,
+        optOut: false,
       },
-      [B]: {},
+      [B]: {
+        delegation: [],
+        expiration: 1999,
+        optOut: true,
+      },
     })
   })
 })

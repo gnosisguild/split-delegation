@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import reduceRegistry from './registryCreate'
+import createRegistry from './createRegistry'
 
 import { DelegationAction } from 'src/types'
 
@@ -26,7 +26,7 @@ describe('createRegistry', () => {
         },
       },
     ]
-    const result = reduceRegistry(actions)
+    const result = createRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
@@ -66,7 +66,7 @@ describe('createRegistry', () => {
         },
       },
     ]
-    const result = reduceRegistry(actions)
+    const result = createRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
@@ -105,7 +105,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -133,7 +133,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -164,7 +164,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -203,7 +203,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -227,7 +227,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [],
         expiration: 123,
@@ -258,7 +258,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -292,7 +292,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(reduceRegistry(actions)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },

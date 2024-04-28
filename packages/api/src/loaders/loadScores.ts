@@ -1,4 +1,3 @@
-import assert from 'assert'
 import { Address } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 import { merge } from 'src/fns/bag'

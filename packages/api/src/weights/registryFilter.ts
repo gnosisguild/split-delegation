@@ -1,14 +1,4 @@
 import { Registry } from './types'
-import { Weights } from 'src/types'
-
-export default function (registry: Registry, when: number): Weights<bigint> {
-  const [delegatorWeights] = [registry]
-    .map((registry) => filterExpired(registry, when))
-    .map((registry) => filterOptOuts(registry))
-    .map((registry) => toWeights(registry))
-
-  return delegatorWeights
-}
 
 export function filterExpired(registry: Registry, now: number): Registry {
   // THIS IS SLOW
@@ -66,28 +56,4 @@ export function filterOptOuts(registry: Registry): Registry {
     )
   }
   return registry
-}
-
-function toWeights(registry: Registry): Weights<bigint> {
-  // THIS IS SLOW
-  // return Object.keys(registry).reduce((result, account) => {
-  //   const { delegation } = registry[account]
-  //   return {
-  //     ...result,
-  //     [account]: delegation.reduce(
-  //       (result, { delegate, ratio }) => ({ ...result, [delegate]: ratio }),
-  //       {}
-  //     ),
-  //   }
-  // }, {})
-
-  // THIS IS FASTER
-  const graph: Weights<bigint> = {}
-  for (const [key, { delegation }] of Object.entries(registry)) {
-    graph[key] = {}
-    for (const { delegate, ratio } of delegation) {
-      graph[key][delegate] = ratio
-    }
-  }
-  return graph
 }

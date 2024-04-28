@@ -1,8 +1,7 @@
-import parseRows from 'src/fns/parseRows'
+import { DelegationEvent } from '@prisma/client'
+import spaceId from 'src/fns/spaceId'
 
 import prisma from '../../prisma/singleton'
-import spaceId from 'src/fns/spaceId'
-import { DelegationEvent } from '@prisma/client'
 
 export default async function loadEvents({
   space,
