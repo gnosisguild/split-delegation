@@ -3,7 +3,6 @@ import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
 import { sum } from 'src/fns/bag'
-import createDelegatorPower from 'src/weights/createDelegatorPower'
 import inverse from 'src/weights/inverse'
 
 import { syncTip } from 'src/commands/sync'
@@ -31,16 +30,11 @@ export const GET = async (req: VercelRequest) => {
 
   await syncTip(space, blockNumber)
 
-  const { delegatorWeights, scores } = await loadDelegators({
+  const { delegatorPower, scores } = await loadDelegators({
     space,
     strategies,
     network,
     blockNumber,
-  })
-
-  const delegatorPower = createDelegatorPower({
-    delegatorWeights,
-    scores,
     alreadyVoted: addresses,
   })
 

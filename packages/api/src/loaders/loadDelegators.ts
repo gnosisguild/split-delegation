@@ -1,16 +1,50 @@
+import { Address } from 'viem'
 import { mainnet } from 'viem/chains'
-import createClient from './createClient'
-import loadScores from './loadScores'
-import loadEvents from './loadEvents'
-import parseRows from 'src/fns/parseRows'
+
 import { all } from 'src/weights/node'
+import createClient from './createClient'
+import createDelegatorPower from 'src/weights/createDelegatorPower'
 import createDelegatorWeights from 'src/weights/createDelegatorWeights'
+import loadEvents from './loadEvents'
+import loadScores from './loadScores'
+import parseRows from 'src/fns/parseRows'
 
 /*
  * Called while syncing the DB
  */
 
 export default async function loadDelegators({
+  space,
+  strategies,
+  network,
+  blockNumber,
+  alreadyVoted,
+}: {
+  space: string
+  strategies: any[]
+  network: string
+  blockNumber: number
+  alreadyVoted?: Address[]
+}) {
+  const { weights, scores } = await _load({
+    space,
+    strategies,
+    network,
+    blockNumber,
+  })
+
+  return {
+    delegatorWeights: weights,
+    delegatorPower: createDelegatorPower({
+      delegatorWeights: weights,
+      scores,
+      alreadyVoted,
+    }),
+    scores,
+  }
+}
+
+async function _load({
   space,
   strategies,
   network,
@@ -43,5 +77,5 @@ export default async function loadDelegators({
   })
 
   // TODO PUT CACHE
-  return { delegatorWeights: weights, scores }
+  return { weights, scores }
 }
