@@ -1,11 +1,11 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import reduceRegistry from './reduce'
+import reduceRegistry from './registryCreate'
 
 import { DelegationAction } from 'src/types'
 
-describe('reduceRegistry', () => {
+describe('createRegistry', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address

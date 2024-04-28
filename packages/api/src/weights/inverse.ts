@@ -1,6 +1,6 @@
 import { Weights } from 'src/types'
 
-export default function <T>(weights: Weights<T>) {
+export default function inverse<T>(weights: Weights<T>) {
   let result: Weights<T> = {}
 
   for (const out of Object.keys(weights)) {

@@ -1,6 +1,7 @@
-import { sum } from 'src/fns/bag'
-import { Weights } from 'src/types'
 import { Address } from 'viem'
+
+import { Scores, Weights } from 'src/types'
+import { sum } from './bag'
 
 export type DelegateStats = {
   address: string
@@ -13,14 +14,19 @@ export type DelegateStats = {
 export default function delegateStats({
   address,
   delegateWeights,
-  delegateScores,
+  delegatePower,
+  scores,
 }: {
   address?: Address
   delegateWeights: Weights<bigint>
-  delegateScores: Record<string, number>
+  delegatePower: Weights<number>
+  scores: Scores
 }): DelegateStats[] {
-  const totalDelegatorCount = Object.keys(delegateWeights).length
-  const totalVotingPower = sum(delegateScores)
+  const totalDelegatorCount = new Set(
+    Object.values(delegateWeights).flatMap((b) => Object.keys(b))
+  ).size
+
+  const totalVotingPower = Object.values(scores).reduce((p, v) => p + v, 0)
 
   const computeFor = address ? [address] : Object.keys(delegateWeights)
 
@@ -28,7 +34,7 @@ export default function delegateStats({
     .map((address) => ({
       address,
       delegatorCount: Object.keys(delegateWeights[address]).length,
-      votingPower: delegateScores[address],
+      votingPower: sum(delegatePower[address]) + scores[address],
     }))
     .map(({ address, delegatorCount, votingPower }) => ({
       address,
@@ -41,5 +47,5 @@ export default function delegateStats({
 
 function bps(score: number, total: number) {
   if (total == 0) return 0
-  return (score * 10000) / total
+  return Math.round((score * 10000) / total)
 }

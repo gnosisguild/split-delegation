@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import registryToGraph from './filter'
+import registryFilter from './registryFilter'
 import { Registry } from './types'
 
 // Allow BigInt to be serialized to JSON
@@ -12,7 +12,7 @@ Object.defineProperty(BigInt.prototype, 'toJSON', {
   },
 })
 
-describe('reduceRegistry', () => {
+describe('filterRegistry', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
@@ -31,7 +31,7 @@ describe('reduceRegistry', () => {
       },
     }
 
-    const result = registryToGraph(registry, 2024)
+    const result = registryFilter(registry, 2024)
 
     expect(result).toEqual({
       [A]: {},
@@ -58,7 +58,7 @@ describe('reduceRegistry', () => {
       },
     }
 
-    const result = registryToGraph(registry, 2024)
+    const result = registryFilter(registry, 2024)
 
     expect(result).toEqual({
       [A]: {},
@@ -85,7 +85,7 @@ describe('reduceRegistry', () => {
       },
     }
 
-    const result = registryToGraph(registry, 2024)
+    const result = registryFilter(registry, 2024)
 
     expect(result).toEqual({
       [A]: {

@@ -1,11 +1,7 @@
-import assert from 'assert'
-
-import kahn from 'src/weights/graph/sort'
 import proportionally from 'src/fns/proportionally'
 import { Weights } from 'src/types'
 
 /**
- * Goes from delegatorDAG -> delegatesDAG
  *
  * Builds the voting leafs, which is what remains after all transitivity
  *
@@ -13,86 +9,42 @@ import { Weights } from 'src/types'
  * propagated via edges
  */
 export default function (delegatorWeights: Weights<bigint>): Weights<bigint> {
-  const order = kahn(delegatorWeights)
+  const result: Weights<bigint> = {}
 
-  let result: Weights<bigint> = Object.fromEntries(
-    Object.entries(delegatorWeights)
-      .map(([k, v]) => [k, sumValues(v)])
-      .filter(([, v]) => (v as bigint) > 0n)
-      .map(([k, v]) => [k, { [k as string]: v }])
+  for (const delegator of Object.keys(delegatorWeights)) {
+    result[delegator] = Object.entries(delegatorWeights[delegator])
+      .flatMap(([delegate, weight]) =>
+        flowUntilLeaf(delegatorWeights, delegate, weight)
+      )
+      .reduce((result: Record<string, bigint>, [delegate, weight]) => {
+        result[delegate] = (result[delegate] || 0n) + weight
+        return result
+      }, {})
+  }
+
+  return result
+}
+
+function flowUntilLeaf(
+  weights: Weights<bigint>,
+  edge: string,
+  value: bigint
+): [string, bigint][] {
+  if (Object.keys(weights[edge] || {}).length == 0) {
+    return [[edge, value]]
+  }
+
+  return distribute(weights[edge], value).flatMap(([edge, value]) =>
+    flowUntilLeaf(weights, edge, value)
   )
-
-  for (const node of order) {
-    const isLeaf = Object.keys(delegatorWeights[node] || {}).length == 0
-    if (isLeaf) {
-      continue
-    }
-
-    const delegatedByNode = delegatorWeights[node]
-    const delegatedToNode = result[node]
-
-    for (const delegator of Object.keys(delegatedToNode)) {
-      const valueIn = delegatedToNode[delegator]
-      const valuesOut = proportionally(valueIn, Object.values(delegatedByNode))
-
-      const delegates = Object.keys(delegatedByNode)
-      for (let i = 0; i < delegates.length; i++) {
-        result = set(result, {
-          delegate: delegates[i],
-          delegator,
-          value: valuesOut[i],
-        })
-      }
-    }
-
-    // if we're here its not a leaf. delete all non leafs
-    delete result[node]
-  }
-
-  return result
 }
 
-function set(
-  result: Weights<bigint>,
-  {
-    delegate,
-    delegator,
-    value,
-  }: { delegate: string; delegator: string; value: bigint }
-) {
-  if (!result[delegate]) {
-    result[delegate] = {}
-  }
-
-  if (!result[delegate][delegator]) {
-    result[delegate][delegator] = 0n
-  }
-
-  result[delegate][delegator] += value
-
-  return result
-}
-
-// THIS
-// function set(
-//   result: Weights<bigint>,
-//   {
-//     delegate,
-//     delegator,
-//     value,
-//   }: { delegate: string; delegator: string; value: bigint }
-// ) {
-//   return {
-//     ...result,
-//     [delegate]: {
-//       ...(result[delegate] || {}),
-//       [delegator]:
-//         ((result[delegate] && result[delegate][delegator]) || BigInt(0)) +
-//         value,
-//     },
-//   }
-// }
-
-function sumValues(bag: Record<string, bigint>) {
-  return Object.values(bag).reduce((p, v) => p + v, 0n)
+function distribute(
+  bag: Record<string, bigint>,
+  value: bigint
+): [string, bigint][] {
+  const keys = Object.keys(bag).sort()
+  const weights = keys.map((key) => bag[key])
+  const result = proportionally(value, weights)
+  return keys.map((key, i) => [key, result[i]])
 }

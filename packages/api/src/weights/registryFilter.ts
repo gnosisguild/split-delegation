@@ -10,7 +10,7 @@ export default function (registry: Registry, when: number): Weights<bigint> {
   return delegatorWeights
 }
 
-function filterExpired(registry: Registry, now: number): Registry {
+export function filterExpired(registry: Registry, now: number): Registry {
   // THIS IS SLOW
   // const isExpired = ({ expiration }: { expiration: number }) =>
   //   expiration != 0 && expiration < now
@@ -36,7 +36,7 @@ function filterExpired(registry: Registry, now: number): Registry {
   return registry
 }
 
-function filterOptOuts(registry: Registry): Registry {
+export function filterOptOuts(registry: Registry): Registry {
   const optedOut = new Set(
     Object.keys(registry).filter((account) => registry[account].optOut == true)
   )
@@ -60,15 +60,10 @@ function filterOptOuts(registry: Registry): Registry {
   // THIS IS FASTER
   for (const key of Object.keys(registry)) {
     const entry = registry[key]
-    const shouldFilter = entry.delegation.some(({ delegate }) =>
-      optedOut.has(delegate)
-    )
 
-    if (shouldFilter) {
-      entry.delegation = entry.delegation.filter(
-        ({ delegate }) => optedOut.has(delegate) == false
-      )
-    }
+    entry.delegation = entry.delegation.filter(
+      ({ delegate }) => optedOut.has(delegate) == false
+    )
   }
   return registry
 }
@@ -89,9 +84,6 @@ function toWeights(registry: Registry): Weights<bigint> {
   // THIS IS FASTER
   const graph: Weights<bigint> = {}
   for (const [key, { delegation }] of Object.entries(registry)) {
-    // graph[key] = Object.fromEntries(
-    //   delegation.map(({ delegate, ratio }) => [delegate, ratio])
-    // )
     graph[key] = {}
     for (const { delegate, ratio } of delegation) {
       graph[key][delegate] = ratio

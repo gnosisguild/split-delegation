@@ -6,7 +6,7 @@ import { rangeToStints } from 'src/fns/rangeToStints'
 import { timerEnd, timerStart } from 'src/fns/timer'
 import parseLogs from 'src/fns/parseLogs'
 
-import blockTagToNumber from 'src/actions/blockTagToNumber'
+import blockTagToNumber from 'src/loaders/loadBlockTag'
 
 import createClient from 'src/loaders/createClient'
 import loadEntries from 'src/loaders/loadEntries'

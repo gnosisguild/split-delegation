@@ -2,11 +2,13 @@ import { Address, BlockTag, getAddress } from 'viem'
 import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
+import { sum } from 'src/fns/bag'
+import createDelegatorPower from 'src/weights/createDelegatorPower'
+import inverse from 'src/weights/inverse'
+
 import { syncTip } from 'src/commands/sync'
 import blockTagToNumber from 'src/loaders/loadBlockTag'
-
 import createClient from 'src/loaders/createClient'
-import loadDelegates from 'src/loaders/loadDelegates'
 import loadDelegators from 'src/loaders/loadDelegators'
 import loadScores from 'src/loaders/loadScores'
 
@@ -29,21 +31,22 @@ export const GET = async (req: VercelRequest) => {
 
   await syncTip(space, blockNumber)
 
-  const { weights: delegatorWeights, scores: delegatorScores } =
-    await loadDelegators({
-      space,
-      strategies,
-      network,
-      blockNumber,
-    })
-
-  const { scores: delegateScores } = await loadDelegates({
-    delegatorWeights,
-    delegatorScores,
-    addresses,
+  const { delegatorWeights, scores } = await loadDelegators({
+    space,
+    strategies,
+    network,
+    blockNumber,
   })
 
-  const scores = await loadScores({
+  const delegatorPower = createDelegatorPower({
+    delegatorWeights,
+    scores,
+    alreadyVoted: addresses,
+  })
+
+  const delegatePower = inverse(delegatorPower)
+
+  const otherScores = await loadScores({
     space,
     strategies,
     network,
@@ -54,7 +57,8 @@ export const GET = async (req: VercelRequest) => {
   const response = Object.fromEntries(
     addresses.map((address) => [
       address,
-      (delegateScores[address] || 0) + (scores[address] || 0),
+      sum(delegatePower[address] || {}) +
+        (scores[address] || otherScores[address] || 0),
     ])
   )
 

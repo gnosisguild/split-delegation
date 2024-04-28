@@ -1,10 +1,10 @@
-import { Address } from 'viem'
 import { mainnet } from 'viem/chains'
 import createClient from './createClient'
 import loadScores from './loadScores'
 import loadEvents from './loadEvents'
 import parseRows from 'src/fns/parseRows'
-import { createDelegatorWeights } from 'src/weights'
+import { all } from 'src/weights/node'
+import createDelegatorWeights from 'src/weights/createDelegatorWeights'
 
 /*
  * Called while syncing the DB
@@ -38,10 +38,10 @@ export default async function loadDelegators({
     space,
     strategies,
     network,
-    addresses: Object.keys(weights) as Address[],
+    addresses: all(weights),
     blockNumber,
   })
 
   // TODO PUT CACHE
-  return { weights, scores }
+  return { delegatorWeights: weights, scores }
 }

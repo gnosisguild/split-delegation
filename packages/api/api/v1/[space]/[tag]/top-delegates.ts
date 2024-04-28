@@ -2,13 +2,15 @@ import { BlockTag } from 'viem'
 import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
-import { syncTip } from 'src/commands/sync'
-import blockTagToNumber from 'src/loaders/loadBlockTag'
-
-import createClient from 'src/loaders/createClient'
-import loadDelegates from 'src/loaders/loadDelegates'
-import loadDelegators from 'src/loaders/loadDelegators'
+import createDelegatorPower from 'src/weights/createDelegatorPower'
 import delegateStats, { DelegateStats } from 'src/fns/delegateStats'
+import inverse from 'src/weights/inverse'
+
+import { syncTip } from 'src/commands/sync'
+
+import blockTagToNumber from 'src/loaders/loadBlockTag'
+import createClient from 'src/loaders/createClient'
+import loadDelegators from 'src/loaders/loadDelegators'
 
 // /api/v1/safe.ggtest.eth/latest/delegates/top
 
@@ -39,24 +41,21 @@ export const GET = async (req: VercelRequest) => {
 
   await syncTip(space, blockNumber)
 
-  const { weights: delegatorWeights, scores: delegatorScores } =
-    await loadDelegators({
-      space,
-      strategies,
-      network,
-      blockNumber,
-    })
+  const { delegatorWeights, scores } = await loadDelegators({
+    space,
+    strategies,
+    network,
+    blockNumber,
+  })
+  const delegatorPower = createDelegatorPower({
+    delegatorWeights,
+    scores,
+  })
 
-  const { weights: delegateWeights, scores: delegateScores } =
-    await loadDelegates({
-      delegatorWeights,
-      delegatorScores,
-      addresses: [],
-    })
-
-  const _result = await delegateStats({
-    delegateWeights,
-    delegateScores,
+  const _result = delegateStats({
+    delegateWeights: inverse(delegatorWeights),
+    delegatePower: inverse(delegatorPower),
+    scores,
   })
 
   const result = _result

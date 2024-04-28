@@ -11,20 +11,30 @@ describe('delegateStats', () => {
   test('it works', () => {
     const weights = {
       [B]: {
-        [A]: 70n,
+        [A]: 50n,
       },
       [C]: {
-        [A]: 30n,
+        [A]: 50n,
+      },
+    }
+    const power = {
+      [B]: {
+        [A]: 20,
+      },
+      [C]: {
+        [A]: 20,
       },
     }
     const scores = {
-      [B]: 140,
-      [C]: 60,
+      [A]: 40,
+      [B]: 10,
+      [C]: 50,
     }
 
     const result = delegateStats({
       delegateWeights: weights,
-      delegateScores: scores,
+      delegatePower: power,
+      scores,
     })
 
     // TODO expand these tests
@@ -32,16 +42,16 @@ describe('delegateStats', () => {
       {
         address: B,
         delegatorCount: 1,
-        votingPower: 140,
-        percentOfDelegators: 5000,
-        percentOfVotingPower: 7000,
+        votingPower: 30,
+        percentOfDelegators: 10000,
+        percentOfVotingPower: 3000,
       },
       {
         address: C,
         delegatorCount: 1,
-        votingPower: 60,
-        percentOfDelegators: 5000,
-        percentOfVotingPower: 3000,
+        votingPower: 70,
+        percentOfDelegators: 10000,
+        percentOfVotingPower: 7000,
       },
     ])
   })
