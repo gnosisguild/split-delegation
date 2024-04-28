@@ -4,9 +4,9 @@ CREATE TABLE "DelegationEvent" (
     "chainId" INTEGER NOT NULL,
     "registry" TEXT NOT NULL,
     "blockNumber" INTEGER NOT NULL,
+    "blockTimestamp" INTEGER NOT NULL,
     "transactionIndex" INTEGER NOT NULL,
     "logIndex" INTEGER NOT NULL,
-    "blockTimestamp" INTEGER NOT NULL,
     "spaceId" TEXT NOT NULL,
     "account" TEXT NOT NULL,
     "topics" TEXT[],
@@ -27,4 +27,7 @@ CREATE TABLE "Checkpoint" (
 CREATE INDEX "DelegationEvent_spaceId_idx" ON "DelegationEvent"("spaceId");
 
 -- CreateIndex
-CREATE INDEX "DelegationEvent_account_idx" ON "DelegationEvent"("account");
+CREATE INDEX "DelegationEvent_blockNumber_idx" ON "DelegationEvent"("blockNumber");
+
+-- CreateIndex
+CREATE INDEX "DelegationEvent_blockTimestamp_idx" ON "DelegationEvent"("blockTimestamp");
