@@ -1,4 +1,4 @@
-import registryCreate from './createRegistry'
+import createRegistry from './createRegistry'
 import { filterExpired, filterOptOuts } from './registryFilter'
 
 import { DelegationAction, Weights } from 'src/types'
@@ -8,7 +8,7 @@ export default function createDelegatorWeights(
   actions: DelegationAction[],
   when: number
 ): Weights<bigint> {
-  const [weights] = [registryCreate(actions)]
+  const [weights] = [createRegistry(actions)]
     .map((registry) => filterExpired(registry, when))
     .map((registry) => filterOptOuts(registry))
     .map((registry) => toWeights(registry))
