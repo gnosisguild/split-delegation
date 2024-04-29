@@ -1,5 +1,6 @@
 import assert from 'assert'
 import { formatUnits, parseUnits } from 'viem'
+import formatDecimal from './formatDecimal'
 
 /**
  * Distributes a value proportionally based on the provided ratios.
@@ -13,7 +14,7 @@ export default function proportionally<T extends number | bigint>(
   ratios: bigint[]
 ): T[] {
   const value =
-    typeof _value == 'bigint' ? _value : parseUnits(String(_value), 18)
+    typeof _value == 'bigint' ? _value : parseUnits(formatDecimal(_value), 18)
 
   const _result = _proportionally(value, ratios)
 
