@@ -23,7 +23,7 @@ export const GET = async (req: VercelRequest) => {
   const tag = req.query.space as BlockTag
 
   const {
-    options: { strategies, network },
+    options: { totalSupply, strategies, network },
   } = req.body
 
   // TODO CACHING
@@ -48,6 +48,7 @@ export const GET = async (req: VercelRequest) => {
   })
 
   const _result = delegateStats({
+    totalSupply,
     delegateWeights: inverse(delegatorWeights),
     delegatePower: inverse(delegatorPower),
     scores,

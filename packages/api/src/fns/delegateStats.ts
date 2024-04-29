@@ -13,11 +13,13 @@ export type DelegateStats = {
 
 export default function delegateStats({
   address,
+  totalSupply,
   delegateWeights,
   delegatePower,
   scores,
 }: {
   address?: Address
+  totalSupply: number
   delegateWeights: Weights<bigint>
   delegatePower: Weights<number>
   scores: Scores
@@ -26,22 +28,20 @@ export default function delegateStats({
     Object.values(delegateWeights).flatMap((b) => Object.keys(b))
   ).size
 
-  const totalVotingPower = Object.values(scores).reduce((p, v) => p + v, 0)
-
   const computeFor = address ? [address] : Object.keys(delegateWeights)
 
   return computeFor
     .map((address) => ({
       address,
       delegatorCount: Object.keys(delegateWeights[address]).length,
-      votingPower: sum(delegatePower[address]) + scores[address],
+      votingPower: sum(delegatePower[address] || {}) + scores[address],
     }))
     .map(({ address, delegatorCount, votingPower }) => ({
       address,
       delegatorCount,
       percentOfDelegators: bps(delegatorCount, totalDelegatorCount),
       votingPower,
-      percentOfVotingPower: bps(votingPower, totalVotingPower),
+      percentOfVotingPower: bps(votingPower, totalSupply),
     }))
 }
 

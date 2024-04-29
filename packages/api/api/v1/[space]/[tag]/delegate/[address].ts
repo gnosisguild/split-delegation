@@ -17,7 +17,7 @@ export const GET = async (req: VercelRequest) => {
   const address = req.query.address as Address
 
   const {
-    options: { strategies, network },
+    options: { totalSupply, strategies, network },
   } = req.body
 
   const blockNumber = await blockTagToNumber(tag, createClient(mainnet))
@@ -33,6 +33,7 @@ export const GET = async (req: VercelRequest) => {
 
   const [response] = delegateStats({
     address,
+    totalSupply,
     delegateWeights: inverse(delegatorWeights),
     delegatePower: inverse(delegatorPower),
     scores,

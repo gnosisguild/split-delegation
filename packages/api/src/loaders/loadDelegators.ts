@@ -2,6 +2,7 @@ import { Address } from 'viem'
 import { mainnet } from 'viem/chains'
 
 import { all } from 'src/weights/node'
+import { timerEnd, timerStart } from 'src/fns/timer'
 import createClient from './createClient'
 import createDelegatorPower from 'src/weights/createDelegatorPower'
 import createDelegatorWeights from 'src/weights/createDelegatorWeights'

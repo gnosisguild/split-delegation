@@ -32,6 +32,7 @@ describe('delegateStats', () => {
     }
 
     const result = delegateStats({
+      totalSupply: 100,
       delegateWeights: weights,
       delegatePower: power,
       scores,
