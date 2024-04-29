@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import { Address, keccak256, toBytes } from 'viem'
 import { mainnet } from 'viem/chains'
 
 import all from 'src/weights/all'
@@ -9,9 +9,16 @@ import loadEvents from './loadEvents'
 import loadScores from './loadScores'
 import parseRows from 'src/fns/parseRows'
 
-/*
- * Called while syncing the DB
- */
+import prisma from '../../prisma/singleton'
+import { timerEnd, timerStart } from 'src/fns/timer'
+
+// Allow BigInt to be serialized to JSON
+Object.defineProperty(BigInt.prototype, 'toJSON', {
+  get() {
+    'use strict'
+    return () => String(this)
+  },
+})
 
 export default async function loadDelegators({
   space,
@@ -26,14 +33,17 @@ export default async function loadDelegators({
   blockNumber: number
   alreadyVoted?: Address[]
 }) {
+  let start = timerStart()
   const { weights, scores } = await _load({
     space,
     strategies,
     network,
     blockNumber,
   })
+  console.log(`Loaded weights for ${space} in ${timerEnd(start)}ms`)
 
-  return {
+  start = timerStart()
+  const result = {
     delegatorWeights: weights,
     delegatorPower: createDelegatorPower({
       delegatorWeights: weights,
@@ -42,6 +52,9 @@ export default async function loadDelegators({
     }),
     scores,
   }
+  console.log(`Computed power for ${space} in ${timerEnd(start)}ms`)
+
+  return result
 }
 
 async function _load({
@@ -55,7 +68,15 @@ async function _load({
   network: string
   blockNumber: number
 }) {
-  // TODO GET CACHE
+  const key = keccak256(
+    toBytes(JSON.stringify({ space, strategies, network, blockNumber }))
+  )
+
+  const hit = await prisma.cache.findFirst({ where: { key } })
+  if (hit) {
+    console.log(`Cache Hit: ${key}`)
+    return JSON.parse(hit.value, revive)
+  }
 
   const [block, events] = await Promise.all([
     createClient(mainnet).getBlock({
@@ -76,6 +97,21 @@ async function _load({
     blockNumber,
   })
 
+  const value = JSON.stringify({ weights, scores })
+  await prisma.cache.upsert({
+    where: { key },
+    create: { key, value },
+    update: { key, value },
+  })
+
   // TODO PUT CACHE
   return { weights, scores }
+}
+
+function revive(key: string, value: string) {
+  const digits = /^\d+$/
+  if (typeof value == 'string' && digits.test(value)) {
+    return BigInt(value)
+  }
+  return value
 }

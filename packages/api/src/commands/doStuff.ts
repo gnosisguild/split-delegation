@@ -77,7 +77,6 @@ export default async function doStuff({
   console.log(JSON.stringify(result, null, 2))
 }
 
-polyfill()
 // doStuff({
 //   space: 'rocketpool-dao.eth',
 //   totalSupply: 20292984,
@@ -116,14 +115,4 @@ doStuff({
 
 function orderByPower(a: DelegateStats, b: DelegateStats) {
   return a.votingPower > b.votingPower ? -1 : 1
-}
-
-function polyfill() {
-  // Allow BigInt to be serialized to JSON
-  Object.defineProperty(BigInt.prototype, 'toJSON', {
-    get() {
-      'use strict'
-      return () => String(this)
-    },
-  })
 }

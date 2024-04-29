@@ -28,6 +28,12 @@ model DelegationEvent {
     @@index([blockTimestamp])
 }
 
+model Cache {
+    key       String   @id
+    value     String
+    updatedAt DateTime @default(now())
+}
+
 model Checkpoint {
     chainId     Int @id
     blockNumber Int
