@@ -2,8 +2,8 @@ import async from 'async'
 import rangeToChunks from 'src/fns/rangeToChunks'
 import { RpcFetch } from './types'
 
-const PARALLELISM = 15
-const MAX_RPC_BLOCK_RANGE = 5000
+const PARALLELISM = 5
+const MAX_RPC_BLOCK_RANGE = 3000
 
 export default async function aggregateRpc<T>(
   { fromBlock, toBlock }: { fromBlock: number; toBlock: number },
