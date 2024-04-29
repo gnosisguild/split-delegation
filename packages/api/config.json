@@ -1,0 +1,10 @@
+{
+  "1": {
+    "network": "mainnet",
+    "startBlock": 11225329
+  },
+  "100": {
+    "network": "gnosis",
+    "startBlock": 20274491
+  }
+}

@@ -1,12 +1,27 @@
-build/
-node_modules/
-.DS_Store
-.zos.session
-.openzeppelin/.session
-env/
-.env
-.env.deploy
-bin/
-solc
+node_modules
+.env**
+coverage
 coverage.json
-/coverage
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
+
+# logs
+yarn-error.log
+
+# backend
+.graphclient
+.vercel
+
+# subgraph
+generated
+build
+.latest.json
+.bin
+.vscode
+.DS_Store
+packages/stress_testing/deployments
+packages/subgraph/subgraph.yaml

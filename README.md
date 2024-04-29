@@ -1,101 +1,25 @@
-Delegate Registry
-=================
+# Delegate Registry v2
 
-[![Build Status](https://travis-ci.com/gnosis/delegate-registry.svg?branch=main)](https://travis-ci.com/gnosis/delegate-registry)
+A general-purpose delegate registry.
 
-Install
--------
-### Install requirements with yarn:
+## Features
 
-```bash
-yarn
-// Setup env
-cp .env.sample .env
-```
+- Transitive delegation
+- Delegate to multiple addresses (specify the percentage of your vote-weight for each).
+- Its possible to set expiry time for a delegation set.
+- Automatic vote weight adjustment based on token balance changes.
+- Delegation revocation at any time.
 
-### Build contracts
+## Packages
 
-With docker:
-```bash
-docker-compose up
-```
+### Backend
 
-Without docker:
-```bash
-yarn compile
-```
+The `backend` package is responsible for computing, caching and exposing each address's delegated voting power. It provides a set of API endpoints that allow you to interact with the delegate registry. For more information on the available endpoints and how to use them, see [the example requests](packages/backend/example-requests).
 
-### Run all tests (requires Node version >=7 for `async/await`):
+### EVM
 
-Running the tests with docker:
+The `evm` package contains the Ethereum Virtual Machine (EVM) contracts for the delegate registry. These contracts are written in Solidity and can be deployed to any EVM-compatible blockchain. The package also includes a Hardhat configuration for compiling the contracts and running tests, as well as scripts for deploying the contracts and interacting with them on a blockchain.
 
-```bash
-docker build -t delegate-registry .
-docker run delegate-registry yarn test
-```
+### Subgraph
 
-If you want to run it without docker:
-
-```bash
-yarn compile
-yarn test
-```
-
-In this case it is expected that the deployment check test fails.
-
-### Deploy
-
-Docker is used to ensure that always the same bytecode is generated.
-
-Preparation:
-- Set `INFURA_TOKEN` in `.env`
-- Set `MNEMONIC` in `.env`
-
-Deploying with docker (should always result in the same registry address):
-
-```bash
-./deploy.sh <network>
-```
-
-If you want to run it without docker (might result in different registry address):
-
-```bash
-yarn compile
-yarn deploy <network>
-```
-
-### Verify contract
-
-Note: To completely replicate the bytecode that has been deployed it is required that the project path is always the same. For this use the provided Dockerfile and map the the build folder into your local build folder. For this a docker-compose file is provided which can be used with:
-```bash
-docker-compose up
-```
-
-You can locally verify contract using the scripts `generate_meta.js` and `verify_deployment.js`.
-
-With `node scripts/generate_meta.js` a `meta` folder is created in the `build` folder that contains all files required to verify the source code on https://verification.komputing.org/ and https://etherscan.io/
-
-For Etherscan only the `DelegateRegistryEtherscan.json` file is required. For sourcify the `DelegateRegistryMeta.json` and all the `.sol` files are required.
-
-Once the meta data has been generated you can verify that your local compiled code corresponds to the version deployed by Gnosis with `yarn do <network> scripts/verify_deployment.js`.
-
-Documentation
--------------
-- [Coding guidelines](docs/guidelines.md)
-
-Audits/ Formal Verification
----------
-- TBD
-
-Security and Liability
-----------------------
-All contracts are WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-License
--------
-All smart contracts are released under LGPL v.3.
-
-Contributors
-------------
-- Richard Meissner ([rmeissner](https://github.com/rmeissner))
-- Auryn Macmillan ([auryn-macmillan](https://github.com/auryn-macmillan))
+The `subgraph` package is responsible for indexing the contracts related to the delegate registry and expose it for the backend. It uses The Graph.
