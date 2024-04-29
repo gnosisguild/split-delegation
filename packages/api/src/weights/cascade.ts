@@ -3,10 +3,10 @@ import { Weights } from 'src/types'
 
 /**
  *
- * Builds the voting leafs, which is what remains after all transitivity
+ * Builds weights from root (delegator) to leaf (delegate)
  *
- * The graph input is guaranteed to be an acyclic graph, and weights are
- * propagated via edges
+ * The input is guaranteed to be acyclic, and weights are propagated via
+ * delegation edges
  */
 export default function (delegatorWeights: Weights<bigint>): Weights<bigint> {
   const result: Weights<bigint> = {}
