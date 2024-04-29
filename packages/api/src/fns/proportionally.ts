@@ -19,7 +19,9 @@ export default function proportionally<T extends number | bigint>(
   const _result = _proportionally(value, ratios)
 
   return (
-    typeof _value == 'bigint' ? _result : _result.map((e) => formatUnits(e, 18))
+    typeof _value == 'bigint'
+      ? _result
+      : _result.map((e) => Number(formatUnits(e, 18)))
   ) as T[]
 }
 
