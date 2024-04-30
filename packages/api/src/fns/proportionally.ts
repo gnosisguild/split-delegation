@@ -5,18 +5,18 @@ import formatDecimal from './formatDecimal'
 /**
  * Distributes a value proportionally based on the provided ratios.
  *
- * @param {bigint[]} ratios - The ratios used for distribution.
+ * @param {bigint[]} weights - The proportions used for distribution.
  * @param {bigint} value - The input value to distribute.
  * @returns {bigint[]} The distributed values based on the ratios.
  */
 export default function proportionally<T extends number | bigint>(
   _value: T,
-  ratios: bigint[]
+  weights: bigint[]
 ): T[] {
   const value =
     typeof _value == 'bigint' ? _value : parseUnits(formatDecimal(_value), 18)
 
-  const _result = _proportionally(value, ratios)
+  const _result = _proportionally(value, weights)
 
   return (
     typeof _value == 'bigint'
@@ -25,11 +25,11 @@ export default function proportionally<T extends number | bigint>(
   ) as T[]
 }
 
-function _proportionally(value: bigint, ratios: bigint[]): bigint[] {
-  const scale = sum(ratios)
+function _proportionally(value: bigint, weights: bigint[]): bigint[] {
+  const scale = sum(weights)
 
-  const result = ratios
-    .map((ratio) => (ratio * value) / scale)
+  const result = weights
+    .map((weight) => (weight * value) / scale)
     // we exclude the last entry, and just make it the remainder
     .slice(0, -1)
 

@@ -1,3 +1,5 @@
+import proportionally from "./proportionally"
+
 export function sum(bag: Record<string, number>): number {
   return Object.values(bag).reduce((p, n) => p + n, 0)
 }
@@ -14,3 +16,14 @@ export function merge(bags: Record<string, number>[]): Record<string, number> {
     ])
   )
 }
+
+export function distribute<T extends number | bigint>(
+  bag: Record<string, bigint>,
+  value: T
+): [string, T][] {
+  const keys = Object.keys(bag).sort()
+  const weights = keys.map((key) => bag[key])
+  const result = proportionally(value, weights)
+  return keys.map((key, i) => [key, result[i]])
+}
+

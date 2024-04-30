@@ -1,10 +1,10 @@
 import { Address } from 'viem'
 
-import filterEdges from './graph/filterEdges'
-import toAcyclical from './graph/toAcyclical'
-import filterNoEdge from './graph/filterNoEdge'
+import { distribute } from 'src/fns/bag'
 import cascade from './cascade'
-import proportionally from 'src/fns/proportionally'
+import filterEdges from './graph/filterEdges'
+import filterNoEdge from './graph/filterNoEdge'
+import toAcyclical from './graph/toAcyclical'
 
 import { Scores, Weights } from 'src/types'
 
@@ -32,20 +32,9 @@ export default function createDelegatorPower({
 
   const distribution: Weights<number> = {}
   for (const delegator of Object.keys(cascadedDelegatorWeights)) {
-    distribution[delegator] = distribute(
-      delegatorWeights[delegator],
-      scores[delegator]
+    distribution[delegator] = Object.fromEntries(
+      distribute(delegatorWeights[delegator], scores[delegator])
     )
   }
   return distribution
-}
-
-function distribute(
-  bag: Record<string, bigint>,
-  value: number
-): Record<string, number> {
-  const keys = Object.keys(bag).sort()
-  const weights = keys.map((key) => bag[key])
-  const result = proportionally(value, weights)
-  return Object.fromEntries(keys.map((key, i) => [key, result[i]]))
 }

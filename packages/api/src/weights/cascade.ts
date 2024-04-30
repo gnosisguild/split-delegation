@@ -1,4 +1,4 @@
-import proportionally from 'src/fns/proportionally'
+import { distribute } from 'src/fns/bag'
 import { Weights } from 'src/types'
 
 /**
@@ -37,14 +37,4 @@ function flowUntilLeaf(
   return distribute(weights[edge], value).flatMap(([edge, value]) =>
     flowUntilLeaf(weights, edge, value)
   )
-}
-
-function distribute(
-  bag: Record<string, bigint>,
-  value: bigint
-): [string, bigint][] {
-  const keys = Object.keys(bag).sort()
-  const weights = keys.map((key) => bag[key])
-  const result = proportionally(value, weights)
-  return keys.map((key, i) => [key, result[i]])
 }
