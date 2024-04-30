@@ -23,7 +23,7 @@ export default async function loadScores({
     blockNumber
   )) as Record<Address, number>[]
 
-  const bag = merge(result)
+  const bag = result.length == 1 ? result[0] : merge(result)
 
   return Object.fromEntries(
     addresses.map((address) => [address, bag[address] || 0])

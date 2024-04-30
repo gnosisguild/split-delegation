@@ -103,8 +103,6 @@ async function _load({
     create: { key, value },
     update: { key, value },
   })
-
-  // TODO PUT CACHE
   return { weights, scores }
 }
 

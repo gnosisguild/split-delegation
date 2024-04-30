@@ -1,4 +1,4 @@
-import proportionally from "./proportionally"
+import proportionally from './proportionally'
 
 export function sum(bag: Record<string, number>): number {
   return Object.values(bag).reduce((p, n) => p + n, 0)
@@ -26,4 +26,3 @@ export function distribute<T extends number | bigint>(
   const result = proportionally(value, weights)
   return keys.map((key, i) => [key, result[i]])
 }
-
