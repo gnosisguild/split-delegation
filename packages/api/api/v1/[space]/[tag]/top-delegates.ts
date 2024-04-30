@@ -1,15 +1,13 @@
 import { BlockTag } from 'viem'
-import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
 import delegateStats, { DelegateStats } from 'src/fns/delegateStats'
 import inverse from 'src/weights/inverse'
 
-import { syncTip } from 'src/commands/sync'
-
-import blockTagToNumber from 'src/loaders/loadBlockTag'
-import createClient from 'src/loaders/createClient'
+import loadBlockTag from 'src/loaders/loadBlockTag'
 import loadDelegators from 'src/loaders/loadDelegators'
+
+import { syncTip } from 'src/commands/sync'
 
 // /api/v1/safe.ggtest.eth/latest/delegates/top
 
@@ -26,8 +24,6 @@ export const GET = async (req: VercelRequest) => {
     options: { totalSupply, strategies, network },
   } = req.body
 
-  // TODO CACHING
-
   const limit = Number(req.query.limit) || 100
   const offset = Number(req.query.offset) || 0
   const orderBy = req.query.by
@@ -36,9 +32,8 @@ export const GET = async (req: VercelRequest) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  const blockNumber = await blockTagToNumber(tag, createClient(mainnet))
-
-  await syncTip(space, blockNumber)
+  const { blockNumber, chain } = await loadBlockTag(tag, network)
+  await syncTip(blockNumber, chain)
 
   const { delegatorWeights, delegatorPower, scores } = await loadDelegators({
     space,

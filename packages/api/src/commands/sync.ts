@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Address, BlockTag, PublicClient, getAddress } from 'viem'
+import { Address, BlockTag, Chain, PublicClient, getAddress } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { rangeToStints } from 'src/fns/rangeToStints'
@@ -7,14 +7,13 @@ import { timerEnd, timerStart } from 'src/fns/timer'
 import parseLogs from 'src/fns/parseLogs'
 
 import blockTagToNumber from 'src/loaders/loadBlockTag'
-
 import createClient from 'src/loaders/createClient'
 import loadEntries from 'src/loaders/loadEntries'
 
 import config from '../../config.json'
 import prisma from '../../prisma/singleton'
 
-const networks = [mainnet, gnosis]
+const chains = [mainnet, gnosis]
 
 const contracts = [
   // v1
@@ -27,15 +26,15 @@ const contracts = [
  * Called while syncing the DB
  */
 export default async function sync() {
-  for (const network of networks) {
+  for (const chain of chains) {
     const start = timerStart()
-    const client = createClient(network)
+    const client = createClient(chain)
 
-    const { fromBlock, toBlock } = await blockRange('finalized', client)
+    const { fromBlock, toBlock } = await blockRange('finalized', chain)
 
     if (fromBlock < toBlock) {
       console.info(
-        `${prefix('Sync')} Starting ${network.name} from ${fromBlock} to ${toBlock}...`
+        `${prefix('Sync')} Starting ${chain.name} from ${fromBlock} to ${toBlock}...`
       )
       const count = await _sync({
         contracts,
@@ -52,17 +51,10 @@ export default async function sync() {
   }
 }
 
-/*
- * Called before servicing a request
- */
-export async function syncTip(space: string, blockNumber: number) {
-  const clientMainnet = createClient(mainnet)
-  const clientGnosis = createClient(gnosis)
+export async function syncTip(blockNumber: number, chain: Chain) {
+  assert(chain.id == 1 || chain.id == 100)
 
-  const { inSync, fromBlock, toBlock } = await shouldSync(
-    blockNumber,
-    clientMainnet
-  )
+  const { inSync, fromBlock, toBlock } = await shouldSync(blockNumber, chain)
 
   if (inSync) {
     return
@@ -71,14 +63,17 @@ export async function syncTip(space: string, blockNumber: number) {
   await Promise.all([
     _sync({
       contracts,
-      fromBlock,
-      toBlock,
-      client: clientMainnet,
+      ...(chain.id == 1
+        ? { fromBlock, toBlock }
+        : await blockRange('finalized', mainnet)),
+      client: createClient(mainnet),
     }),
     _sync({
       contracts,
-      ...(await blockRange('finalized', clientGnosis)),
-      client: clientGnosis,
+      ...(chain.id == 100
+        ? { fromBlock, toBlock }
+        : await blockRange('finalized', gnosis)),
+      client: createClient(gnosis),
     }),
   ])
 }
@@ -146,11 +141,11 @@ function prefix(venue: 'Sync') {
 
 async function blockRange(
   blockTag: BlockTag,
-  client: PublicClient
+  chain: Chain
 ): Promise<{ fromBlock: number; toBlock: number }> {
-  const blockNumber = await blockTagToNumber(blockTag, client)
+  const { blockNumber } = await blockTagToNumber(blockTag, chain.id)
 
-  const chainId = client.chain?.id
+  const chainId = chain.id
   assert(chainId == 1 || chainId == 100)
 
   const entry = await prisma.checkpoint.findFirst({
@@ -171,12 +166,10 @@ async function blockRange(
 }
 
 async function shouldSync(
-  blockTag: BlockTag | number,
-  client: PublicClient
+  blockNumber: number,
+  chain: Chain
 ): Promise<{ inSync: boolean; fromBlock: number; toBlock: number }> {
-  const blockNumber = await blockTagToNumber(blockTag, client)
-
-  const chainId = client.chain?.id
+  const chainId = chain.id
   assert(chainId == 1 || chainId == 100)
 
   const entry = await prisma.checkpoint.findFirst({
@@ -191,7 +184,7 @@ async function shouldSync(
     }
   }
 
-  if (entry.blockNumber <= blockNumber) {
+  if (entry.blockNumber < blockNumber) {
     return { inSync: false, fromBlock: entry.blockNumber, toBlock: blockNumber }
   }
 

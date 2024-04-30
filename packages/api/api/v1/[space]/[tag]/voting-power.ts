@@ -1,34 +1,28 @@
 import { Address, BlockTag, getAddress } from 'viem'
-import { mainnet } from 'viem/chains'
 import type { VercelRequest } from '@vercel/node'
 
 import { sum } from 'src/fns/bag'
 import inverse from 'src/weights/inverse'
 
-import { syncTip } from 'src/commands/sync'
-import blockTagToNumber from 'src/loaders/loadBlockTag'
-import createClient from 'src/loaders/createClient'
+import loadBlockTag from 'src/loaders/loadBlockTag'
 import loadDelegators from 'src/loaders/loadDelegators'
 import loadScores from 'src/loaders/loadScores'
+
+import { syncTip } from 'src/commands/sync'
 
 export const GET = async (req: VercelRequest) => {
   const space = req.query.space as string
   const tag = req.query.tag as BlockTag
 
   const {
-    addresses: _addresses,
     options: { strategies, network },
+    addresses: _addresses,
   } = req.body
 
-  // TODO CACHING
+  const { blockNumber, chain } = await loadBlockTag(tag, network)
+  await syncTip(blockNumber, chain)
 
-  const addresses = _addresses.map((address: any) =>
-    getAddress(address)
-  ) as Address[]
-
-  const blockNumber = await blockTagToNumber(tag, createClient(mainnet))
-
-  await syncTip(space, blockNumber)
+  const addresses = _addresses.map(getAddress).sort() as Address[]
 
   const { delegatorPower, scores } = await loadDelegators({
     space,
@@ -37,7 +31,6 @@ export const GET = async (req: VercelRequest) => {
     blockNumber,
     alreadyVoted: addresses,
   })
-
   const delegatePower = inverse(delegatorPower)
 
   const otherScores = await loadScores({
