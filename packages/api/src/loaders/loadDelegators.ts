@@ -1,16 +1,20 @@
 import { Address, keccak256, toBytes } from 'viem'
 import { mainnet } from 'viem/chains'
 
+import { merge } from 'src/fns/bag'
+import { timerEnd, timerStart } from 'src/fns/timer'
 import all from 'src/weights/all'
-import createClient from './createClient'
-import createDelegatorPower from 'src/weights/createDelegatorPower'
+import createDelegatedPower from 'src/weights/createDelegatedPower'
+import createDelegatorCount from 'src/weights/createDelegatorCount'
+import createDelegatorDistribution from 'src/weights/createDelegatorDistribution'
 import createDelegatorWeights from 'src/weights/createDelegatorWeights'
-import loadEvents from './loadEvents'
-import loadScores from './loadScores'
 import parseRows from 'src/fns/parseRows'
 
+import createClient from './createClient'
+import loadEvents from './loadEvents'
+import loadScores from './loadScores'
+
 import prisma from '../../prisma/singleton'
-import { timerEnd, timerStart } from 'src/fns/timer'
 
 // Allow BigInt to be serialized to JSON
 Object.defineProperty(BigInt.prototype, 'toJSON', {
@@ -20,7 +24,7 @@ Object.defineProperty(BigInt.prototype, 'toJSON', {
   },
 })
 
-export default async function loadDelegators({
+export default async function loadDelegations({
   space,
   strategies,
   network,
@@ -43,18 +47,32 @@ export default async function loadDelegators({
   console.log(`Loaded weights for ${space} in ${timerEnd(start)}ms`)
 
   start = timerStart()
-  const result = {
+  const delegatorDistribution = createDelegatorDistribution({
     delegatorWeights: weights,
-    delegatorPower: createDelegatorPower({
-      delegatorWeights: weights,
-      scores,
-      alreadyVoted,
-    }),
     scores,
-  }
+    alreadyVoted,
+  })
+  const delegatedPower = createDelegatedPower({ delegatorDistribution })
+  const delegatorCount = createDelegatorCount({ delegatorDistribution })
   console.log(`Computed power for ${space} in ${timerEnd(start)}ms`)
 
-  return result
+  return {
+    delegatedPower,
+    delegatorCount,
+    scores: alreadyVoted
+      ? merge(
+          scores,
+          await loadScores({
+            // TODO we'll make this better soon
+            space,
+            strategies,
+            network,
+            blockNumber,
+            addresses: alreadyVoted,
+          })
+        )
+      : scores,
+  }
 }
 
 async function _load({

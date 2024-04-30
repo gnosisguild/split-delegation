@@ -15,7 +15,7 @@ import { Scores, Weights } from 'src/types'
  * Every address marked as already voted, will be removed from the delegator
  * list.
  */
-export default function createDelegatorPower({
+export default function createDelegatorDistribution({
   delegatorWeights,
   scores,
   alreadyVoted,

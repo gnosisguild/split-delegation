@@ -3,7 +3,6 @@ import { Address, BlockTag } from 'viem'
 import type { VercelRequest } from '@vercel/node'
 
 import delegateStats from 'src/fns/delegateStats'
-import inverse from 'src/weights/inverse'
 
 import loadBlockTag from 'src/loaders/loadBlockTag'
 import loadDelegators from 'src/loaders/loadDelegators'
@@ -23,7 +22,7 @@ export const GET = async (req: VercelRequest) => {
 
   await syncTip(blockNumber, chain)
 
-  const { delegatorWeights, delegatorPower, scores } = await loadDelegators({
+  const { delegatedPower, delegatorCount, scores } = await loadDelegators({
     space,
     strategies,
     network,
@@ -33,8 +32,8 @@ export const GET = async (req: VercelRequest) => {
   const [response] = delegateStats({
     address,
     totalSupply,
-    delegateWeights: inverse(delegatorWeights),
-    delegatePower: inverse(delegatorPower),
+    delegatedPower,
+    delegatorCount,
     scores,
   })
 

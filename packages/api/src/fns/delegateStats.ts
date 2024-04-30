@@ -1,7 +1,5 @@
 import { Address } from 'viem'
-
-import { Scores, Weights } from 'src/types'
-import { sum } from './bag'
+import { Scores } from 'src/types'
 
 export type DelegateStats = {
   address: string
@@ -14,27 +12,28 @@ export type DelegateStats = {
 export default function delegateStats({
   address,
   totalSupply,
-  delegateWeights,
-  delegatePower,
+  delegatedPower,
+  delegatorCount,
   scores,
 }: {
   address?: Address
   totalSupply: number
-  delegateWeights: Weights<bigint>
-  delegatePower: Weights<number>
+  delegatedPower: Scores
+  delegatorCount: Scores
   scores: Scores
 }): DelegateStats[] {
-  const totalDelegatorCount = new Set(
-    Object.values(delegateWeights).flatMap((b) => Object.keys(b))
-  ).size
-
-  const computeFor = address ? [address] : Object.keys(delegateWeights)
+  // TODO this is wrong, we have to count unique delegators
+  const totalDelegatorCount = Object.values(delegatorCount).reduce(
+    (p, v) => p + v,
+    0
+  )
+  const computeFor = address ? [address] : Object.keys(delegatedPower)
 
   return computeFor
     .map((address) => ({
       address,
-      delegatorCount: Object.keys(delegateWeights[address]).length,
-      votingPower: sum(delegatePower[address] || {}) + scores[address],
+      delegatorCount: delegatorCount[address],
+      votingPower: delegatedPower[address] + scores[address],
     }))
     .map(({ address, delegatorCount, votingPower }) => ({
       address,
