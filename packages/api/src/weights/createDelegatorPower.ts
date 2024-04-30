@@ -8,6 +8,13 @@ import toAcyclical from './graph/toAcyclical'
 
 import { Scores, Weights } from 'src/types'
 
+/**
+ * Creates a delegator power distribution based on the provided delegator
+ * weights, scores, and optional list of already voted addresses.
+ *
+ * Every address marked as already voted, will be removed from the delegator
+ * list.
+ */
 export default function createDelegatorPower({
   delegatorWeights,
   scores,
@@ -17,21 +24,21 @@ export default function createDelegatorPower({
   scores: Scores
   alreadyVoted?: Address[]
 }) {
+  // Filter out the already voted addresses from the delegator weights
   const [cascadedDelegatorWeights] = [delegatorWeights]
-    // filter the already voted addresses
     .map((weights) =>
       alreadyVoted ? filterEdges(weights, alreadyVoted) : weights
     )
-    // break any cycle that may exist
+    // Break any potential cycles in the delegator weights
     .map((weights) => toAcyclical(weights))
-    // remove any empty node that may linger
+    // Remove any empty nodes that may remain after cycle busting
     .map((weights) => filterNoEdge(weights))
-    // cascade edges such that all delegators are resolved to a leaf
-    // this is possible because we already guaranteed there are no cycles
+    // Cascade all delegators, such that they point to delegate leaf nodes
     .map((weights) => cascade(weights))
 
   const distribution: Weights<number> = {}
   for (const delegator of Object.keys(cascadedDelegatorWeights)) {
+    // Distribute each delegator raw score to delegates, based on cascaded weights
     distribution[delegator] = Object.fromEntries(
       distribute(delegatorWeights[delegator], scores[delegator])
     )
