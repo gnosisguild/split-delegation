@@ -9,7 +9,7 @@ describe('filterRegistry', () => {
   const B = 'B' as Address
   const C = 'C' as Address
 
-  test('expired delegations are not reflected in the graph', () => {
+  test('expired delegations are not reflected', () => {
     const registry: Registry = {
       [A]: {
         delegation: [{ delegate: B, ratio: 100n }],
@@ -39,7 +39,7 @@ describe('filterRegistry', () => {
     })
   })
 
-  test('optedout accounts do not figure in edges', () => {
+  test('optedout accounts do not figure in delegations', () => {
     const registry: Registry = {
       [A]: {
         delegation: [

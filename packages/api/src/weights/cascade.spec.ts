@@ -23,7 +23,7 @@ describe('cascadeDelegators', () => {
     })
   })
 
-  test('C gets A from two differences become properly combined', () => {
+  test('A delegates to C directly, and indirectly', () => {
     const dag: Weights<bigint> = {
       A: {
         B: BigInt(50),
@@ -47,7 +47,7 @@ describe('cascadeDelegators', () => {
     })
   })
 
-  test('three level delegation', () => {
+  test('Multi hop delegation', () => {
     const dag: Weights<bigint> = {
       A: {
         B: BigInt(50),
