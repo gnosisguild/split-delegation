@@ -3,12 +3,12 @@ import { Weights } from 'src/types'
 export default function inverse<T>(weights: Weights<T>) {
   let result: Weights<T> = {}
 
-  for (const out of Object.keys(weights)) {
-    for (const inside of Object.keys(weights[out])) {
-      if (!result[inside]) {
-        result[inside] = {}
+  for (const a of Object.keys(weights)) {
+    for (const b of Object.keys(weights[a])) {
+      if (!result[b]) {
+        result[b] = {}
       }
-      result[inside][out] = weights[out][inside]
+      result[b][a] = weights[a][b]
     }
   }
   return result
