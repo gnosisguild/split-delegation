@@ -7,8 +7,9 @@ import loadDelegators from '@/src/loaders/loadDelegators'
 import { syncTip } from '@/src/commands/sync'
 
 export const GET = async (req: VercelRequest) => {
-  const space = req.query.space as string
-  const tag = req.query.tag as BlockTag
+  const searchParams = new URL(req.url || '').searchParams
+  const space = searchParams.get('space') as string
+  const tag = searchParams.get('tag') as BlockTag
 
   const {
     options: { strategies, network },

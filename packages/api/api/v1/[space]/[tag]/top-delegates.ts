@@ -16,16 +16,17 @@ import { syncTip } from '@/src/commands/sync'
 // - orderBy: 'power' | 'count'
 
 export const GET = async (req: VercelRequest) => {
-  const space = req.query.space as string
-  const tag = req.query.space as BlockTag
+  const searchParams = new URL(req.url || '').searchParams
+  const space = searchParams.get('space') as string
+  const tag = searchParams.get('tag') as BlockTag
 
   const {
     options: { totalSupply, strategies, network },
   } = req.body
 
-  const limit = Number(req.query.limit) || 100
-  const offset = Number(req.query.offset) || 0
-  const orderBy = req.query.by
+  const limit = Number(searchParams.get('limit')) || 100
+  const offset = Number(searchParams.get('offset')) || 0
+  const orderBy = searchParams.get('by')
 
   if (orderBy != 'count' && orderBy != 'power') {
     return new Response('invalid orderBy', { status: 400 })
