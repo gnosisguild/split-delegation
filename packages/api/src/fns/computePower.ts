@@ -76,10 +76,11 @@ function delegatorCount({
   }
 
   for (const delegator of order) {
-    result[delegator] = result[delegator] || 0
+    result[delegator] = 0
+  }
 
+  for (const delegator of order) {
     for (const delegate of Object.keys(weights[delegator] || {})) {
-      result[delegate] = result[delegate] || 0
       result[delegate] += result[delegator] + 1
     }
   }
