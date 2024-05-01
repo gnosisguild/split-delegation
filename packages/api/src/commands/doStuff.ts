@@ -1,6 +1,6 @@
-import delegateStats, { DelegateStats } from 'src/fns/delegateStats'
+import delegateStats, { DelegateStats } from '@/src/fns/delegateStats'
 
-import loadDelegators from 'src/loaders/loadDelegators'
+import loadDelegators from '@/src/loaders/loadDelegators'
 
 /*
  * Called while syncing the DB

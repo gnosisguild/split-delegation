@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 
 import toDAG from './toAcyclical'
-import { Weights } from 'src/types'
+import { Weights } from '@/src/types'
 
 describe('toDAG', () => {
   test('one cycle in the graph', () => {

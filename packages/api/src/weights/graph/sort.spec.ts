@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 
 import kahn from './sort'
 
-import { Weights } from 'src/types'
+import { Weights } from '@/src/types'
 
 describe('sort', () => {
   test('no cycles', () => {

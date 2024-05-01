@@ -12,7 +12,7 @@ import {
   isSetDelegate,
 } from './decodeLog'
 
-import { DelegationAction } from 'src/types'
+import { DelegationAction } from '@/src/types'
 
 export default function parseRows(
   rows: {

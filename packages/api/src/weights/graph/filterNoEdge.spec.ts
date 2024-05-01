@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 
 import filterNoEdge from './filterNoEdge'
 
-import { Weights } from 'src/types'
+import { Weights } from '@/src/types'
 
 describe('filterNoEdge', () => {
   test('nothing to remove', () => {

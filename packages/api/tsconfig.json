@@ -22,7 +22,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "paths": {
-      "src/*": ["./src/*"],
+      "@/*": ["./*"],
       "routes/*": ["api/*"]
     }
   },

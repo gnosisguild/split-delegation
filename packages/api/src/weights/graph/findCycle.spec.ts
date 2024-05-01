@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 
 import findCycle from './findCycle'
 
-import { Weights } from 'src/types'
+import { Weights } from '@/src/types'
 
 describe('findCycle', () => {
   test('no back edge, no forward edge', () => {

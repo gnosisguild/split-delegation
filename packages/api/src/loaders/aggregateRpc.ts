@@ -1,5 +1,5 @@
 import async from 'async'
-import rangeToChunks from 'src/fns/rangeToChunks'
+import rangeToChunks from '@/src/fns/rangeToChunks'
 import { RpcFetch } from './types'
 
 const PARALLELISM = 5

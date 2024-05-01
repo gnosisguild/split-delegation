@@ -1,10 +1,10 @@
 import { Address, BlockTag, getAddress } from 'viem'
 import type { VercelRequest } from '@vercel/node'
 
-import loadBlockTag from 'src/loaders/loadBlockTag'
-import loadDelegators from 'src/loaders/loadDelegators'
+import loadBlockTag from '@/src/loaders/loadBlockTag'
+import loadDelegators from '@/src/loaders/loadDelegators'
 
-import { syncTip } from 'src/commands/sync'
+import { syncTip } from '@/src/commands/sync'
 
 export const GET = async (req: VercelRequest) => {
   const space = req.query.space as string

@@ -1,6 +1,6 @@
 import { Address, getAddress } from 'viem'
 
-import { Weights } from 'src/types'
+import { Weights } from '@/src/types'
 
 export default function all(weights: Weights<bigint>): Address[] {
   const set = new Set<Address>()
