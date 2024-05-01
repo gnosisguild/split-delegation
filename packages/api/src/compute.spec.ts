@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import computePower from './computePower'
+import compute from './compute'
 
 describe('compute', () => {
   const A = 'A' as Address
@@ -25,7 +25,7 @@ describe('compute', () => {
       [C]: 20,
       [D]: 30,
     }
-    expect(computePower({ weights, scores })).toEqual({
+    expect(compute({ weights, scores })).toEqual({
       delegatedPower: {
         [A]: 0,
         [B]: 0,

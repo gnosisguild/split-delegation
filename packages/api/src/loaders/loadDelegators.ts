@@ -4,13 +4,14 @@ import { mainnet } from 'viem/chains'
 import { merge } from 'src/fns/bag'
 import { timerEnd, timerStart } from 'src/fns/timer'
 import all from 'src/weights/all'
-import computePower from 'src/fns/computePower'
 import createWeights from 'src/weights/createWeights'
 import parseRows from 'src/fns/parseRows'
 
 import createClient from './createClient'
 import loadEvents from './loadEvents'
 import loadScores from './loadScores'
+
+import compute from 'src/compute'
 
 import prisma from '../../prisma/singleton'
 
@@ -45,7 +46,7 @@ export default async function loadDelegations({
   console.log(`Loaded weights for ${space} in ${timerEnd(start)}ms`)
 
   start = timerStart()
-  const { delegatedPower, delegatorCount } = await computePower({
+  const { delegatedPower, delegatorCount } = await compute({
     weights,
     scores,
     alreadyVoted,

@@ -1,10 +1,12 @@
-import { Scores, Weights } from 'src/types'
 import { Address } from 'viem'
-import filterEdges from '../weights/graph/filterEdges'
-import toAcyclical from '../weights/graph/toAcyclical'
-import filterNoEdge from '../weights/graph/filterNoEdge'
+
 import { distribute } from 'src/fns/bag'
-import kahn from '../weights/graph/sort'
+import filterEdges from './weights/graph/filterEdges'
+import filterNoEdge from './weights/graph/filterNoEdge'
+import kahn from './weights/graph/sort'
+import toAcyclical from './weights/graph/toAcyclical'
+
+import { Scores, Weights } from 'src/types'
 
 export default function computePower({
   weights,
