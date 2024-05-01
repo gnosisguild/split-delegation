@@ -22,11 +22,7 @@ export default function delegateStats({
   delegatorCount: Scores
   scores: Scores
 }): DelegateStats[] {
-  // TODO this is wrong, we have to count unique delegators
-  const totalDelegatorCount = Object.values(delegatorCount).reduce(
-    (p, v) => p + v,
-    0
-  )
+  const allDelegatorCount = delegatorCount.all
   const computeFor = address ? [address] : Object.keys(delegatedPower)
 
   return computeFor
@@ -38,7 +34,7 @@ export default function delegateStats({
     .map(({ address, delegatorCount, votingPower }) => ({
       address,
       delegatorCount,
-      percentOfDelegators: bps(delegatorCount, totalDelegatorCount),
+      percentOfDelegators: bps(delegatorCount, allDelegatorCount),
       votingPower,
       percentOfVotingPower: bps(votingPower, totalSupply),
     }))

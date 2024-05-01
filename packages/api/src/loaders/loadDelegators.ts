@@ -4,10 +4,8 @@ import { mainnet } from 'viem/chains'
 import { merge } from 'src/fns/bag'
 import { timerEnd, timerStart } from 'src/fns/timer'
 import all from 'src/weights/all'
-import createDelegatedPower from 'src/weights/createDelegatedPower'
-import createDelegatorCount from 'src/weights/createDelegatorCount'
-import createDelegatorDistribution from 'src/weights/createDelegatorDistribution'
-import createDelegatorWeights from 'src/weights/createDelegatorWeights'
+import computePower from 'src/fns/computePower'
+import createWeights from 'src/weights/createWeights'
 import parseRows from 'src/fns/parseRows'
 
 import createClient from './createClient'
@@ -47,13 +45,11 @@ export default async function loadDelegations({
   console.log(`Loaded weights for ${space} in ${timerEnd(start)}ms`)
 
   start = timerStart()
-  const delegatorDistribution = createDelegatorDistribution({
-    delegatorWeights: weights,
+  const { delegatedPower, delegatorCount } = await computePower({
+    weights,
     scores,
     alreadyVoted,
   })
-  const delegatedPower = createDelegatedPower({ delegatorDistribution })
-  const delegatorCount = createDelegatorCount({ delegatorDistribution })
   console.log(`Computed power for ${space} in ${timerEnd(start)}ms`)
 
   return {
@@ -103,10 +99,7 @@ async function _load({
     loadEvents({ space, blockNumber }),
   ])
 
-  const weights = createDelegatorWeights(
-    parseRows(events),
-    Number(block.timestamp)
-  )
+  const weights = createWeights(parseRows(events), Number(block.timestamp))
   const scores = await loadScores({
     space,
     strategies,
