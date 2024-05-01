@@ -20,11 +20,7 @@
     "plugins": [],
     "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "paths": {
-      "@/*": ["./*"],
-      "routes/*": ["api/*"]
-    }
+    "sourceMap": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

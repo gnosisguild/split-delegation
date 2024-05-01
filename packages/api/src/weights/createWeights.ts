@@ -1,7 +1,7 @@
 import createRegistry from './createRegistry'
 import { filterExpired, filterOptOuts } from './registryFilter'
 
-import { DelegationAction, Weights } from '@/src/types'
+import { DelegationAction, Weights } from '../../src/types'
 import { Registry } from './types'
 
 export default function createWeights(

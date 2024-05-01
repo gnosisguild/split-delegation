@@ -1,17 +1,17 @@
 import { Address, keccak256, toBytes } from 'viem'
 import { mainnet } from 'viem/chains'
 
-import { merge } from '@/src/fns/bag'
-import { timerEnd, timerStart } from '@/src/fns/timer'
-import all from '@/src/weights/all'
-import createWeights from '@/src/weights/createWeights'
-import parseRows from '@/src/fns/parseRows'
+import { merge } from '../../src/fns/bag'
+import { timerEnd, timerStart } from '../../src/fns/timer'
+import all from '../../src/weights/all'
+import createWeights from '../../src/weights/createWeights'
+import parseRows from '../../src/fns/parseRows'
 
 import createClient from './createClient'
 import loadEvents from './loadEvents'
 import loadScores from './loadScores'
 
-import compute from '@/src/compute'
+import compute from '../../src/compute'
 
 import prisma from '../../prisma/singleton'
 

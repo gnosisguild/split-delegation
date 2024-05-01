@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals'
 import cascade from './cascade'
-import { Weights } from '@/src/types'
+import { Weights } from '../../src/types'
 
 describe('cascadeDelegators', () => {
   test('simple linear delegation', () => {

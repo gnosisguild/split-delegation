@@ -2,7 +2,7 @@ import assert from 'assert'
 import { Address } from 'viem'
 
 import { Registry } from './types'
-import { DelegationAction } from '@/src/types'
+import { DelegationAction } from '../../src/types'
 
 /**
  * Consolidates DelegationEvents into a unified registry view. These events can come

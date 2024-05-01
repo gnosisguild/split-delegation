@@ -1,4 +1,4 @@
-import { Weights } from '@/src/types'
+import { Weights } from '../../../src/types'
 import { Address } from 'viem'
 
 export default function filterEdges<T>(

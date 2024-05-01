@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
-import { merge } from '@/src/fns/bag'
+import { merge } from '../../src/fns/bag'
 
 export default async function loadScores({
   space,

@@ -1,12 +1,12 @@
 import { BlockTag } from 'viem'
 import type { VercelRequest } from '@vercel/node'
 
-import delegateStats, { DelegateStats } from '@/src/fns/delegateStats'
+import delegateStats, { DelegateStats } from '../../../../src/fns/delegateStats'
 
-import loadBlockTag from '@/src/loaders/loadBlockTag'
-import loadDelegators from '@/src/loaders/loadDelegators'
+import loadBlockTag from '../../../../src/loaders/loadBlockTag'
+import loadDelegators from '../../../../src/loaders/loadDelegators'
 
-import { syncTip } from '@/src/commands/sync'
+import { syncTip } from '../../../../src/commands/sync'
 
 // /api/v1/safe.ggtest.eth/latest/delegates/top
 

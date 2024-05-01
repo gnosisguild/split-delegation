@@ -3,7 +3,7 @@ import { Address } from 'viem'
 
 import createRegistry from './createRegistry'
 
-import { DelegationAction } from '@/src/types'
+import { DelegationAction } from '../../src/types'
 
 describe('createRegistry', () => {
   const A = 'A' as Address
