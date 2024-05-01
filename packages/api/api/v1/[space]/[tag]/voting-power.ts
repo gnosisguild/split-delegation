@@ -2,7 +2,7 @@ import { Address, BlockTag, getAddress } from 'viem'
 import type { VercelRequest } from '@vercel/node'
 
 import loadBlockTag from '../../../../src/loaders/loadBlockTag'
-import loadDelegators from '../../../../src/loaders/loadDelegators'
+import loadPower from '../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -15,17 +15,16 @@ export const GET = async (req: VercelRequest) => {
     options: { strategies, network },
     addresses: _addresses,
   } = req.body
+  const addresses = _addresses.map(getAddress).sort() as Address[]
 
   const { blockNumber, chain } = await loadBlockTag(tag, network)
   await syncTip(blockNumber, chain)
 
-  const addresses = _addresses.map(getAddress).sort() as Address[]
-
-  const { delegatedPower, scores } = await loadDelegators({
+  const { delegatedPower, scores } = await loadPower({
+    chain,
+    blockNumber,
     space,
     strategies,
-    network,
-    blockNumber,
     alreadyVoted: addresses,
   })
 

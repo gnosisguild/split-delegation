@@ -1,6 +1,7 @@
-import delegateStats, { DelegateStats } from '../../src/fns/delegateStats'
+import { mainnet } from 'viem/chains'
 
-import loadDelegators from '../../src/loaders/loadDelegators'
+import delegateStats, { DelegateStats } from '../../src/fns/delegateStats'
+import loadPower from '../loaders/loadPower'
 
 /*
  * Called while syncing the DB
@@ -58,11 +59,11 @@ export default async function doStuff({
   totalSupply: number
   strategies: any[]
 }) {
-  const { delegatedPower, delegatorCount, scores } = await loadDelegators({
+  const { delegatedPower, delegatorCount, scores } = await loadPower({
+    chain: mainnet,
+    blockNumber: 19760000,
     space,
     strategies,
-    network: '1',
-    blockNumber: 19760000,
   })
 
   const _result = delegateStats({
@@ -76,37 +77,37 @@ export default async function doStuff({
   console.log(JSON.stringify(result, null, 2))
 }
 
-doStuff({
-  space: 'rocketpool-dao.eth',
-  totalSupply: 20292984,
-  strategies: [
-    {
-      name: 'rocketpool-node-operator-v3',
-      network: '1',
-      params: {
-        symbol: 'RPL',
-        address: '0xD33526068D116cE69F19A9ee46F0bd304F21A51f',
-        decimals: 18,
-      },
-    },
-  ],
-})
-
 // doStuff({
-//   space: 'lido-snapshot.eth',
-//   totalSupply: 1000000000,
+//   space: 'rocketpool-dao.eth',
+//   totalSupply: 20292984,
 //   strategies: [
 //     {
-//       name: 'erc20-balance-of',
+//       name: 'rocketpool-node-operator-v3',
 //       network: '1',
 //       params: {
-//         symbol: 'LDO',
-//         address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
+//         symbol: 'RPL',
+//         address: '0xD33526068D116cE69F19A9ee46F0bd304F21A51f',
 //         decimals: 18,
 //       },
 //     },
 //   ],
 // })
+
+doStuff({
+  space: 'lido-snapshot.eth',
+  totalSupply: 1000000000,
+  strategies: [
+    {
+      name: 'erc20-balance-of',
+      network: '1',
+      params: {
+        symbol: 'LDO',
+        address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
+        decimals: 18,
+      },
+    },
+  ],
+})
 
 // function orderByCount(a: DelegateStats, b: DelegateStats) {
 //   return a.delegatorCount > b.delegatorCount ? -1 : 1

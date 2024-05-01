@@ -1,11 +1,10 @@
-// /api/v1/safe.ggtest.eth/latest/delegate/0xcDdcCC9976F7fd5658Ac82AA8b12BAaf334d27f6
-import { Address, BlockTag } from 'viem'
+import { BlockTag, getAddress } from 'viem'
 import type { VercelRequest } from '@vercel/node'
 
 import delegateStats from '../../../../../src/fns/delegateStats'
 
 import loadBlockTag from '../../../../../src/loaders/loadBlockTag'
-import loadDelegators from '../../../../../src/loaders/loadDelegators'
+import loadPower from '../../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../../src/commands/sync'
 
@@ -13,7 +12,7 @@ export const GET = async (req: VercelRequest) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
-  const address = searchParams.get('address') as Address
+  const address = getAddress(searchParams.get('address') as string)
 
   const {
     options: { totalSupply, strategies, network },
@@ -23,11 +22,11 @@ export const GET = async (req: VercelRequest) => {
 
   await syncTip(blockNumber, chain)
 
-  const { delegatedPower, delegatorCount, scores } = await loadDelegators({
+  const { delegatedPower, delegatorCount, scores } = await loadPower({
+    chain,
+    blockNumber,
     space,
     strategies,
-    network,
-    blockNumber,
   })
 
   const [response] = delegateStats({

@@ -8,7 +8,7 @@ import toAcyclical from './weights/graph/toAcyclical'
 
 import { Scores, Weights } from '../src/types'
 
-export default function computePower({
+export default function compute({
   weights,
   scores,
   alreadyVoted,

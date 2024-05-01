@@ -5,13 +5,13 @@ import prisma from '../../prisma/singleton'
 
 export default async function loadEvents({
   space,
-  blockNumber,
+  blockTimestamp,
 }: {
   space: string
-  blockNumber: number
+  blockTimestamp: number
 }): Promise<DelegationEvent[]> {
   return prisma.delegationEvent.findMany({
-    where: { spaceId: spaceId(space), blockNumber: { lte: blockNumber } },
+    where: { spaceId: spaceId(space), blockTimestamp: { lte: blockTimestamp } },
     orderBy: { blockTimestamp: 'asc' },
   })
 }

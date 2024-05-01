@@ -4,16 +4,9 @@ import type { VercelRequest } from '@vercel/node'
 import delegateStats, { DelegateStats } from '../../../../src/fns/delegateStats'
 
 import loadBlockTag from '../../../../src/loaders/loadBlockTag'
-import loadDelegators from '../../../../src/loaders/loadDelegators'
+import loadPower from '../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../src/commands/sync'
-
-// /api/v1/safe.ggtest.eth/latest/delegates/top
-
-// should support query params:
-// - limit: number
-// - offset: number
-// - orderBy: 'power' | 'count'
 
 export const GET = async (req: VercelRequest) => {
   const searchParams = new URL(req.url || '').searchParams
@@ -32,14 +25,14 @@ export const GET = async (req: VercelRequest) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  const { blockNumber, chain } = await loadBlockTag(tag, network)
+  const { chain, blockNumber } = await loadBlockTag(tag, network)
   await syncTip(blockNumber, chain)
 
-  const { delegatedPower, delegatorCount, scores } = await loadDelegators({
+  const { delegatedPower, delegatorCount, scores } = await loadPower({
+    chain,
+    blockNumber,
     space,
     strategies,
-    network,
-    blockNumber,
   })
 
   const _result = delegateStats({
