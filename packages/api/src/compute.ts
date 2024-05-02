@@ -30,7 +30,7 @@ export default function compute({
 
   return {
     votingPower: votingPower({ order, weights, scores }),
-    delegatorCount: delegatorCount({ order, weights }),
+    delegatorCount: delegatorCount({ order, weights, scores }),
   }
 }
 
@@ -43,25 +43,27 @@ function votingPower({
   weights: Weights<bigint>
   scores: Scores
 }) {
-  const inPower: Scores = Object.fromEntries(order.map((node) => [node, 0]))
-  const outPower: Scores = { ...inPower }
-  const result: Scores = {}
+  const inPower: Scores = { ...scores }
+  const outPower: Scores = Object.fromEntries(
+    Object.keys(scores).map((a) => [a, 0])
+  )
 
-  for (const node of order) {
-    assert(typeof scores[node] == 'number')
-    inPower[node] += scores[node]
+  for (const address of order) {
+    const delegator =
+      Object.keys(weights[address] || {}).length > 0 ? address : null
 
-    const isDelegator = Object.keys(weights[node] || {}).length > 0
-    if (isDelegator) {
-      const distribution = distribute(weights[node], inPower[node])
+    if (delegator) {
+      const distribution = distribute(weights[delegator], inPower[delegator])
       for (const [delegate, power] of distribution) {
-        assert(typeof scores[delegate] == 'number')
-        outPower[node] += power
+        outPower[delegator] += power
         inPower[delegate] += power
       }
     }
+  }
 
-    result[node] = inPower[node] - outPower[node]
+  const result: Scores = {}
+  for (const address of Object.keys(scores)) {
+    result[address] = inPower[address] - outPower[address]
   }
   return result
 }
@@ -69,16 +71,18 @@ function votingPower({
 function delegatorCount({
   order,
   weights,
+  scores,
 }: {
   order: string[]
   weights: Weights<bigint>
+  scores: Scores
 }) {
   const result: Scores = {
     all: Object.keys(weights).length,
   }
 
-  for (const delegator of order) {
-    result[delegator] = 0
+  for (const delegate of Object.keys(scores)) {
+    result[delegate] = 0
   }
 
   for (const delegator of order) {
