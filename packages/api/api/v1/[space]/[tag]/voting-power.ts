@@ -16,7 +16,9 @@ export const POST = async (req: Request) => {
     addresses: _addresses,
   } = (await req.json()) as VotingPowerRequestBody
 
-  const addresses = _addresses.map(getAddress).sort() as Address[]
+  const addresses = _addresses
+    .map((address) => getAddress(address))
+    .sort() as Address[]
 
   const { blockNumber, chain } = await loadBlockTag(tag, network)
   await syncTip(blockNumber, chain)
