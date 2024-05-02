@@ -11,13 +11,13 @@ export default async function loadPower({
   blockNumber,
   space,
   strategies,
-  alreadyVoted,
+  voters,
 }: {
   chain: Chain
   blockNumber: number
   space: string
   strategies: any[]
-  alreadyVoted?: Address[]
+  voters?: Address[]
 }) {
   const { weights } = await loadWeights({
     chain,
@@ -27,9 +27,7 @@ export default async function loadPower({
   })
 
   // TODO make this faster
-  const addresses = Array.from(
-    new Set([...all(weights), ...(alreadyVoted ?? [])])
-  )
+  const addresses = Array.from(new Set([...all(weights), ...(voters ?? [])]))
 
   const { scores } = await loadScores({
     chain,
@@ -42,7 +40,7 @@ export default async function loadPower({
   const { votingPower, delegatorCount } = await compute({
     weights,
     scores,
-    alreadyVoted,
+    voters,
   })
 
   return {

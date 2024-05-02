@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    alreadyVoted: addresses,
+    voters: addresses,
   })
 
   const response = Object.fromEntries(

@@ -12,17 +12,15 @@ import { Scores, Weights } from '../src/types'
 export default function compute({
   weights,
   scores,
-  alreadyVoted,
+  voters,
 }: {
   weights: Weights<bigint>
   scores: Scores
-  alreadyVoted?: Address[]
+  voters?: Address[]
 }) {
   ;[weights] = [weights]
-    // Filter out the already voted addresses from the delegator weights
-    .map((weights) =>
-      alreadyVoted ? filterEdges(weights, alreadyVoted) : weights
-    )
+    // Filter out the addresses exercising voting right, from delegator weights
+    .map((weights) => (voters ? filterEdges(weights, voters) : weights))
     // Break any potential cycles in the delegator weights
     .map((weights) => toAcyclical(weights))
     // Remove any empty nodes that may remain after cycle busting

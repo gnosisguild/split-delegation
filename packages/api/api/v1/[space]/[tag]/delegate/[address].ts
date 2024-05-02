@@ -27,7 +27,7 @@ export const POST = async (req: Request) => {
     space,
     strategies,
   })
-  console.log('delegatedPower', delegatedPower)
+
   const [response] = delegateStats({
     address,
     totalSupply,

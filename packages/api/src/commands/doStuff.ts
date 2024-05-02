@@ -2,6 +2,9 @@ import { mainnet } from 'viem/chains'
 
 import delegateStats, { DelegateStats } from '../../src/fns/delegateStats'
 import loadPower from '../loaders/loadPower'
+import loadBlockTag from 'src/loaders/loadBlockTag'
+import { syncTip } from './sync'
+import { Address } from 'viem'
 
 /*
  * Called while syncing the DB
@@ -76,16 +79,65 @@ export default async function doStuff({
   console.log(JSON.stringify(result, null, 2))
 }
 
-doStuff({
+async function doSingle({
+  address,
+  space,
+  totalSupply,
+  strategies,
+}: {
+  address: Address
+  space: string
+  totalSupply: number
+  strategies: any[]
+}) {
+  const { blockNumber, chain } = await loadBlockTag(19777000, '1')
+
+  await syncTip(blockNumber, chain)
+
+  const { votingPower, delegatorCount } = await loadPower({
+    chain,
+    blockNumber,
+    space,
+    strategies,
+  })
+
+  const [response] = delegateStats({
+    address,
+    totalSupply,
+    votingPower,
+    delegatorCount,
+  })
+
+  console.log(response)
+}
+
+// doStuff({
+//   space: 'rocketpool-dao.eth',
+//   totalSupply: 20292984,
+//   strategies: [
+//     {
+//       name: 'rocketpool-node-operator-v3',
+//       network: '1',
+//       params: {
+//         symbol: 'RPL',
+//         address: '0xD33526068D116cE69F19A9ee46F0bd304F21A51f',
+//         decimals: 18,
+//       },
+//     },
+//   ],
+// })
+
+doSingle({
+  totalSupply: 1000000000,
   space: 'rocketpool-dao.eth',
-  totalSupply: 20292984,
+  address: '0x4af84812e595B5B0997A457eb3d5Ad8a3C1F6A0B',
   strategies: [
     {
-      name: 'rocketpool-node-operator-v3',
+      name: 'erc20-balance-of',
       network: '1',
       params: {
-        symbol: 'RPL',
-        address: '0xD33526068D116cE69F19A9ee46F0bd304F21A51f',
+        symbol: 'LDO',
+        address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
         decimals: 18,
       },
     },

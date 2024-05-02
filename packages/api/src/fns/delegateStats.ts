@@ -23,13 +23,24 @@ export default function delegateStats({
   const allDelegatorCount = delegatorCount.all
   const computeFor = address ? [address] : Object.keys(votingPower)
 
-  return computeFor.map((address) => ({
-    address,
-    delegatorCount: delegatorCount[address],
-    percentOfDelegators: bps(delegatorCount[address], allDelegatorCount),
-    votingPower: votingPower[address],
-    percentOfVotingPower: bps(votingPower[address], totalSupply),
-  }))
+  return computeFor.map((address) => {
+    // not a delegate -> no key or zero
+    return !delegatorCount[address]
+      ? {
+          address,
+          delegatorCount: 0,
+          percentOfDelegators: 0,
+          votingPower: 0,
+          percentOfVotingPower: 0,
+        }
+      : {
+          address,
+          delegatorCount: delegatorCount[address],
+          percentOfDelegators: bps(delegatorCount[address], allDelegatorCount),
+          votingPower: votingPower[address],
+          percentOfVotingPower: bps(votingPower[address], totalSupply),
+        }
+  })
 }
 
 function bps(score: number, total: number) {
