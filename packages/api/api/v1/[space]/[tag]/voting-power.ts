@@ -20,7 +20,7 @@ export const GET = async (req: VercelRequest) => {
   const { blockNumber, chain } = await loadBlockTag(tag, network)
   await syncTip(blockNumber, chain)
 
-  const { delegatedPower, scores } = await loadPower({
+  const { votingPower } = await loadPower({
     chain,
     blockNumber,
     space,
@@ -29,10 +29,7 @@ export const GET = async (req: VercelRequest) => {
   })
 
   const response = Object.fromEntries(
-    addresses.map((address) => [
-      address,
-      delegatedPower[address] + scores[address],
-    ])
+    addresses.map((address) => [address, votingPower[address]])
   )
 
   return new Response(JSON.stringify(response))

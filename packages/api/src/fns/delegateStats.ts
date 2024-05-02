@@ -12,32 +12,24 @@ export type DelegateStats = {
 export default function delegateStats({
   address,
   totalSupply,
-  delegatedPower,
+  votingPower,
   delegatorCount,
-  scores,
 }: {
   address?: Address
   totalSupply: number
-  delegatedPower: Scores
+  votingPower: Scores
   delegatorCount: Scores
-  scores: Scores
 }): DelegateStats[] {
   const allDelegatorCount = delegatorCount.all
-  const computeFor = address ? [address] : Object.keys(delegatedPower)
+  const computeFor = address ? [address] : Object.keys(votingPower)
 
-  return computeFor
-    .map((address) => ({
-      address,
-      delegatorCount: delegatorCount[address],
-      votingPower: delegatedPower[address] + scores[address],
-    }))
-    .map(({ address, delegatorCount, votingPower }) => ({
-      address,
-      delegatorCount,
-      percentOfDelegators: bps(delegatorCount, allDelegatorCount),
-      votingPower,
-      percentOfVotingPower: bps(votingPower, totalSupply),
-    }))
+  return computeFor.map((address) => ({
+    address,
+    delegatorCount: delegatorCount[address],
+    percentOfDelegators: bps(delegatorCount[address], allDelegatorCount),
+    votingPower: votingPower[address],
+    percentOfVotingPower: bps(votingPower[address], totalSupply),
+  }))
 }
 
 function bps(score: number, total: number) {

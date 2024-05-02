@@ -26,7 +26,7 @@ describe('compute', () => {
       [D]: 30,
     }
     expect(compute({ weights, scores })).toEqual({
-      delegatedPower: {
+      votingPower: {
         [A]: 0,
         [B]: 0,
         [C]: 800 + 20,

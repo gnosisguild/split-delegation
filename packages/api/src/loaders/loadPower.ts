@@ -39,15 +39,14 @@ export default async function loadPower({
     addresses,
   })
 
-  const { delegatedPower, delegatorCount } = await compute({
+  const { votingPower, delegatorCount } = await compute({
     weights,
     scores,
     alreadyVoted,
   })
 
   return {
-    delegatedPower,
+    votingPower,
     delegatorCount,
-    scores,
   }
 }

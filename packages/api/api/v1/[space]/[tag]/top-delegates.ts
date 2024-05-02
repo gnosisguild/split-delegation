@@ -28,7 +28,7 @@ export const GET = async (req: VercelRequest) => {
   const { chain, blockNumber } = await loadBlockTag(tag, network)
   await syncTip(blockNumber, chain)
 
-  const { delegatedPower, delegatorCount, scores } = await loadPower({
+  const { votingPower, delegatorCount } = await loadPower({
     chain,
     blockNumber,
     space,
@@ -37,9 +37,8 @@ export const GET = async (req: VercelRequest) => {
 
   const _result = delegateStats({
     totalSupply,
-    delegatedPower,
+    votingPower,
     delegatorCount,
-    scores,
   })
 
   const result = _result

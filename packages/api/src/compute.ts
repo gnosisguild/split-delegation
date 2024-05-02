@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { Address } from 'viem'
 
 import { distribute } from '../src/fns/bag'
@@ -30,12 +31,12 @@ export default function compute({
   const order = kahn(weights)
 
   return {
-    delegatedPower: delegatedPower({ order, weights, scores }),
+    votingPower: votingPower({ order, weights, scores }),
     delegatorCount: delegatorCount({ order, weights }),
   }
 }
 
-function delegatedPower({
+function votingPower({
   order,
   weights,
   scores,
@@ -46,22 +47,23 @@ function delegatedPower({
 }) {
   const inPower: Scores = Object.fromEntries(order.map((node) => [node, 0]))
   const outPower: Scores = { ...inPower }
-
   const result: Scores = {}
 
-  for (const delegator of order) {
-    inPower[delegator] += scores[delegator]
+  for (const node of order) {
+    assert(typeof scores[node] == 'number')
+    inPower[node] += scores[node]
 
-    const hasOut = Object.keys(weights[delegator] || {}).length > 0
-    if (hasOut) {
-      const distribution = distribute(weights[delegator], inPower[delegator])
+    const isDelegator = Object.keys(weights[node] || {}).length > 0
+    if (isDelegator) {
+      const distribution = distribute(weights[node], inPower[node])
       for (const [delegate, power] of distribution) {
-        outPower[delegator] += power
+        assert(typeof scores[delegate] == 'number')
+        outPower[node] += power
         inPower[delegate] += power
       }
     }
 
-    result[delegator] = inPower[delegator] - outPower[delegator]
+    result[node] = inPower[node] - outPower[node]
   }
   return result
 }
