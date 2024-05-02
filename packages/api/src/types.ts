@@ -25,3 +25,14 @@ export type Weights<W> = {
 export type Scores = {
   [key: string]: number
 }
+
+export type DelegateRequestBody = {
+  totalSupply: number
+  strategies: any[]
+  network: any
+}
+
+export type VotingPowerRequestBody = {
+  options: { strategies: any[]; network: string }
+  addresses: string[]
+}
