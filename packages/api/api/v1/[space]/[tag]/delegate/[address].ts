@@ -1,5 +1,4 @@
 import { BlockTag, getAddress } from 'viem'
-import type { VercelRequest } from '@vercel/node'
 
 import delegateStats from '../../../../../src/fns/delegateStats'
 
@@ -7,16 +6,16 @@ import loadBlockTag from '../../../../../src/loaders/loadBlockTag'
 import loadPower from '../../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../../src/commands/sync'
+import { DelegateRequestBody } from 'src/types'
 
-export const GET = async (req: VercelRequest) => {
+export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
   const address = getAddress(searchParams.get('address') as string)
 
-  const {
-    options: { totalSupply, strategies, network },
-  } = req.body
+  const { totalSupply, strategies, network } =
+    (await req.json()) as DelegateRequestBody
 
   const { blockNumber, chain } = await loadBlockTag(tag, network)
 
@@ -28,7 +27,7 @@ export const GET = async (req: VercelRequest) => {
     space,
     strategies,
   })
-
+  console.log('delegatedPower', delegatedPower)
   const [response] = delegateStats({
     address,
     totalSupply,
@@ -37,5 +36,7 @@ export const GET = async (req: VercelRequest) => {
     scores,
   })
 
-  return new Response(JSON.stringify(response))
+  return new Response(JSON.stringify(response), {
+    headers: { 'Content-Type': 'application/json' },
+  })
 }

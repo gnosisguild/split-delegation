@@ -1,12 +1,12 @@
 import { Address, BlockTag, getAddress } from 'viem'
-import type { VercelRequest } from '@vercel/node'
 
 import loadBlockTag from '../../../../src/loaders/loadBlockTag'
 import loadPower from '../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../src/commands/sync'
+import { VotingPowerRequestBody } from 'src/types'
 
-export const GET = async (req: VercelRequest) => {
+export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
@@ -14,7 +14,8 @@ export const GET = async (req: VercelRequest) => {
   const {
     options: { strategies, network },
     addresses: _addresses,
-  } = req.body
+  } = (await req.json()) as VotingPowerRequestBody
+
   const addresses = _addresses.map(getAddress).sort() as Address[]
 
   const { blockNumber, chain } = await loadBlockTag(tag, network)
@@ -35,5 +36,7 @@ export const GET = async (req: VercelRequest) => {
     ])
   )
 
-  return new Response(JSON.stringify(response))
+  return new Response(JSON.stringify(response), {
+    headers: { 'Content-Type': 'application/json' },
+  })
 }

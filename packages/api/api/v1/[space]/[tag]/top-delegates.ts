@@ -1,5 +1,4 @@
 import { BlockTag } from 'viem'
-import type { VercelRequest } from '@vercel/node'
 
 import delegateStats, { DelegateStats } from '../../../../src/fns/delegateStats'
 
@@ -7,15 +6,14 @@ import loadBlockTag from '../../../../src/loaders/loadBlockTag'
 import loadPower from '../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../src/commands/sync'
+import { DelegateRequestBody } from 'src/types'
 
-export const GET = async (req: VercelRequest) => {
+export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
-
-  const {
-    options: { totalSupply, strategies, network },
-  } = req.body
+  const { totalSupply, strategies, network } =
+    (await req.json()) as DelegateRequestBody
 
   const limit = Number(searchParams.get('limit')) || 100
   const offset = Number(searchParams.get('offset')) || 0
@@ -48,7 +46,9 @@ export const GET = async (req: VercelRequest) => {
 
   const response = { delegates: result }
 
-  return new Response(JSON.stringify(response))
+  return new Response(JSON.stringify(response), {
+    headers: { 'Content-Type': 'application/json' },
+  })
 }
 
 function orderByCount(a: DelegateStats, b: DelegateStats) {
