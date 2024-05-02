@@ -1,12 +1,12 @@
 import { Address, Chain, getAddress, keccak256, toBytes } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
+import { timerEnd, timerStart } from 'src/fns/timer'
 import { merge } from '../fns/bag'
 
 import { Scores } from '../types'
 
 import prisma from '../../prisma/singleton'
-import { timerEnd, timerStart } from 'src/fns/timer'
 
 export default async function loadScores({
   chain,
@@ -29,7 +29,7 @@ export default async function loadScores({
     strategies,
     addresses,
   })
-  console.log(`Loaded scores for ${space} in ${timerEnd(start)}ms`)
+  console.log(`[Load Scores ] ${space}, done in ${timerEnd(start)}ms`)
   return { scores }
 }
 
@@ -55,7 +55,7 @@ async function _load({
 
   const { scores } = await cacheGet(key)
   const missing = []
-  for (const address in addresses) {
+  for (const address of addresses) {
     if (typeof scores[address] != 'number') {
       missing.push(address)
     }
@@ -63,7 +63,7 @@ async function _load({
 
   let allScores
   if (missing.length > 0) {
-    console.log(`LoadScores: Cache missing ${missing.length} entries`)
+    console.log(`[Load Scores ] missing ${missing.length} entries`)
     allScores = {
       ...scores,
       ...(await _loadScores({
@@ -76,7 +76,6 @@ async function _load({
     }
     await cachePut(key, { scores: allScores })
   } else {
-    console.log(`LoadScores: Cache Hit ${key}`)
     allScores = scores
   }
 
@@ -111,6 +110,7 @@ function cacheKey({
 async function cacheGet(key: string): Promise<{ scores: Scores }> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
+    console.log(`[Load Scores ] Cache Hit ${key}`)
     return JSON.parse(hit.value)
   }
   return { scores: {} }
@@ -123,6 +123,7 @@ async function cachePut(key: string, { scores }: { scores: Scores }) {
     create: { key, value },
     update: { key, value },
   })
+  console.log(`[Load Scores ] Cache Put ${key}`)
 }
 
 async function _loadScores({

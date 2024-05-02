@@ -37,7 +37,8 @@ export default async function loadWeights({
     space,
     strategies,
   })
-  console.log(`Loaded weights for ${space} in ${timerEnd(start)}ms`)
+
+  console.log(`[Load Weights] ${space}, done in ${timerEnd(start)}ms`)
   return { weights }
 }
 
@@ -106,7 +107,7 @@ async function cacheGet(
 ): Promise<{ weights: Weights<bigint> } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`Cache Hit: ${key}`)
+    console.log(`[Load Weights] Cache Hit ${key}`)
     return JSON.parse(hit.value, revive)
   }
   return null
@@ -119,7 +120,7 @@ async function cachePut(key: string, weights: Weights<bigint>) {
     create: { key, value },
     update: { key, value },
   })
-  return weights
+  console.log(`[Load Weights] Cache Put ${key}`)
 }
 
 function revive(key: string, value: string) {
