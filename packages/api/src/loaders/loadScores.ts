@@ -1,7 +1,7 @@
 import { Address, Chain, getAddress, keccak256, toBytes } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
-import { timerEnd, timerStart } from 'src/fns/timer'
+import { timerEnd, timerStart } from '../../src/fns/timer'
 import { merge } from '../fns/bag'
 
 import { Scores } from '../types'
