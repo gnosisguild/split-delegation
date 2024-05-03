@@ -28,7 +28,7 @@ To integrate it into your Snapshot space, follow these steps:
      "name": "split-delegation",
      "params": {
        "backendUrl": "https://delegate-api.gnosisguild.org",
-       "totalSupply": 1000000000, // in Ether NOT wei
+       "totalSupply": 1000000000, // denominated in ether NOT wei
        "strategies": [
          {
            "name": "erc20-balance-of",
