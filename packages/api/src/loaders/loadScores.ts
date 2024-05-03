@@ -156,7 +156,7 @@ async function _loadScores({
 }
 
 const CHUNK_SIZE = 500
-const PARALLELISM = 5
+// const PARALLELISM = 5
 
 async function getScores({
   chain,
@@ -172,9 +172,9 @@ async function getScores({
   addresses: Address[]
 }) {
   return (
-    await async.mapLimit(
+    await async.mapSeries(
       chunks(addresses, CHUNK_SIZE),
-      PARALLELISM,
+      // PARALLELISM,
       function (
         addresses: string[],
         done: (err: any, result: Record<Address, number>) => void
