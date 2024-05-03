@@ -155,7 +155,7 @@ async function _loadScores({
   )
 }
 
-const CHUNK_SIZE = 1000
+const CHUNK_SIZE = 500
 const PARALLELISM = 5
 
 async function getScores({
