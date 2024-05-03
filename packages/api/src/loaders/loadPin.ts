@@ -11,6 +11,7 @@ export default async function loadPin(
 
   const { blockNumber, blockTimestamp } = await cacheGet(key)
   if (blockTimestamp > pinTimestamp()) {
+    console.log(`[Load Pin] Using block ${blockNumber} @ ${chain.name}`)
     return { blockNumber }
   }
 
@@ -19,6 +20,7 @@ export default async function loadPin(
     blockNumber: Number(block.number),
     blockTimestamp: Number(block.timestamp),
   })
+  console.log(`[Load Pin] New block ${blockNumber} @ ${chain.name}`)
 
   return { blockNumber: Number(block.number) }
 }

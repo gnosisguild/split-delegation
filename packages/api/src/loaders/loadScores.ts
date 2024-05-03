@@ -1,3 +1,4 @@
+import async from 'async'
 import { Address, Chain, getAddress, keccak256, toBytes } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
@@ -139,17 +140,63 @@ async function _loadScores({
   strategies: any[]
   addresses: Address[]
 }): Promise<Record<Address, number>> {
-  const result = (await snapshot.utils.getScores(
+  const result = (await getScores({
+    chain,
+    blockNumber,
     space,
     strategies,
-    String(chain.id),
     addresses,
-    blockNumber
-  )) as Record<Address, number>[]
+  })) as Record<Address, number>[]
 
-  const bag = result.length == 1 ? result[0] : merge(...result)
+  const bag = merge(...result)
 
   return Object.fromEntries(
     addresses.map((address) => [getAddress(address), bag[address] || 0])
   )
+}
+
+const CHUNK_SIZE = 1000
+const PARALLELISM = 5
+
+async function getScores({
+  chain,
+  blockNumber,
+  space,
+  strategies,
+  addresses,
+}: {
+  chain: Chain
+  blockNumber: number
+  space: string
+  strategies: any[]
+  addresses: Address[]
+}) {
+  return (
+    await async.mapLimit(
+      chunks(addresses, CHUNK_SIZE),
+      PARALLELISM,
+      function (
+        addresses: string[],
+        done: (err: any, result: Record<Address, number>) => void
+      ) {
+        snapshot.utils
+          .getScores(
+            space,
+            strategies,
+            String(chain.id),
+            addresses,
+            blockNumber
+          )
+          .then((result) => done(null, result as Record<Address, number>))
+      }
+    )
+  ).flat()
+}
+
+function chunks<T>(array: T[], chunkSize: number): T[][] {
+  const result: T[][] = []
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize))
+  }
+  return result
 }
