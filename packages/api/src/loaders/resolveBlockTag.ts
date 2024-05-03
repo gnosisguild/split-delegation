@@ -2,19 +2,24 @@ import { BlockTag, Chain } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import createClient from './createClient'
+import loadPin from './loadPin'
 
 export default async function loadBlockTag(
-  blockTag: BlockTag | number,
+  blockTag: BlockTag | number | 'pin',
   networkish: any
 ): Promise<{ blockNumber: number; chain: Chain }> {
   const chain = networkToChain(networkish)
   if (!isNaN(Number(blockTag))) {
-    return { blockNumber: Number(blockTag), chain }
+    return { chain, blockNumber: Number(blockTag) }
+  }
+
+  if (blockTag == 'pin') {
+    return { chain, blockNumber: (await loadPin(chain)).blockNumber }
   }
 
   const client = createClient(chain)
   const { number } = await client.getBlock({ blockTag: blockTag as BlockTag })
-  return { blockNumber: Number(number), chain }
+  return { chain, blockNumber: Number(number) }
 }
 
 function networkToChain(networkish: any): Chain {

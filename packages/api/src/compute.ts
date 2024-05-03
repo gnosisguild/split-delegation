@@ -45,7 +45,7 @@ function votingPower({
 }) {
   const inPower: Scores = { ...scores }
   const outPower: Scores = Object.fromEntries(
-    Object.keys(scores).map((a) => [a, 0])
+    Object.keys(scores).map((address) => [address, 0])
   )
 
   for (const address of order) {

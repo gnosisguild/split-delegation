@@ -2,7 +2,7 @@ import { BlockTag } from 'viem'
 
 import delegateStats, { DelegateStats } from '../../../../src/fns/delegateStats'
 
-import loadBlockTag from '../../../../src/loaders/loadBlockTag'
+import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 import loadPower from '../../../../src/loaders/loadPower'
 
 import { syncTip } from '../../../../src/commands/sync'
@@ -23,8 +23,8 @@ export const POST = async (req: Request) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  const { chain, blockNumber } = await loadBlockTag(tag, network)
-  await syncTip(blockNumber, chain)
+  const { chain, blockNumber } = await resolveBlockTag(tag, network)
+  await syncTip(chain, blockNumber)
 
   const { votingPower, delegatorCount } = await loadPower({
     chain,

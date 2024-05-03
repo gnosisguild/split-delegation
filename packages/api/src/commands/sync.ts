@@ -6,9 +6,9 @@ import { rangeToStints } from '../../src/fns/rangeToStints'
 import { timerEnd, timerStart } from '../../src/fns/timer'
 import parseLogs from '../../src/fns/parseLogs'
 
-import blockTagToNumber from '../../src/loaders/loadBlockTag'
 import createClient from '../../src/loaders/createClient'
 import loadEntries from '../../src/loaders/loadEntries'
+import resolveBlockTag from '../loaders/resolveBlockTag'
 
 import config from '../../config.json'
 import prisma from '../../prisma/singleton'
@@ -30,7 +30,7 @@ export default async function sync() {
     const start = timerStart()
     const client = createClient(chain)
 
-    const { fromBlock, toBlock } = await blockRange('finalized', chain)
+    const { fromBlock, toBlock } = await blockRange(chain, 'finalized')
 
     if (fromBlock < toBlock) {
       console.info(
@@ -51,10 +51,10 @@ export default async function sync() {
   }
 }
 
-export async function syncTip(blockNumber: number, chain: Chain) {
+export async function syncTip(chain: Chain, blockNumber: number) {
   assert(chain.id == 1 || chain.id == 100)
 
-  const { inSync, fromBlock, toBlock } = await shouldSync(blockNumber, chain)
+  const { inSync, fromBlock, toBlock } = await shouldSync(chain, blockNumber)
 
   if (inSync) {
     return
@@ -65,14 +65,14 @@ export async function syncTip(blockNumber: number, chain: Chain) {
       contracts,
       ...(chain.id == 1
         ? { fromBlock, toBlock }
-        : await blockRange('finalized', mainnet)),
+        : await blockRange(mainnet, 'finalized')),
       client: createClient(mainnet),
     }),
     _sync({
       contracts,
       ...(chain.id == 100
         ? { fromBlock, toBlock }
-        : await blockRange('finalized', gnosis)),
+        : await blockRange(gnosis, 'finalized')),
       client: createClient(gnosis),
     }),
   ])
@@ -140,10 +140,10 @@ function prefix(venue: 'Sync') {
 }
 
 async function blockRange(
-  blockTag: BlockTag,
-  chain: Chain
+  chain: Chain,
+  blockTag: BlockTag
 ): Promise<{ fromBlock: number; toBlock: number }> {
-  const { blockNumber } = await blockTagToNumber(blockTag, chain.id)
+  const { blockNumber } = await resolveBlockTag(blockTag, chain.id)
 
   const chainId = chain.id
   assert(chainId == 1 || chainId == 100)
@@ -166,8 +166,8 @@ async function blockRange(
 }
 
 async function shouldSync(
-  blockNumber: number,
-  chain: Chain
+  chain: Chain,
+  blockNumber: number
 ): Promise<{ inSync: boolean; fromBlock: number; toBlock: number }> {
   const chainId = chain.id
   assert(chainId == 1 || chainId == 100)

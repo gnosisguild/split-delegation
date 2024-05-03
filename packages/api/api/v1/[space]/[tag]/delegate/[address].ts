@@ -2,8 +2,8 @@ import { BlockTag, getAddress } from 'viem'
 
 import delegateStats from '../../../../../src/fns/delegateStats'
 
-import loadBlockTag from '../../../../../src/loaders/loadBlockTag'
 import loadPower from '../../../../../src/loaders/loadPower'
+import resolveBlockTag from '../../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../../src/commands/sync'
 import { DelegateRequestBody } from 'src/types'
@@ -17,9 +17,9 @@ export const POST = async (req: Request) => {
   const { totalSupply, strategies, network } =
     (await req.json()) as DelegateRequestBody
 
-  const { blockNumber, chain } = await loadBlockTag(tag, network)
+  const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
-  await syncTip(blockNumber, chain)
+  await syncTip(chain, blockNumber)
 
   const { votingPower, delegatorCount } = await loadPower({
     chain,
