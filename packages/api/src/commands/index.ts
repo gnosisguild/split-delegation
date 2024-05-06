@@ -2,6 +2,7 @@ import { command, run, subcommands } from 'cmd-ts'
 
 import count from './count'
 import sync from './sync'
+import trim from './trim'
 
 import 'dotenv/config'
 
@@ -11,6 +12,15 @@ const countCommand = command({
   args: {},
   handler: async () => {
     await count()
+  },
+})
+
+const trimCommand = command({
+  name: 'trim',
+  description: 'Produces slim down version of Safe allocations',
+  args: {},
+  handler: async () => {
+    await trim()
   },
 })
 
@@ -28,6 +38,7 @@ run(
     name: 'entrypoint',
     cmds: {
       count: countCommand,
+      trim: trimCommand,
       sync: syncCommand,
     },
   }),
