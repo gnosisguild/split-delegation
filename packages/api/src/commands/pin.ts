@@ -3,10 +3,8 @@ import { Block } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { setPin } from 'src/loaders/loadPin'
-import all from 'src/weights/all'
 import createClient from 'src/loaders/createClient'
-import loadScores from 'src/loaders/loadScores'
-import loadWeights from 'src/loaders/loadWeights'
+import loadPower from 'src/loaders/loadPower'
 import spaceName from 'src/fns/spaceName'
 
 import prisma from '../../prisma/singleton'
@@ -46,25 +44,18 @@ export default async function () {
     const chainId = String(chain.id)
     const client = createClient(chain)
     if (!pins[chainId]) {
-      pins[chainId] = await client.getBlock()
+      pins[chainId] = await client.getBlock({ blockTag: 'finalized' })
     }
     const block = pins[chainId]
 
     const children = strategies[0].params.strategies
     assert(Array.isArray(children) && children.length > 0)
 
-    const { weights } = await loadWeights({
-      chain,
-      blockNumber: Number(block.number),
-      space: name,
-    })
-
-    await loadScores({
+    await loadPower({
       chain,
       blockNumber: Number(block.number),
       space: name,
       strategies: children,
-      addresses: all(weights),
     })
     console.log(`[Pin] ${name} done`)
   }
@@ -113,7 +104,6 @@ async function loadSpaces(spaces: string[]): Promise<Space[]> {
 }
 
 function isUsingSplitDelegation(space: Space) {
-  console.log(space)
   if (space.strategies.length != 1) {
     return false
   }
