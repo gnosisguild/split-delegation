@@ -2,11 +2,10 @@ import assert from 'assert'
 import { Address, Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../../src/fns/timer'
+import loadRawScores from './loadRawScores'
 
 import { Scores } from '../types'
-
 import prisma from '../../prisma/singleton'
-import loadRawScores from './loadRawScores'
 
 export default async function loadScores({
   chain,

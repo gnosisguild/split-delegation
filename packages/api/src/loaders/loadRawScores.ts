@@ -4,7 +4,6 @@ import snapshot from '@snapshot-labs/snapshot.js'
 
 import { merge } from '../fns/bag'
 import { Scores } from '../../src/types'
-import { timerEnd, timerStart } from '../../src/fns/timer'
 
 export default async function loadRawScores({
   chain,
@@ -56,9 +55,7 @@ async function loadStrategy({
 
   let result = {}
   while (addresses.length) {
-    const start = timerStart()
     const curr = addresses.slice(0, CHUNK)
-    console.log(`[Load Scores] ${space} ${strategy.name} ${curr.length}, start`)
     result = {
       ...result,
       ...(await loadStrategyWithRetry({
@@ -69,9 +66,6 @@ async function loadStrategy({
         addresses: curr,
       })),
     }
-    console.log(
-      `[Load Scores] ${space} ${strategy.name} ${curr.length}, done in ${timerEnd(start)}ms`
-    )
     addresses = addresses.slice(CHUNK)
   }
 
