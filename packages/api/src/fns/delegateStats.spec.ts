@@ -7,6 +7,8 @@ describe('delegateStats', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
+  const D = 'D' as Address
+  const E = 'E' as Address
 
   test('it works', () => {
     const votingPower = {
@@ -14,38 +16,38 @@ describe('delegateStats', () => {
       [B]: 30,
       [C]: 50,
     }
-    const delegatorCount = {
-      all: 5,
-      [A]: 3,
-      [B]: 2,
-      [C]: 0,
+    const delegators = {
+      all: [A, B, C, D, E],
+      [A]: [A, B, C],
+      [B]: [A, C],
+      [C]: [],
     }
 
     const result = delegateStats({
       totalSupply: 100,
       votingPower,
-      delegatorCount,
+      delegators,
     })
 
     // TODO expand these tests
     expect(result).toEqual([
       {
         address: A,
-        delegatorCount: 3,
+        delegators: [A, B, C],
         votingPower: 20,
         percentOfDelegators: 6000,
         percentOfVotingPower: 2000,
       },
       {
         address: B,
-        delegatorCount: 2,
+        delegators: [A, C],
         votingPower: 30,
         percentOfDelegators: 4000,
         percentOfVotingPower: 3000,
       },
       {
         address: C,
-        delegatorCount: 0,
+        delegators: [],
         votingPower: 0,
         percentOfDelegators: 0,
         percentOfVotingPower: 0,

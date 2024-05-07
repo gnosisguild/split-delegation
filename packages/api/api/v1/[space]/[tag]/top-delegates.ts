@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { votingPower, delegatorCount } = await loadPower({
+  const { votingPower, delegators } = await loadPower({
     chain,
     blockNumber,
     space,
@@ -36,7 +36,7 @@ export const POST = async (req: Request) => {
   const _result = delegateStats({
     totalSupply,
     votingPower,
-    delegatorCount,
+    delegators,
   })
 
   const result = _result
@@ -51,7 +51,7 @@ export const POST = async (req: Request) => {
 }
 
 function orderByCount(a: DelegateStats, b: DelegateStats) {
-  return a.delegatorCount > b.delegatorCount ? -1 : 1
+  return a.delegators.length > b.delegators.length ? -1 : 1
 }
 function orderByPower(a: DelegateStats, b: DelegateStats) {
   return a.votingPower > b.votingPower ? -1 : 1

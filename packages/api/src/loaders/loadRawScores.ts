@@ -31,7 +31,12 @@ export default async function loadRawScores({
     )
   )
 
-  return merge(...results)
+  // ensure that all address gets at least a 0
+  // Snapshot omits zero balances from the result
+  return merge(
+    Object.fromEntries(addresses.map((address) => [address, 0])),
+    ...results
+  )
 }
 
 async function loadStrategy({

@@ -1,10 +1,10 @@
 import { Address, Chain } from 'viem'
 
+import { timerEnd, timerStart } from 'src/fns/timer'
 import all from '../weights/all'
 import compute from '../compute'
-
-import loadWeights from './loadWeights'
 import loadScores from './loadScores'
+import loadWeights from './loadWeights'
 
 export default async function loadPower({
   chain,
@@ -36,7 +36,7 @@ export default async function loadPower({
     addresses,
   })
 
-  const { votingPower, delegatorCount } = await compute({
+  const { votingPower, delegators } = await compute({
     weights,
     scores,
     voters,
@@ -44,6 +44,6 @@ export default async function loadPower({
 
   return {
     votingPower,
-    delegatorCount,
+    delegators,
   }
 }

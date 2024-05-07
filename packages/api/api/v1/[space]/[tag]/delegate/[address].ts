@@ -21,7 +21,7 @@ export const POST = async (req: Request) => {
 
   await syncTip(chain, blockNumber)
 
-  const { votingPower, delegatorCount } = await loadPower({
+  const { votingPower, delegators } = await loadPower({
     chain,
     blockNumber,
     space,
@@ -32,7 +32,7 @@ export const POST = async (req: Request) => {
     address,
     totalSupply,
     votingPower,
-    delegatorCount,
+    delegators,
   })
 
   return new Response(JSON.stringify(response), {

@@ -30,7 +30,7 @@ export default function compute({
 
   return {
     votingPower: votingPower({ order, weights, scores }),
-    delegatorCount: delegatorCount({ order, weights, scores }),
+    delegators: delegators({ order, weights, scores }),
   }
 }
 
@@ -68,7 +68,7 @@ function votingPower({
   return result
 }
 
-function delegatorCount({
+function delegators({
   order,
   weights,
   scores,
@@ -77,17 +77,19 @@ function delegatorCount({
   weights: Weights<bigint>
   scores: Scores
 }) {
-  const result: Scores = {
-    all: Object.keys(weights).length,
+  const result: Record<string, Address[]> = {
+    all: Object.keys(weights).sort() as Address[],
   }
 
   for (const delegate of Object.keys(scores)) {
-    result[delegate] = 0
+    result[delegate] = []
   }
 
   for (const delegator of order) {
     for (const delegate of Object.keys(weights[delegator] || {})) {
-      result[delegate] += result[delegator] + 1
+      result[delegate] = Array.from(
+        new Set<Address>([...result[delegator], delegator as Address])
+      ).sort()
     }
   }
   return result
