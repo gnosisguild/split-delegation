@@ -40,7 +40,6 @@ function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
     chainId,
     registry,
     blockNumber,
-    blockTimestamp,
     transactionIndex,
     logIndex,
     spaceId,
@@ -59,7 +58,6 @@ function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
         { type: 'bytes32' },
         { type: 'bytes32' },
         { type: 'bytes32' },
-        { type: 'bytes32' },
         { type: 'bytes32[]' },
         { type: 'bytes' },
       ],
@@ -67,7 +65,6 @@ function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
         pad(toHex(BigInt(chainId))),
         pad(registry as Address),
         pad(toHex(blockNumber)),
-        pad(toHex(blockTimestamp)),
         pad(toHex(transactionIndex)),
         pad(toHex(logIndex)),
         spaceId as Hex,
@@ -79,6 +76,6 @@ function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
   )
   return {
     ...event,
-    id: `${chainId}-${blockNumber}-${registry}--${hash.slice(2, 2 + 16)}`,
+    id: `${chainId}-${blockNumber}-${registry}-${hash.slice(2, 2 + 16)}`,
   }
 }
