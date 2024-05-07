@@ -3,7 +3,7 @@ import { Block } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { setPin } from '../loaders/loadPin'
-import { timerEnd, timerStart } from 'src/fns/timer'
+import { timerEnd, timerStart } from '../fns/timer'
 import loadCandidate from '../loaders/loadCandidate'
 import loadPower from '../loaders/loadPower'
 import spaceName from '../fns/spaceName'

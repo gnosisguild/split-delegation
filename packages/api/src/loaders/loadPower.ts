@@ -1,6 +1,6 @@
 import { Address, Chain } from 'viem'
 
-import { timerEnd, timerStart } from 'src/fns/timer'
+import { timerEnd, timerStart } from '../fns/timer'
 import all from '../weights/all'
 import compute from '../compute'
 import loadScores from './loadScores'
