@@ -1,7 +1,7 @@
 import { RequestContext } from '@vercel/edge'
 import type { VercelRequest } from '@vercel/node'
 import sync from '../../src/commands/sync'
-import pin from 'src/commands/pin'
+import pin from '../../src/commands/pin'
 
 const actions = async () => {
   await sync()
