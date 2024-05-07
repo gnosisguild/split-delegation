@@ -62,7 +62,7 @@ async function _load({
 
   let allScores
   if (missing.length > 0) {
-    console.log(`[Load Scores ] missing ${missing.length} entries`)
+    console.log(`[Load Scores] missing ${missing.length} entries`)
     allScores = {
       ...scores,
       ...(await loadRawScores({

@@ -2,6 +2,7 @@ import assert from 'assert'
 import { Block, Chain } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
+import { setPin } from 'src/loaders/loadPin'
 import all from 'src/weights/all'
 import createClient from 'src/loaders/createClient'
 import loadScores from 'src/loaders/loadScores'
@@ -10,11 +11,13 @@ import loadWeights from 'src/loaders/loadWeights'
 type Space = {
   name: string
   chain: Chain
-  strategies: {
-    name: string
-    network: string
-    params: any
-  }[]
+  strategies: Strategy[]
+}
+
+type Strategy = {
+  name: string
+  network: string
+  params: any
 }
 
 const LARGE_SPACES = [
@@ -22,11 +25,6 @@ const LARGE_SPACES = [
   'cow.eth',
   'lido-snapshot.eth',
   'rocketpool-dao.eth',
-  'cvx.eth',
-  'starknet.eth',
-  'gearbox.eth',
-  'snapshot.dcl.eth',
-  'apecoin.eth',
 ]
 
 export default async function () {
@@ -35,18 +33,18 @@ export default async function () {
   //   _count: true,
   // })
 
-  const spaces = await loadSpaces(LARGE_SPACES)
-
-  const blocks: Record<number, Block> = {}
+  const pins: Record<string, Block> = {}
+  const spaces = (await loadSpaces(LARGE_SPACES)).filter(filterSpaceByStrategy)
 
   for (const { name, chain, strategies } of spaces) {
     console.log(`[Pin] ${name} starting`)
 
+    const chainId = String(chain.id)
     const client = createClient(chain)
-    if (!blocks[chain.id]) {
-      blocks[chain.id] = await client.getBlock()
+    if (!pins[chainId]) {
+      pins[chainId] = await client.getBlock()
     }
-    const block = blocks[chain.id]
+    const block = pins[chainId]
 
     const { weights } = await loadWeights({
       chain,
@@ -65,6 +63,10 @@ export default async function () {
       addresses,
     })
     console.log(`[Pin] ${name} done`)
+  }
+
+  for (const [chainId, block] of Object.entries(pins)) {
+    await setPin({ chain: chainId == '1' ? mainnet : gnosis, block })
   }
 }
 
@@ -97,15 +99,40 @@ async function loadSpaces(spaces: string[]): Promise<Space[]> {
 
   const json: any = await response.json()
 
-  return json.data.spaces.map(({ id, network, strategies, ...rest }: any) => {
+  return json.data.spaces.map(({ id, network, ...rest }: any) => {
     assert(network == '1' || network == '100')
     return {
       ...rest,
       name: id,
       chain: network == '1' ? mainnet : gnosis,
-      strategies: strategies.filter(
-        (strategy: any) => strategy?.name != 'delegation'
-      ),
     }
   })
+}
+
+function filterSpaceByStrategy(space: Space) {
+  if (space.strategies.length != 1) {
+    return false
+  }
+
+  const [root] = space.strategies
+  if (root.name != 'split-delegation') {
+    return false
+  }
+
+  if (!root.params.strategies || root.params.strategies.length == 0) {
+    console.error(
+      `[Pin] Found misconfigured strategy ${space.name} root has no children`
+    )
+  }
+
+  const forbidden = ['delegation', 'erc20-balance-of-delegation']
+  for (const strategy of root.params.strategies) {
+    if (forbidden.includes(strategy.name)) {
+      console.error(
+        `[Pin] Found misconfigured child strategy ${strategy.name} at space ${space.name}`
+      )
+      return false
+    }
+  }
+  return false
 }
