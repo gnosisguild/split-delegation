@@ -1,5 +1,5 @@
 import { DelegationEvent } from '@prisma/client'
-import spaceId from '../../src/fns/spaceId'
+import spaceId from '../fns/spaceId'
 
 import prisma from '../../prisma/singleton'
 

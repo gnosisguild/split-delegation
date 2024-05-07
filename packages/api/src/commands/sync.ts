@@ -2,12 +2,12 @@ import assert from 'assert'
 import { Address, BlockTag, Chain, PublicClient, getAddress } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
-import { rangeToStints } from '../../src/fns/rangeToStints'
-import { timerEnd, timerStart } from '../../src/fns/timer'
-import parseLogs from '../../src/fns/parseLogs'
+import { rangeToStints } from '../fns/rangeToStints'
+import { timerEnd, timerStart } from '../fns/timer'
+import parseLogs from '../fns/parseLogs'
 
-import createClient from '../../src/loaders/createClient'
-import loadEntries from '../../src/loaders/loadEntries'
+import createClient from '../loaders/createClient'
+import loadEntries from '../loaders/loadEntries'
 import resolveBlockTag from '../loaders/resolveBlockTag'
 
 import config from '../../config.json'

@@ -2,10 +2,10 @@ import assert from 'assert'
 import { Block } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
-import { setPin } from '../../src/loaders/loadPin'
-import createClient from '../../src/loaders/createClient'
-import loadPower from '../../src/loaders/loadPower'
-import spaceName from '../../src/fns/spaceName'
+import { setPin } from '../loaders/loadPin'
+import createClient from '../loaders/createClient'
+import loadPower from '../loaders/loadPower'
+import spaceName from '../fns/spaceName'
 
 import prisma from '../../prisma/singleton'
 

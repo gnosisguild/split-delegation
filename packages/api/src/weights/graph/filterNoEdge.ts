@@ -1,4 +1,4 @@
-import { Weights } from '../../../src/types'
+import { Weights } from '../../types'
 
 export default function filterNoEdge<T>(weights: Weights<T>): Weights<T> {
   let result

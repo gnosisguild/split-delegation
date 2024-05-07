@@ -1,5 +1,5 @@
-import { distribute } from '../../src/fns/bag'
-import { Weights } from '../../src/types'
+import { distribute } from '../fns/bag'
+import { Weights } from '../types'
 
 /**
  *

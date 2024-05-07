@@ -1,5 +1,5 @@
 import { Address } from 'viem'
-import { Scores } from '../../src/types'
+import { Scores } from '../types'
 
 export type DelegateStats = {
   address: string

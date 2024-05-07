@@ -1,6 +1,6 @@
 import assert from 'assert'
 import findCycle from './findCycle'
-import { Weights } from '../../../src/types'
+import { Weights } from '../../types'
 
 export default function toAcyclical<T>(graph: Weights<T>): Weights<T> {
   while (true) {

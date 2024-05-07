@@ -1,4 +1,4 @@
-import { Weights } from '../../../src/types'
+import { Weights } from '../../types'
 
 /**
  * Detects cycles in a directed graph using Depth First Search (DFS).

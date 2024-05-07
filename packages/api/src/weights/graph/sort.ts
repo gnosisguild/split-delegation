@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Weights } from '../../../src/types'
+import { Weights } from '../../types'
 
 /**
  * Performs a topological sort using Kahn's algorithm on a directed acyclic
