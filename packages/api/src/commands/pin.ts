@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Block, Chain } from 'viem'
+import { Block } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { setPin } from 'src/loaders/loadPin'
@@ -7,10 +7,13 @@ import all from 'src/weights/all'
 import createClient from 'src/loaders/createClient'
 import loadScores from 'src/loaders/loadScores'
 import loadWeights from 'src/loaders/loadWeights'
+import spaceName from 'src/fns/spaceName'
+
+import prisma from '../../prisma/singleton'
 
 type Space = {
   name: string
-  chain: Chain
+  network: string
   strategies: Strategy[]
 }
 
@@ -20,25 +23,24 @@ type Strategy = {
   params: any
 }
 
-const LARGE_SPACES = [
-  'safe.eth',
-  'cow.eth',
-  'lido-snapshot.eth',
-  'rocketpool-dao.eth',
-]
-
 export default async function () {
-  // const counts = await prisma.delegationEvent.groupBy({
-  //   by: 'spaceId',
-  //   _count: true,
-  // })
+  const spaceNames = (
+    await prisma.delegationEvent.groupBy({
+      by: 'spaceId',
+      _count: true,
+    })
+  )
+    .filter((entry) => entry._count > 1000)
+    .map((entry) => spaceName(entry.spaceId))
+    .filter((name) => /^[a-zA-Z0-9.-]+$/.test(name))
 
   const pins: Record<string, Block> = {}
-  const spaces = (await loadSpaces(LARGE_SPACES)).filter(filterSpaceByStrategy)
+  const spaces = (await loadSpaces(spaceNames)).filter(isUsingSplitDelegation)
 
-  for (const { name, chain, strategies } of spaces) {
+  for (const { name, network, strategies } of spaces) {
     console.log(`[Pin] ${name} starting`)
 
+    const chain = networkToChain(network)
     const chainId = String(chain.id)
     const client = createClient(chain)
     if (!pins[chainId]) {
@@ -46,26 +48,28 @@ export default async function () {
     }
     const block = pins[chainId]
 
+    const children = strategies[0].params.strategies
+    assert(Array.isArray(children) && children.length > 0)
+
     const { weights } = await loadWeights({
       chain,
       blockNumber: Number(block.number),
       space: name,
-      strategies,
+      strategies: children,
     })
-
-    const addresses = all(weights)
 
     await loadScores({
       chain,
       blockNumber: Number(block.number),
       space: name,
       strategies,
-      addresses,
+      addresses: all(weights),
     })
     console.log(`[Pin] ${name} done`)
   }
 
   for (const [chainId, block] of Object.entries(pins)) {
+    console.log(`[Pin] Pinning ${block.number} for network ${chainId}`)
     await setPin({ chain: chainId == '1' ? mainnet : gnosis, block })
   }
 }
@@ -109,7 +113,7 @@ async function loadSpaces(spaces: string[]): Promise<Space[]> {
   })
 }
 
-function filterSpaceByStrategy(space: Space) {
+function isUsingSplitDelegation(space: Space) {
   if (space.strategies.length != 1) {
     return false
   }
@@ -135,4 +139,9 @@ function filterSpaceByStrategy(space: Space) {
     }
   }
   return false
+}
+
+function networkToChain(network: string) {
+  assert(network == '1' || network == '100')
+  return network == '1' ? mainnet : gnosis
 }

@@ -10,6 +10,8 @@ export default async function loadEvents({
   space: string
   blockTimestamp: number
 }): Promise<DelegationEvent[]> {
+  space = space.replace('.ggtest', '')
+
   return prisma.delegationEvent.findMany({
     where: { spaceId: spaceId(space), blockTimestamp: { lte: blockTimestamp } },
     orderBy: { blockTimestamp: 'asc' },
