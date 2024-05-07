@@ -1,6 +1,5 @@
 import { Block, Chain, keccak256, toBytes } from 'viem'
-
-import createClient from './createClient'
+import loadCandidate from './loadCandidate'
 
 import prisma from '../../prisma/singleton'
 
@@ -16,7 +15,7 @@ export default async function loadPin(
 
   console.log(`[Load Pin] Outdated ${blockNumber} @ ${chain.name}`)
 
-  const block = await createClient(chain).getBlock({ blockTag: 'finalized' })
+  const block = await loadCandidate(chain)
   await cachePut(key, {
     chainId: chain.id,
     blockNumber: Number(block.number),

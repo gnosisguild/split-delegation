@@ -3,7 +3,7 @@ import { Block } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { setPin } from '../loaders/loadPin'
-import createClient from '../loaders/createClient'
+import loadCandidate from '../loaders/loadCandidate'
 import loadPower from '../loaders/loadPower'
 import spaceName from '../fns/spaceName'
 
@@ -42,9 +42,8 @@ export default async function () {
 
     const chain = networkToChain(network)
     const chainId = String(chain.id)
-    const client = createClient(chain)
     if (!pins[chainId]) {
-      pins[chainId] = await client.getBlock({ blockTag: 'finalized' })
+      pins[chainId] = await loadCandidate(chain)
     }
     const block = pins[chainId]
 
@@ -133,7 +132,6 @@ function isUsingSplitDelegation(space: Space) {
 }
 
 function networkToChain(network: any) {
-  console.log(network)
   assert(network == 1 || network == '1' || network == 100 || network == '100')
   return network == 1 || network == '1' ? mainnet : gnosis
 }
