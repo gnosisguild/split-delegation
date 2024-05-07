@@ -23,19 +23,16 @@ export default async function loadWeights({
   chain,
   blockNumber,
   space,
-  strategies,
 }: {
   chain: Chain
   blockNumber: number
   space: string
-  strategies: any[]
 }) {
   const start = timerStart()
   const { weights } = await _load({
     chain,
     blockNumber,
     space,
-    strategies,
   })
 
   console.log(`[Load Weights] ${space}, done in ${timerEnd(start)}ms`)
@@ -46,18 +43,15 @@ async function _load({
   chain,
   blockNumber,
   space,
-  strategies,
 }: {
   chain: Chain
   blockNumber: number
   space: string
-  strategies: any[]
 }) {
   const key = cacheKey({
     chain,
     blockNumber,
     space,
-    strategies,
   })
 
   const hit = await cacheGet(key)
@@ -81,12 +75,10 @@ function cacheKey({
   chain,
   blockNumber,
   space,
-  strategies,
 }: {
   chain: Chain
   blockNumber: number
   space: string
-  strategies: any[]
 }) {
   return keccak256(
     toBytes(
@@ -96,7 +88,6 @@ function cacheKey({
         chainId: chain.id,
         blockNumber,
         space,
-        strategies,
       })
     )
   )

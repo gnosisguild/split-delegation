@@ -35,7 +35,9 @@ export default async function () {
     .filter((name) => /^[a-zA-Z0-9.-]+$/.test(name))
 
   const pins: Record<string, Block> = {}
-  const spaces = (await loadSpaces(spaceNames)).filter(isUsingSplitDelegation)
+  const spaces = (
+    await loadSpaces([...spaceNames, 'safe.ggtest.eth', 'cow.ggtest.eth'])
+  ).filter(isUsingSplitDelegation)
 
   for (const { name, network, strategies } of spaces) {
     console.log(`[Pin] ${name} starting`)
@@ -55,14 +57,13 @@ export default async function () {
       chain,
       blockNumber: Number(block.number),
       space: name,
-      strategies: children,
     })
 
     await loadScores({
       chain,
       blockNumber: Number(block.number),
       space: name,
-      strategies,
+      strategies: children,
       addresses: all(weights),
     })
     console.log(`[Pin] ${name} done`)
@@ -103,17 +104,16 @@ async function loadSpaces(spaces: string[]): Promise<Space[]> {
 
   const json: any = await response.json()
 
-  return json.data.spaces.map(({ id, network, ...rest }: any) => {
-    assert(network == '1' || network == '100')
+  return json.data.spaces.map(({ id, ...rest }: any) => {
     return {
       ...rest,
       name: id,
-      chain: network == '1' ? mainnet : gnosis,
     }
   })
 }
 
 function isUsingSplitDelegation(space: Space) {
+  console.log(space)
   if (space.strategies.length != 1) {
     return false
   }
@@ -138,10 +138,12 @@ function isUsingSplitDelegation(space: Space) {
       return false
     }
   }
-  return false
+
+  return true
 }
 
-function networkToChain(network: string) {
-  assert(network == '1' || network == '100')
-  return network == '1' ? mainnet : gnosis
+function networkToChain(network: any) {
+  console.log(network)
+  assert(network == 1 || network == '1' || network == 100 || network == '100')
+  return network == 1 || network == '1' ? mainnet : gnosis
 }

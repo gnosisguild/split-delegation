@@ -23,7 +23,6 @@ export default async function loadPower({
     chain,
     blockNumber,
     space,
-    strategies,
   })
 
   const addresses = Array.from(new Set([...all(weights), ...(voters ?? [])]))
