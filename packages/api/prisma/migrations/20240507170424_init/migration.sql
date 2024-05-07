@@ -16,6 +16,15 @@ CREATE TABLE "DelegationEvent" (
 );
 
 -- CreateTable
+CREATE TABLE "Cache" (
+    "key" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Cache_pkey" PRIMARY KEY ("key")
+);
+
+-- CreateTable
 CREATE TABLE "Checkpoint" (
     "chainId" INTEGER NOT NULL,
     "blockNumber" INTEGER NOT NULL,
