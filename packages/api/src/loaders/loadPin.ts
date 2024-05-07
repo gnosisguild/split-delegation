@@ -7,15 +7,16 @@ import prisma from '../../prisma/singleton'
 export default async function loadPin(
   chain: Chain
 ): Promise<{ blockNumber: number }> {
-  // TODO this needs to be updated
   const key = cacheKey({ chain })
   const { blockNumber, blockTimestamp } = await cacheGet(key)
-  if (blockTimestamp > pinTimestamp()) {
+  if (blockAge(blockTimestamp) < 60 * 1000 * 15) {
     console.log(`[Load Pin] Using block ${blockNumber} @ ${chain.name}`)
     return { blockNumber }
   }
 
-  const block = await createClient(chain).getBlock({ blockTag: 'latest' })
+  console.log(`[Load Pin] Outdated ${blockNumber} @ ${chain.name}`)
+
+  const block = await createClient(chain).getBlock({ blockTag: 'finalized' })
   await cachePut(key, {
     chainId: chain.id,
     blockNumber: Number(block.number),
@@ -74,19 +75,7 @@ async function cachePut(
   })
 }
 
-function pinTimestamp(): number {
-  const now = new Date()
-  const minutes = now.getMinutes()
-  const remainder = minutes % 15
-
-  const start = new Date(now)
-
-  if (remainder !== 0) {
-    start.setMinutes(minutes - remainder)
-  }
-
-  start.setSeconds(0)
-  start.setMilliseconds(0)
-
-  return start.getTime() / 1000
+function blockAge(blockTimestamp: number) {
+  const now = Math.floor(Date.now())
+  return Math.abs(now - blockTimestamp * 1000)
 }
