@@ -42,6 +42,43 @@ describe('compute', () => {
     })
   })
 
+  test('it works with a forward edge', () => {
+    const weights = {
+      [A]: {
+        [B]: 50n,
+        [C]: 50n,
+      },
+      [B]: {
+        [D]: 100n,
+      },
+      [C]: {
+        [D]: 100n,
+      },
+    }
+    const scores = {
+      [A]: 1000,
+      [B]: 1000,
+      [C]: 1000,
+      [D]: 500,
+    }
+
+    expect(compute({ weights, scores })).toEqual({
+      votingPower: {
+        [A]: 0,
+        [B]: 0,
+        [C]: 0,
+        [D]: 3500,
+      },
+      delegators: {
+        all: [A, B, C],
+        [A]: [],
+        [B]: [A],
+        [C]: [A],
+        [D]: [A, B, C],
+      },
+    })
+  })
+
   test('it works when some requested nodes not present in delegation graph', () => {
     const weights = {
       [A]: {

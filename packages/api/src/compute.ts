@@ -1,4 +1,3 @@
-import assert from 'assert'
 import { Address } from 'viem'
 
 import { distribute } from '../src/fns/bag'
@@ -77,20 +76,25 @@ function delegators({
   weights: Weights<bigint>
   scores: Scores
 }) {
-  const result: Record<string, Address[]> = {
-    all: Object.keys(weights).sort() as Address[],
-  }
+  const result: Record<string, Record<string, true>> = {}
 
   for (const delegate of Object.keys(scores)) {
-    result[delegate] = []
+    result[delegate] = {}
   }
 
   for (const delegator of order) {
     for (const delegate of Object.keys(weights[delegator] || {})) {
-      result[delegate] = Array.from(
-        new Set<Address>([...result[delegator], delegator as Address])
-      ).sort()
+      Object.assign(result[delegate], result[delegator], { [delegator]: true })
     }
   }
-  return result
+
+  const map = Object.fromEntries(
+    Object.keys(scores).map((address) => [
+      address,
+      Object.keys(result[address]).sort(),
+    ])
+  )
+
+  map.all = Object.keys(weights).sort()
+  return map as Record<Address, Address[]>
 }
