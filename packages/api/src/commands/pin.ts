@@ -3,6 +3,7 @@ import { Block } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
 
 import { setPin } from '../loaders/loadPin'
+import { timerEnd, timerStart } from 'src/fns/timer'
 import loadCandidate from '../loaders/loadCandidate'
 import loadPower from '../loaders/loadPower'
 import spaceName from '../fns/spaceName'
@@ -38,6 +39,7 @@ export default async function () {
   ).filter(isUsingSplitDelegation)
 
   for (const { name, network, strategies } of spaces) {
+    const start = timerStart()
     console.log(`[Pin] ${name} starting`)
 
     const chain = networkToChain(network)
@@ -56,11 +58,11 @@ export default async function () {
       space: name,
       strategies: children,
     })
-    console.log(`[Pin] ${name} done`)
+    console.log(`[Pin] ${name}, done in ${timerEnd(start)}ms`)
   }
 
   for (const [chainId, block] of Object.entries(pins)) {
-    console.log(`[Pin] Pinning ${block.number} for network ${chainId}`)
+    console.log(`[Pin] Block ${block.number} for network ${chainId}`)
     await setPin({ chain: chainId == '1' ? mainnet : gnosis, block })
   }
 }

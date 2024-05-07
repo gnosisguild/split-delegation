@@ -30,7 +30,7 @@ export default async function sync() {
     const start = timerStart()
     const client = createClient(chain)
 
-    const { fromBlock, toBlock } = await blockRange(chain, 'finalized')
+    const { fromBlock, toBlock } = await blockRange(chain, 'latest')
 
     if (fromBlock < toBlock) {
       console.info(
