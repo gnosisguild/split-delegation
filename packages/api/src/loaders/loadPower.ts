@@ -26,7 +26,6 @@ export default async function loadPower({
     strategies,
   })
 
-  // TODO make this faster
   const addresses = Array.from(new Set([...all(weights), ...(voters ?? [])]))
 
   const { scores } = await loadScores({

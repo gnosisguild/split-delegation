@@ -1,6 +1,7 @@
 import { command, run, subcommands } from 'cmd-ts'
 
 import count from './count'
+import pin from './pin'
 import sync from './sync'
 import trim from './trim'
 
@@ -15,12 +16,12 @@ const countCommand = command({
   },
 })
 
-const trimCommand = command({
-  name: 'trim',
-  description: 'Produces slim down version of Safe allocations',
+const pinCommand = command({
+  name: 'pin',
+  description: '',
   args: {},
   handler: async () => {
-    await trim()
+    await pin()
   },
 })
 
@@ -33,13 +34,23 @@ const syncCommand = command({
   },
 })
 
+const trimCommand = command({
+  name: 'trim',
+  description: 'Produces slim down version of Safe allocations',
+  args: {},
+  handler: async () => {
+    await trim()
+  },
+})
+
 run(
   subcommands({
     name: 'entrypoint',
     cmds: {
       count: countCommand,
-      trim: trimCommand,
+      pin: pinCommand,
       sync: syncCommand,
+      trim: trimCommand,
     },
   }),
   process.argv.slice(2)
