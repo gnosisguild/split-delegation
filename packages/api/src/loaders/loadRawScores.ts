@@ -3,8 +3,8 @@ import { Address, Chain, getAddress } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
 import { merge } from '../fns/bag'
-import { Scores } from 'src/types'
-import { timerEnd, timerStart } from 'src/fns/timer'
+import { Scores } from '../../src/types'
+import { timerEnd, timerStart } from '../../src/fns/timer'
 
 export default async function loadRawScores({
   chain,
