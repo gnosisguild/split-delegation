@@ -2,7 +2,7 @@ import { mainnet } from 'viem/chains'
 
 import delegateStats, { DelegateStats } from '../../src/fns/delegateStats'
 import loadPower from '../loaders/loadPower'
-import loadPin from 'src/loaders/loadPin'
+import loadPin from '../../src/loaders/loadPin'
 
 export default async function doStuff({
   space,
