@@ -126,10 +126,10 @@ function cacheKey({
 async function cacheGet(key: string): Promise<DelegateStats[] | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`[Load Top] Cache Hit ${key}`)
+    console.log(`[Load Top] Cache Hit ${key.slice(0, 18)}`)
     return JSON.parse(hit.value)
   } else {
-    console.log(`[Load Top] Cache Miss ${key}`)
+    console.log(`[Load Top] Cache Miss ${key.slice(0, 18)}`)
     return null
   }
 }
@@ -141,5 +141,5 @@ async function cachePut(key: string, delegateStats: DelegateStats[]) {
     create: { key, value },
     update: { key, value },
   })
-  console.log(`[Load Top] Cache Put ${key}`)
+  console.log(`[Load Top] Cache Put ${key.slice(0, 18)}`)
 }

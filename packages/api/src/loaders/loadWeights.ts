@@ -98,7 +98,7 @@ async function cacheGet(
 ): Promise<{ weights: Weights<bigint> } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`[Load Weights] Cache Hit ${key}`)
+    console.log(`[Load Weights] Cache Hit ${key.slice(0, 18)}`)
     return JSON.parse(hit.value, revive)
   }
   return null
@@ -111,7 +111,7 @@ async function cachePut(key: string, weights: Weights<bigint>) {
     create: { key, value },
     update: { key, value },
   })
-  console.log(`[Load Weights] Cache Put ${key}`)
+  console.log(`[Load Weights] Cache Put ${key.slice(0, 18)}`)
 }
 
 function revive(key: string, value: string) {

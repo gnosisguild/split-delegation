@@ -111,7 +111,7 @@ function cacheKey({
 async function cacheGet(key: string): Promise<{ scores: Scores }> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`[Load Scores] Cache Hit ${key}`)
+    console.log(`[Load Scores] Cache Hit ${key.slice(0, 18)}`)
     return JSON.parse(hit.value)
   }
   return { scores: {} }
@@ -124,5 +124,5 @@ async function cachePut(key: string, { scores }: { scores: Scores }) {
     create: { key, value },
     update: { key, value },
   })
-  console.log(`[Load Scores] Cache Put ${key}`)
+  console.log(`[Load Scores] Cache Put ${key.slice(0, 18)}`)
 }
