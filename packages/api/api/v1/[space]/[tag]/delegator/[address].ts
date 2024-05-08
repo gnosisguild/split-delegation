@@ -7,7 +7,7 @@ import resolveBlockTag from '../../../../../src/loaders/resolveBlockTag'
 import { syncTip } from '../../../../../src/commands/sync'
 
 import { DelegatorRequestBody } from '../../../../../src/types'
-import loadDelegates from 'src/loaders/loadDelegates'
+import loadDelegates from '../../../../../src/loaders/loadDelegates'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams

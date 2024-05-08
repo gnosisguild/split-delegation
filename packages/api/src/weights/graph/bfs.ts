@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { Weights } from 'src/types'
+import { Weights } from '../../../src/types'
 
 export default function bfs<T>(weights: Weights<T>, root: string): Address[] {
   const queue: string[] = [root]
