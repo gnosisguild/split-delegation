@@ -36,7 +36,7 @@ export default async function loadPower({
   })
 
   const start = timerStart()
-  const { votingPower, delegators } = await compute({
+  const { votingPower, delegatorCount } = await compute({
     weights,
     scores,
     voters,
@@ -44,7 +44,9 @@ export default async function loadPower({
   console.log(`[Compute] ${space}, done in ${timerEnd(start)}ms`)
 
   return {
+    weights,
+    scores,
     votingPower,
-    delegators,
+    delegatorCount,
   }
 }

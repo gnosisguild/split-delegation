@@ -1,11 +1,7 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import delegateStats, {
-  DelegateStats,
-  orderByCount,
-  orderByPower,
-} from '../fns/delegateStats'
+import delegateStats, { DelegateStats } from '../fns/delegateStats'
 import loadPower from './loadPower'
 
 import prisma from '../../prisma/singleton'
@@ -62,41 +58,20 @@ async function _load({
     }
   }
 
-  const { votingPower, delegators } = await loadPower({
+  const { votingPower, delegatorCount } = await loadPower({
     chain,
     blockNumber,
     space,
     strategies,
   })
 
-  const result = filterRelevant(
-    delegateStats({
-      votingPower,
-      delegators,
-      totalSupply,
-    })
-  )
+  const result = delegateStats({
+    votingPower,
+    delegatorCount,
+    totalSupply,
+  })
 
   await cachePut(key, result)
-
-  return result
-}
-
-function filterRelevant(stats: DelegateStats[]) {
-  stats = [...stats]
-
-  const byCount = stats.sort(orderByCount).slice(0, 250)
-  const byPower = stats.sort(orderByPower).slice(0, 250)
-
-  const done = new Set<string>()
-  const result = []
-
-  for (const entry of [...byCount, ...byPower]) {
-    if (!done.has(entry.address)) {
-      result.push(entry)
-    }
-    done.add(entry.address)
-  }
 
   return result
 }

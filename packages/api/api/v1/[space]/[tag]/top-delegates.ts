@@ -2,7 +2,7 @@ import { BlockTag } from 'viem'
 
 import { orderByCount, orderByPower } from '../../../../src/fns/delegateStats'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
-import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
+import loadDelegates from '../../../../src/loaders/loadDelegates'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const _result = await loadTopDelegates({
+  const _result = await loadDelegates({
     chain,
     blockNumber,
     space,

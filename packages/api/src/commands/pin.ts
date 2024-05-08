@@ -5,7 +5,7 @@ import { gnosis, mainnet } from 'viem/chains'
 import { setPin } from '../loaders/loadPin'
 import { timerEnd, timerStart } from '../fns/timer'
 import loadCandidate from '../loaders/loadCandidate'
-import loadTopDelegates from '../loaders/loadTopDelegates'
+import loadDelegates from '../loaders/loadDelegates'
 import spaceName from '../fns/spaceName'
 
 import prisma from '../../prisma/singleton'
@@ -54,7 +54,7 @@ export default async function () {
     assert(Array.isArray(children) && children.length > 0)
     assert(typeof totalSupply == 'number')
 
-    await loadTopDelegates({
+    await loadDelegates({
       chain,
       blockNumber: Number(block.number),
       space: name,

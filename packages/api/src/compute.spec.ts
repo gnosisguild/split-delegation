@@ -32,12 +32,12 @@ describe('compute', () => {
         [C]: 800 + 20,
         [D]: 300 + 30,
       },
-      delegators: {
-        all: [A, B],
-        [A]: [],
-        [B]: [A],
-        [C]: [A],
-        [D]: [A, B],
+      delegatorCount: {
+        all: 2,
+        [A]: 0,
+        [B]: 1,
+        [C]: 1,
+        [D]: 2,
       },
     })
   })
@@ -69,12 +69,12 @@ describe('compute', () => {
         [C]: 0,
         [D]: 3500,
       },
-      delegators: {
-        all: [A, B, C],
-        [A]: [],
-        [B]: [A],
-        [C]: [A],
-        [D]: [A, B, C],
+      delegatorCount: {
+        all: 3,
+        [A]: 0,
+        [B]: 1,
+        [C]: 1,
+        [D]: 3,
       },
     })
   })
@@ -99,12 +99,12 @@ describe('compute', () => {
         [C]: 800,
         [D]: 30,
       },
-      delegators: {
-        all: [A],
-        [A]: [],
-        [B]: [A],
-        [C]: [A],
-        [D]: [],
+      delegatorCount: {
+        all: 1,
+        [A]: 0,
+        [B]: 1,
+        [C]: 1,
+        [D]: 0,
       },
     })
   })
@@ -120,10 +120,10 @@ describe('compute', () => {
         [A]: 50,
         [B]: 60,
       },
-      delegators: {
-        all: [],
-        [A]: [],
-        [B]: [],
+      delegatorCount: {
+        all: 0,
+        [A]: 0,
+        [B]: 0,
       },
     })
   })

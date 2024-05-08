@@ -3,7 +3,7 @@ import { Scores } from '../types'
 
 export type DelegateStats = {
   address: string
-  delegators: Address[]
+  delegatorCount: number
   percentOfDelegators: number
   votingPower: number
   percentOfVotingPower: number
@@ -13,33 +13,30 @@ export default function delegateStats({
   address,
   totalSupply,
   votingPower,
-  delegators,
+  delegatorCount,
 }: {
   address?: Address
   totalSupply: number
   votingPower: Scores
-  delegators: Record<string, Address[]>
+  delegatorCount: Scores
 }): DelegateStats[] {
-  const allDelegatorCount = delegators.all.length
+  const allDelegatorCount = delegatorCount.all
   const computeFor = address ? [address] : Object.keys(votingPower)
 
   return computeFor.map((address) => {
     // not a delegate -> no key or zero
-    return !delegators[address] || delegators[address].length == 0
+    return !delegatorCount[address]
       ? {
           address,
-          delegators: [],
+          delegatorCount: 0,
           percentOfDelegators: 0,
           votingPower: 0,
           percentOfVotingPower: 0,
         }
       : {
           address,
-          delegators: delegators[address],
-          percentOfDelegators: bps(
-            delegators[address].length,
-            allDelegatorCount
-          ),
+          delegatorCount: delegatorCount[address],
+          percentOfDelegators: bps(delegatorCount[address], allDelegatorCount),
           votingPower: votingPower[address],
           percentOfVotingPower: bps(votingPower[address], totalSupply),
         }
@@ -52,7 +49,7 @@ function bps(score: number, total: number) {
 }
 
 export function orderByCount(a: DelegateStats, b: DelegateStats) {
-  return a.delegators.length > b.delegators.length ? -1 : 1
+  return a.delegatorCount > b.delegatorCount ? -1 : 1
 }
 export function orderByPower(a: DelegateStats, b: DelegateStats) {
   return a.votingPower > b.votingPower ? -1 : 1
