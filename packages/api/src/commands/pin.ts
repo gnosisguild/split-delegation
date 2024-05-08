@@ -5,7 +5,7 @@ import { gnosis, mainnet } from 'viem/chains'
 import { setPin } from '../loaders/loadPin'
 import { timerEnd, timerStart } from '../fns/timer'
 import loadCandidate from '../loaders/loadCandidate'
-import loadPower from '../loaders/loadPower'
+import loadTopDelegates from '../loaders/loadTopDelegates'
 import spaceName from '../fns/spaceName'
 
 import prisma from '../../prisma/singleton'
@@ -49,14 +49,17 @@ export default async function () {
     }
     const block = pins[chainId]
 
-    const children = strategies[0].params.strategies
-    assert(Array.isArray(children) && children.length > 0)
+    const { strategies: children, totalSupply } = strategies[0].params
 
-    await loadPower({
+    assert(Array.isArray(children) && children.length > 0)
+    assert(typeof totalSupply == 'number')
+
+    await loadTopDelegates({
       chain,
       blockNumber: Number(block.number),
       space: name,
       strategies: children,
+      totalSupply,
     })
     console.log(`[Pin] ${name}, done in ${timerEnd(start)}ms`)
   }
@@ -117,6 +120,11 @@ function isUsingSplitDelegation(space: Space) {
   if (!root.params.strategies || root.params.strategies.length == 0) {
     console.error(
       `[Pin] Found misconfigured strategy ${space.name} root has no children`
+    )
+  }
+  if (typeof root?.params?.totalSupply != 'number') {
+    console.error(
+      `[Pin] Found misconfigured strategy ${space.name} no totalSupply`
     )
   }
 
