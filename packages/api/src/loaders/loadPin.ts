@@ -8,7 +8,7 @@ export default async function loadPin(
 ): Promise<{ blockNumber: number }> {
   const key = cacheKey({ chain })
   const { blockNumber, blockTimestamp } = await cacheGet(key)
-  if (blockAge(blockTimestamp) < 60 * 1000 * 15) {
+  if (blockAge(blockTimestamp) < 60 * 1000 * 30 /* 30 minutes */) {
     console.log(`[Load Pin] Using block ${blockNumber} @ ${chain.name}`)
     return { blockNumber }
   }
