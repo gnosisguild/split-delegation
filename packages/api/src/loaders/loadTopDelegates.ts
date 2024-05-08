@@ -85,8 +85,8 @@ async function _load({
 function filterRelevant(stats: DelegateStats[]) {
   stats = [...stats]
 
-  const byCount = stats.sort(orderByCount).slice(0, 100)
-  const byPower = stats.sort(orderByPower).slice(0, 100)
+  const byCount = stats.sort(orderByCount).slice(0, 250)
+  const byPower = stats.sort(orderByPower).slice(0, 250)
 
   const done = new Set<string>()
   const result = []
