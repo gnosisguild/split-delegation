@@ -3,8 +3,8 @@ import { Chain, keccak256, toBytes } from 'viem'
 import { timerEnd, timerStart } from '../fns/timer'
 import delegateStats, {
   DelegateStats,
-  // orderByCount,
-  // orderByPower,
+  orderByCount,
+  orderByPower,
 } from '../fns/delegateStats'
 import loadPower from './loadPower'
 
@@ -69,37 +69,37 @@ async function _load({
     strategies,
   })
 
-  const result = delegateStats({
-    votingPower,
-    delegators,
-    totalSupply,
-  }).filter((s) => s.delegators.length > 0)
-
-  // const result = filterRelevant()
+  const result = filterRelevant(
+    delegateStats({
+      votingPower,
+      delegators,
+      totalSupply,
+    })
+  )
 
   await cachePut(key, result)
 
   return result
 }
 
-// function filterRelevant(stats: DelegateStats[]) {
-//   stats = [...stats]
+function filterRelevant(stats: DelegateStats[]) {
+  stats = [...stats]
 
-//   const byCount = stats.sort(orderByCount).slice(0, 250)
-//   const byPower = stats.sort(orderByPower).slice(0, 250)
+  const byCount = stats.sort(orderByCount).slice(0, 250)
+  const byPower = stats.sort(orderByPower).slice(0, 250)
 
-//   const done = new Set<string>()
-//   const result = []
+  const done = new Set<string>()
+  const result = []
 
-//   for (const entry of [...byCount, ...byPower]) {
-//     if (!done.has(entry.address)) {
-//       result.push(entry)
-//     }
-//     done.add(entry.address)
-//   }
+  for (const entry of [...byCount, ...byPower]) {
+    if (!done.has(entry.address)) {
+      result.push(entry)
+    }
+    done.add(entry.address)
+  }
 
-//   return result
-// }
+  return result
+}
 
 function cacheKey({
   chain,
