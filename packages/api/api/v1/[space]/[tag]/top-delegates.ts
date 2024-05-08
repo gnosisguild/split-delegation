@@ -1,11 +1,11 @@
 import { BlockTag } from 'viem'
 
-import delegateStats, { DelegateStats } from '../../../../src/fns/delegateStats'
-
+import { orderByCount, orderByPower } from '../../../../src/fns/delegateStats'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
-import loadPower from '../../../../src/loaders/loadPower'
+import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
 
 import { syncTip } from '../../../../src/commands/sync'
+
 import { DelegateRequestBody } from '../../../../src/types'
 
 export const POST = async (req: Request) => {
@@ -26,17 +26,12 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { votingPower, delegators } = await loadPower({
+  const _result = await loadTopDelegates({
     chain,
     blockNumber,
     space,
     strategies,
-  })
-
-  const _result = delegateStats({
     totalSupply,
-    votingPower,
-    delegators,
   })
 
   const result = _result
@@ -48,11 +43,4 @@ export const POST = async (req: Request) => {
   return new Response(JSON.stringify(response), {
     headers: { 'Content-Type': 'application/json' },
   })
-}
-
-function orderByCount(a: DelegateStats, b: DelegateStats) {
-  return a.delegators.length > b.delegators.length ? -1 : 1
-}
-function orderByPower(a: DelegateStats, b: DelegateStats) {
-  return a.votingPower > b.votingPower ? -1 : 1
 }

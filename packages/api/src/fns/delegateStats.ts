@@ -50,3 +50,10 @@ function bps(score: number, total: number) {
   if (total == 0) return 0
   return Math.round((score * 10000) / total)
 }
+
+export function orderByCount(a: DelegateStats, b: DelegateStats) {
+  return a.delegators.length > b.delegators.length ? -1 : 1
+}
+export function orderByPower(a: DelegateStats, b: DelegateStats) {
+  return a.votingPower > b.votingPower ? -1 : 1
+}
