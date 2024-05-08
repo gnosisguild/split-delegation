@@ -5,7 +5,7 @@ import snapshot from '@snapshot-labs/snapshot.js'
 import { merge } from '../fns/bag'
 import { Scores } from '../types'
 
-export default async function loadRawScores2({
+export default async function loadRawScores({
   chain,
   blockNumber,
   space,
@@ -18,46 +18,51 @@ export default async function loadRawScores2({
   strategies: any[]
   addresses: Address[]
 }) {
-  const result = await _load({
-    chain,
-    blockNumber,
-    space,
-    strategies: strategies.map(maybePatchStrategy),
-    addresses,
-  })
+  const results = await Promise.all(
+    strategies.map((strategy) =>
+      loadStrategy({
+        chain,
+        blockNumber,
+        space,
+        strategy: maybePatchStrategy(strategy),
+        addresses,
+      })
+    )
+  )
 
   // ensure that all address gets at least a 0
   // Snapshot omits zero balances from the result
   return merge(
     Object.fromEntries(addresses.map((address) => [address, 0])),
-    result
+    ...results
   )
 }
 
-async function _load({
+async function loadStrategy({
   chain,
   blockNumber,
   space,
-  strategies,
+  strategy,
   addresses,
 }: {
   chain: Chain
   blockNumber: number
   space: string
-  strategies: any[]
+  strategy: any
   addresses: Address[]
 }): Promise<Scores> {
-  const CHUNK = 3000
+  const CHUNK = chunkForStrategy(strategy)
+
   let result = {}
   while (addresses.length) {
     const curr = addresses.slice(0, CHUNK)
     result = {
       ...result,
-      ...(await loadWithRetry({
+      ...(await loadStrategyWithRetry({
         chain,
         blockNumber,
         space,
-        strategies,
+        strategy,
         addresses: curr,
       })),
     }
@@ -67,35 +72,33 @@ async function _load({
   return result
 }
 
-async function loadWithRetry({
+async function loadStrategyWithRetry({
   chain,
   blockNumber,
   space,
-  strategies,
+  strategy,
   addresses,
 }: {
   chain: Chain
   blockNumber: number
   space: string
-  strategies: any
+  strategy: any
   addresses: Address[]
 }): Promise<Scores> {
   try {
-    const results = await snapshot.utils.getScores(
+    const [result] = await snapshot.utils.getScores(
       space,
-      strategies,
+      [strategy],
       String(chain.id),
       addresses,
       blockNumber
     )
 
-    const result = merge(...results)
-
     assert(
       Object.keys(result)
         .slice(0, 50) // just a sample
         .every((address) => address == getAddress(address)),
-      'snapshot.getScores not checksummed'
+      'snapshot.getScores Non Check-summed Address'
     )
     return result
   } catch (e) {
@@ -103,28 +106,38 @@ async function loadWithRetry({
       throw e
     }
 
-    console.log(`[Load Scores] ${space} ${addresses.length}, retry`)
+    console.log(
+      `[Load Scores] ${space} ${strategy.name} ${addresses.length}, retry`
+    )
 
     const args = {
       chain,
       blockNumber,
       space,
-      strategies,
+      strategy,
     }
 
     const middle = addresses.length / 2
     const [a, b] = await Promise.all([
-      loadWithRetry({
+      loadStrategyWithRetry({
         ...args,
         addresses: addresses.slice(0, middle),
       }),
-      loadWithRetry({
+      loadStrategyWithRetry({
         ...args,
         addresses: addresses.slice(middle),
       }),
     ])
 
     return merge(a, b)
+  }
+}
+
+function chunkForStrategy(strategy: any): number {
+  if (strategy.name == 'safe-vested') {
+    return 5000
+  } else {
+    return 10000
   }
 }
 
