@@ -29,11 +29,6 @@ export const POST = async (req: Request) => {
     strategies,
   })
 
-  if (Object.keys(weights[delegator] || {}).length == 0) {
-    // TODO improve this
-    throw new Error('Not a Delegate')
-  }
-
   const allDelegateStats = await loadDelegates({
     chain,
     blockNumber,
