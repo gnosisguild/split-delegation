@@ -1,4 +1,4 @@
-import { Weights } from '../types'
+import { Weights } from '../../types'
 
 export default function inverse<T>(weights: Weights<T>) {
   let result: Weights<T> = {}

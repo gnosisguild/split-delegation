@@ -1,8 +1,8 @@
 import { BlockTag, getAddress } from 'viem'
 
-import bfs from '../../../../../src/weights/graph/bfs'
+import bfs from '../../../../../src/fns/graph/bfs'
 import delegateStats from '../../../../../src/fns/delegateStats'
-import inverse from '../../../../../src/weights/inverse'
+import inverse from '../../../../../src/fns/graph/inverse'
 import loadPower from '../../../../../src/loaders/loadPower'
 import resolveBlockTag from '../../../../../src/loaders/resolveBlockTag'
 

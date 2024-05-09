@@ -1,10 +1,10 @@
 import { Address } from 'viem'
 
 import { distribute } from '../src/fns/bag'
-import filterEdges from './weights/graph/filterEdges'
-import filterNoEdge from './weights/graph/filterNoEdge'
-import kahn from './weights/graph/sort'
-import toAcyclical from './weights/graph/toAcyclical'
+import filterEdges from './fns/graph/filterEdges'
+import filterNoEdge from './fns/graph/filterNoEdge'
+import kahn from './fns/graph/sort'
+import toAcyclical from './fns/graph/toAcyclical'
 
 import { Scores, Weights } from '../src/types'
 

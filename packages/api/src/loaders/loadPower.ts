@@ -1,7 +1,7 @@
 import { Address, Chain } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import all from '../weights/all'
+import allNodes from '../fns/graph/allNodes'
 import compute from '../compute'
 import loadScores from './loadScores'
 import loadWeights from './loadWeights'
@@ -25,7 +25,10 @@ export default async function loadPower({
     space,
   })
 
-  const addresses = Array.from(new Set([...all(weights), ...(voters ?? [])]))
+  const addresses =
+    voters && voters.length > 0
+      ? Array.from(new Set([...allNodes(weights), ...voters]))
+      : allNodes(weights)
 
   const { scores } = await loadScores({
     chain,
