@@ -10,10 +10,21 @@ export default async function loadEvents({
   space: string
   blockTimestamp: number
 }): Promise<DelegationEvent[]> {
-  space = space.replace('.ggtest', '')
+  let where
+  if (space.includes(".ggtest'")) {
+    where = {
+      spaceId: { in: [spaceId(space), spaceId(space.replace('.ggtest', ''))] },
+      blockTimestamp: { lte: blockTimestamp },
+    }
+  } else {
+    where = {
+      spaceId: spaceId(space),
+      blockTimestamp: { lte: blockTimestamp },
+    }
+  }
 
   return prisma.delegationEvent.findMany({
-    where: { spaceId: spaceId(space), blockTimestamp: { lte: blockTimestamp } },
+    where,
     orderBy: { blockTimestamp: 'asc' },
   })
 }
