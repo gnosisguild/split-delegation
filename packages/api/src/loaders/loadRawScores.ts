@@ -5,7 +5,7 @@ import snapshot from '@snapshot-labs/snapshot.js'
 import { merge } from '../fns/bag'
 import { Scores } from '../types'
 
-export default async function loadRawScores2({
+export default async function loadRawScores({
   chain,
   blockNumber,
   space,

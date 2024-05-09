@@ -1,11 +1,12 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createWeights from '../fns/createWeights'
-import parseRows from '../fns/parseRows'
-
 import createClient from './createClient'
 import loadEvents from './loadEvents'
+
+import createRegistry from '../fns/createRegistry'
+import createWeights from '../fns/createWeights'
+import parseRows from '../fns/parseRows'
 
 import { Weights } from '../types'
 
@@ -64,7 +65,8 @@ async function _load({
     space,
     blockTimestamp: Number(block.timestamp),
   })
-  const weights = createWeights(parseRows(events), Number(block.timestamp))
+  const registry = createRegistry(parseRows(events), Number(block.timestamp))
+  const weights = createWeights(registry)
 
   await cachePut(key, weights)
 
