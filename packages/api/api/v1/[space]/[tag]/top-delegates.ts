@@ -38,7 +38,11 @@ export const POST = async (req: Request) => {
     .sort(orderBy == 'count' ? orderByCount : orderByPower)
     .slice(offset, offset + limit)
 
-  const response = { delegates: result }
+  const response = {
+    chainId: chain.id,
+    blockNumber,
+    delegates: result,
+  }
 
   return new Response(JSON.stringify(response), {
     headers: { 'Content-Type': 'application/json' },

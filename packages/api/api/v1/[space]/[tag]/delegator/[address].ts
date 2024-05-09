@@ -40,6 +40,7 @@ export const POST = async (req: Request) => {
   const delegates = bfs(weights, delegator)
 
   const response = {
+    chainId: chain.id,
     blockNumber,
     delegator,
     delegates: delegates.map((delegate) =>

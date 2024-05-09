@@ -1,7 +1,9 @@
 import { BlockTag, getAddress } from 'viem'
 
 import bfs from '../../../../../src/fns/graph/bfs'
-import delegateStats from '../../../../../src/fns/delegateStats'
+import delegateStats, {
+  DelegateStats,
+} from '../../../../../src/fns/delegateStats'
 import inverse from '../../../../../src/fns/graph/inverse'
 import loadPower from '../../../../../src/loaders/loadPower'
 import resolveBlockTag from '../../../../../src/loaders/resolveBlockTag'
@@ -33,14 +35,17 @@ export const POST = async (req: Request) => {
     },
   })
 
-  const stats = delegateStats({
+  const { address, ...rest } = delegateStats({
     totalSupply,
     votingPower,
     delegatorCount,
-  }).find((entry) => entry.address == delegate)
+  }).find((entry) => entry.address == delegate) as DelegateStats
 
   const response = {
-    ...stats,
+    ...rest,
+    chainId: chain.id,
+    blockNumber,
+    delegate: address,
     delegators: bfs(inverse(weights), delegate),
   }
 
