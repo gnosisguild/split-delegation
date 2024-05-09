@@ -9,20 +9,24 @@ export default function createWeights(
     Object.keys(registry).filter((account) => registry[account].optOut == true)
   )
 
+  type Entries = [string, { delegate: Address; ratio: bigint }[]]
+  const isExpired = (expiration: number) => expiration != 0 && expiration < when
+
   const entries = Object.entries(registry)
-    .map(([delegator, { delegation, expiration }]) => {
-      const isExpired = expiration != 0 && expiration < when
-      return [delegator, isExpired ? [] : delegation] as [
-        string,
-        { delegate: Address; ratio: bigint }[],
-      ]
-    })
-    .map(([delegator, delegation]) => {
-      return [
-        delegator,
-        delegation.filter(({ delegate }) => !optedOut.has(delegate)),
-      ] as [string, { delegate: Address; ratio: bigint }[]]
-    })
+    // filter expired delegations
+    .map(
+      ([delegator, { delegation, expiration }]) =>
+        [delegator, isExpired(expiration) ? [] : delegation] as Entries
+    )
+    // filter opted out addresses
+    .map(
+      ([delegator, delegation]) =>
+        [
+          delegator,
+          delegation.filter(({ delegate }) => !optedOut.has(delegate)),
+        ] as Entries
+    )
+    // exclude empty bags
     .filter(([, delegation]) => delegation.length > 0)
 
   const result: Weights<bigint> = {}
