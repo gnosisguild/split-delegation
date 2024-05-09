@@ -65,8 +65,8 @@ async function _load({
     space,
     blockTimestamp: Number(block.timestamp),
   })
-  const registry = createRegistry(parseRows(events), Number(block.timestamp))
-  const weights = createWeights(registry)
+  const registry = createRegistry(parseRows(events))
+  const weights = createWeights(registry, Number(block.timestamp))
 
   await cachePut(key, weights)
 
