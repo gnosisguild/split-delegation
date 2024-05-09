@@ -16,6 +16,15 @@ export type DelegationAction = {
   | { expire: { expiration: number } }
 )
 
+export type Registry = Record<
+  string,
+  {
+    delegation: { delegate: Address; ratio: bigint }[]
+    expiration: number
+    optOut: boolean
+  }
+>
+
 export type Weights<W> = {
   [key: string]: {
     [key: string]: W

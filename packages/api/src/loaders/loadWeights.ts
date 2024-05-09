@@ -1,7 +1,7 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createWeights from '../weights/createWeights'
+import createWeights from '../fns/createWeights'
 import parseRows from '../fns/parseRows'
 
 import createClient from './createClient'

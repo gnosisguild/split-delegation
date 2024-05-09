@@ -1,8 +1,7 @@
 import assert from 'assert'
 import { Address } from 'viem'
 
-import { Registry } from './types'
-import { DelegationAction } from '../types'
+import { DelegationAction, Registry } from '../types'
 
 /**
  * Consolidates DelegationEvents into a unified registry view. These events can come
@@ -16,9 +15,13 @@ import { DelegationAction } from '../types'
  * @param {DelegationEvent[]} events - DelegationEvents sorted by source block timestamp.
  * @returns {Registry} - Unified registry view.
  */
-export default function (actions: DelegationAction[]): Registry {
-  const fullRegistry = actions.reduce(reducer, {})
-  const registry = selectEffectiveVenue(fullRegistry)
+export default function (actions: DelegationAction[], when: number): Registry {
+  const [registry] = [actions]
+    .map((actions) => actions.reduce(reducer, {}))
+    .map((fullRegistry) => selectEffectiveVenue(fullRegistry))
+    .map((registry) => filterExpired(registry, when))
+    .map((registry) => filterOptOuts(registry))
+
   return registry
 }
 
@@ -37,7 +40,6 @@ type Venue = {
 
 function reducer(state: State, action: DelegationAction): State {
   const account = action.account
-
   const venueId = `${action.chainId}-${action.registry}`
 
   // THIS IS SLOW
@@ -90,24 +92,6 @@ function reducer(state: State, action: DelegationAction): State {
 function selectEffectiveVenue(
   registry: Record<string, { venueId: string; venues: Record<string, Venue> }>
 ): Registry {
-  // THIS IS SLOW
-  // return Object.keys(registry).reduce(
-  //   (result, account) => {
-  //     const { venueId, venues } = registry[account]
-  //     const { delegation, expiration, optOut } = venues[venueId]
-
-  //     assert(Array.isArray(delegation))
-  //     assert(typeof expiration == 'number')
-  //     assert(typeof optOut == 'boolean')
-
-  //     return {
-  //       ...result,
-  //       [account]: { delegation, expiration, optOut },
-  //     }
-  //   },
-  //   {} as Record<string, Venue>
-  // )
-
   const result: Record<string, Venue> = {}
   for (const account of Object.keys(registry)) {
     const { venueId, venues } = registry[account]
@@ -115,4 +99,33 @@ function selectEffectiveVenue(
     result[account] = { delegation, expiration, optOut }
   }
   return result
+}
+
+function filterExpired(registry: Registry, now: number): Registry {
+  for (const key of Object.keys(registry)) {
+    const { expiration } = registry[key]
+    if (expiration != 0 && expiration < now) {
+      registry[key].delegation = []
+    }
+  }
+  return registry
+}
+
+function filterOptOuts(registry: Registry): Registry {
+  const optedOut = new Set(
+    Object.keys(registry).filter((account) => registry[account].optOut == true)
+  )
+
+  if (optedOut.size == 0) {
+    return registry
+  }
+
+  for (const key of Object.keys(registry)) {
+    const entry = registry[key]
+
+    entry.delegation = entry.delegation.filter(
+      ({ delegate }) => optedOut.has(delegate) == false
+    )
+  }
+  return registry
 }

@@ -26,7 +26,7 @@ describe('createRegistry', () => {
         },
       },
     ]
-    const result = createRegistry(actions)
+    const result = createRegistry(actions, 0)
 
     expect(result).toEqual({
       [A]: {
@@ -53,7 +53,7 @@ describe('createRegistry', () => {
         account: A,
         set: {
           delegation: [{ delegate: B, ratio: 100n }],
-          expiration: 100,
+          expiration: 1000,
         },
       },
       {
@@ -66,7 +66,7 @@ describe('createRegistry', () => {
         },
       },
     ]
-    const result = createRegistry(actions)
+    const result = createRegistry(actions, 0)
 
     expect(result).toEqual({
       [A]: {
@@ -105,7 +105,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 100)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -133,7 +133,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 100)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -164,10 +164,10 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 0)).toEqual({
       [A]: {
         delegation: [
-          { delegate: B, ratio: 3n },
+          // { delegate: B, ratio: 3n },
           { delegate: C, ratio: 4n },
         ],
         expiration: 0,
@@ -203,7 +203,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 0)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -227,7 +227,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 0)).toEqual({
       [A]: {
         delegation: [],
         expiration: 123,
@@ -258,7 +258,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 100)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -292,7 +292,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions)).toEqual({
+    expect(createRegistry(actions, 0)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -300,6 +300,55 @@ describe('createRegistry', () => {
         ],
         expiration: 123,
         optOut: false,
+      },
+    })
+  })
+
+  test('opting out outlasts expirations', () => {
+    const actions: DelegationAction[] = [
+      {
+        chainId: 1,
+        registry: REGISTRY_V1,
+        account: A,
+        set: {
+          delegation: [
+            { delegate: B, ratio: 50n },
+            { delegate: C, ratio: 50n },
+          ],
+          expiration: 0,
+        },
+      },
+      {
+        chainId: 1,
+        registry: REGISTRY_V1,
+        account: B,
+        set: {
+          delegation: [{ delegate: C, ratio: 50n }],
+          expiration: 1999,
+        },
+      },
+      {
+        chainId: 1,
+        registry: REGISTRY_V1,
+        account: B,
+        opt: {
+          optOut: true,
+        },
+      },
+    ]
+
+    const result = createRegistry(actions, 2024)
+
+    expect(result).toEqual({
+      [A]: {
+        delegation: [{ delegate: C, ratio: 50n }],
+        expiration: 0,
+        optOut: false,
+      },
+      [B]: {
+        delegation: [],
+        expiration: 1999,
+        optOut: true,
       },
     })
   })
