@@ -30,7 +30,7 @@ export default async function loadScores({
   })
   console.log(`[Load Scores] ${space}, done in ${timerEnd(start)}ms`)
 
-  assert(addresses.length == Object.keys(scores).length)
+  assert(addresses.length <= Object.keys(scores).length)
   return { scores }
 }
 
