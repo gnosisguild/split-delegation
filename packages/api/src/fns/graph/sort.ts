@@ -1,4 +1,5 @@
 import assert from 'assert'
+import allNodes from './allNodes'
 import { Weights } from '../../types'
 
 /**
@@ -11,58 +12,39 @@ import { Weights } from '../../types'
 
 export default function kahn<T>(dag: Weights<T>): string[] {
   const inDegree = new Map<string, number>()
-  const nodes = all(dag)
-  for (const node of nodes) {
-    inDegree.set(node, 0)
+  const addresses = allNodes(dag)
+  for (const address of addresses) {
+    inDegree.set(address, 0)
   }
 
-  for (const node of nodes) {
-    for (const neighbor of neighbors(dag, node)) {
+  for (const address of addresses) {
+    for (const neighbor of neighbors(dag, address)) {
       inDegree.set(neighbor, (inDegree.get(neighbor) as number) + 1)
     }
   }
 
   const pending: string[] = []
-  for (const node of nodes) {
-    if (inDegree.get(node) == 0) {
-      pending.push(node)
+  for (const address of addresses) {
+    if (inDegree.get(address) == 0) {
+      pending.push(address)
     }
   }
 
   const result: string[] = []
   while (pending.length) {
-    const node = pending.shift() as string
-    for (const neighbor of neighbors(dag, node)) {
+    const address = pending.shift() as string
+    for (const neighbor of neighbors(dag, address)) {
       inDegree.set(neighbor, (inDegree.get(neighbor) as number) - 1)
       if (inDegree.get(neighbor) == 0) {
         pending.push(neighbor)
       }
     }
-    result.push(node)
+    result.push(address)
   }
 
-  assert(nodes.length == result.length, 'Expected no cycles')
+  assert(addresses.length == result.length, 'Expected no cycles')
 
   return result
-}
-
-function all<T>(dag: Weights<T>): string[] {
-  // THIS IS SLOW
-  // return Array.from(
-  //   new Set(
-  //     Object.keys(dag).reduce(
-  //       (prev, node) => [...prev, node, ...Object.keys(dag[node])],
-  //       [] as string[]
-  //     )
-  //   )
-  // )
-
-  const set = new Set<string>()
-  Object.keys(dag).forEach((node) => {
-    set.add(node)
-    Object.keys(dag[node]).forEach((neighbor) => set.add(neighbor))
-  })
-  return Array.from(set)
 }
 
 function neighbors<T>(dag: Weights<T>, node: string): string[] {
