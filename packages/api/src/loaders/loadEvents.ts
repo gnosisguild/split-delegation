@@ -11,7 +11,7 @@ export default async function loadEvents({
   blockTimestamp: number
 }): Promise<DelegationEvent[]> {
   let where
-  if (space.includes(".ggtest'")) {
+  if (space.includes('.ggtest')) {
     where = {
       spaceId: { in: [spaceId(space), spaceId(space.replace('.ggtest', ''))] },
       blockTimestamp: { lte: blockTimestamp },
