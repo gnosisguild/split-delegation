@@ -1,8 +1,10 @@
 import { Address } from 'viem'
 
 import { distribute } from '../src/fns/bag'
+import bfs from './fns/graph/bfs'
 import filterEdges from './fns/graph/filterEdges'
 import filterNoEdge from './fns/graph/filterNoEdge'
+import inverse from './fns/graph/inverse'
 import kahn from './fns/graph/sort'
 import toAcyclical from './fns/graph/toAcyclical'
 
@@ -28,23 +30,24 @@ export default function compute({
   const order = kahn(weights)
 
   return {
-    votingPower: votingPower({ order, weights, scores }),
-    delegatorCount: delegatorCount({ order, weights, scores }),
+    votingPower: votingPower({ weights, scores, order }),
+    delegatorCount: delegatorCount({ weights, scores }),
   }
 }
 
 function votingPower({
-  order,
   weights,
   scores,
+  order,
 }: {
-  order: string[]
   weights: Weights<bigint>
   scores: Scores
+  order: string[]
 }) {
+  const addresses = Object.keys(scores)
   const inPower: Scores = { ...scores }
   const outPower: Scores = Object.fromEntries(
-    Object.keys(scores).map((address) => [address, 0])
+    addresses.map((address) => [address, 0])
   )
 
   for (const address of order) {
@@ -61,39 +64,27 @@ function votingPower({
   }
 
   const result: Scores = {}
-  for (const address of Object.keys(scores)) {
+  for (const address of addresses) {
     result[address] = inPower[address] - outPower[address]
   }
   return result
 }
 
 function delegatorCount({
-  order,
   weights,
   scores,
 }: {
-  order: string[]
   weights: Weights<bigint>
   scores: Scores
 }): Scores {
-  const result: Record<string, Record<string, true>> = {}
-
-  for (const delegate of Object.keys(scores)) {
-    result[delegate] = {}
+  const result: Scores = {
+    all: Object.keys(weights).length,
   }
 
-  for (const delegator of order) {
-    for (const delegate of Object.keys(weights[delegator] || {})) {
-      Object.assign(result[delegate], result[delegator], { [delegator]: true })
-    }
+  const rweights = inverse(weights)
+  for (const address of Object.keys(scores)) {
+    result[address] = bfs(rweights, address).length
   }
 
-  const map = Object.fromEntries(
-    Object.keys(scores).map((address) => [
-      address,
-      Object.keys(result[address]).length,
-    ])
-  )
-  map.all = Object.keys(weights).length
-  return map
+  return result
 }
