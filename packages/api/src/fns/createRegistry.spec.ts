@@ -26,7 +26,7 @@ describe('createRegistry', () => {
         },
       },
     ]
-    const result = createRegistry(actions, 0)
+    const result = createRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
@@ -66,7 +66,7 @@ describe('createRegistry', () => {
         },
       },
     ]
-    const result = createRegistry(actions, 0)
+    const result = createRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
@@ -105,7 +105,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 100)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -133,7 +133,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 100)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [{ delegate: B, ratio: 345n }],
         expiration: 567,
@@ -164,10 +164,10 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 0)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
-          // { delegate: B, ratio: 3n },
+          { delegate: B, ratio: 3n },
           { delegate: C, ratio: 4n },
         ],
         expiration: 0,
@@ -203,7 +203,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 0)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -227,7 +227,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 0)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [],
         expiration: 123,
@@ -258,7 +258,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 100)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -292,7 +292,7 @@ describe('createRegistry', () => {
       },
     ]
 
-    expect(createRegistry(actions, 0)).toEqual({
+    expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
           { delegate: B, ratio: 3n },
@@ -337,16 +337,19 @@ describe('createRegistry', () => {
       },
     ]
 
-    const result = createRegistry(actions, 2024)
+    const result = createRegistry(actions)
 
     expect(result).toEqual({
       [A]: {
-        delegation: [{ delegate: C, ratio: 50n }],
+        delegation: [
+          { delegate: B, ratio: 50n },
+          { delegate: C, ratio: 50n },
+        ],
         expiration: 0,
         optOut: false,
       },
       [B]: {
-        delegation: [],
+        delegation: [{ delegate: C, ratio: 50n }],
         expiration: 1999,
         optOut: true,
       },

@@ -15,12 +15,10 @@ import { DelegationAction, Registry } from '../types'
  * @param {DelegationEvent[]} events - DelegationEvents sorted by source block timestamp.
  * @returns {Registry} - Unified registry view.
  */
-export default function (actions: DelegationAction[], when: number): Registry {
+export default function (actions: DelegationAction[]): Registry {
   const [registry] = [actions]
     .map((actions) => actions.reduce(reducer, {}))
     .map((fullRegistry) => selectEffectiveVenue(fullRegistry))
-    .map((registry) => filterExpired(registry, when))
-    .map((registry) => filterOptOuts(registry))
 
   return registry
 }
@@ -99,33 +97,4 @@ function selectEffectiveVenue(
     result[account] = { delegation, expiration, optOut }
   }
   return result
-}
-
-function filterExpired(registry: Registry, now: number): Registry {
-  for (const key of Object.keys(registry)) {
-    const { expiration } = registry[key]
-    if (expiration != 0 && expiration < now) {
-      registry[key].delegation = []
-    }
-  }
-  return registry
-}
-
-function filterOptOuts(registry: Registry): Registry {
-  const optedOut = new Set(
-    Object.keys(registry).filter((account) => registry[account].optOut == true)
-  )
-
-  if (optedOut.size == 0) {
-    return registry
-  }
-
-  for (const key of Object.keys(registry)) {
-    const entry = registry[key]
-
-    entry.delegation = entry.delegation.filter(
-      ({ delegate }) => optedOut.has(delegate) == false
-    )
-  }
-  return registry
 }
