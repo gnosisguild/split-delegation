@@ -28,20 +28,20 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
+    addresses: {
+      more: [delegate],
+    },
   })
 
-  const [stats] = delegateStats({
-    address: delegate,
+  const stats = delegateStats({
     totalSupply,
     votingPower,
     delegatorCount,
-  })
-
-  const delegators = bfs(inverse(weights), delegate)
+  }).find((entry) => entry.address == delegate)
 
   const response = {
     ...stats,
-    delegators,
+    delegators: bfs(inverse(weights), delegate),
   }
 
   return new Response(JSON.stringify(response), {

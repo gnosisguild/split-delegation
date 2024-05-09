@@ -46,9 +46,9 @@ describe('delegateStats', () => {
       {
         address: C,
         delegatorCount: 0,
-        votingPower: 0,
         percentOfDelegators: 0,
-        percentOfVotingPower: 0,
+        votingPower: 50,
+        percentOfVotingPower: 5000,
       },
     ])
   })

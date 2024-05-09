@@ -11,13 +11,16 @@ export default async function loadPower({
   blockNumber,
   space,
   strategies,
-  voters,
+  addresses: { voters = [], more = [] } = {},
 }: {
   chain: Chain
   blockNumber: number
   space: string
   strategies: any[]
-  voters?: Address[]
+  addresses?: {
+    voters?: Address[]
+    more?: Address[]
+  }
 }) {
   const { weights } = await loadWeights({
     chain,
@@ -26,8 +29,8 @@ export default async function loadPower({
   })
 
   const addresses =
-    voters && voters.length > 0
-      ? Array.from(new Set([...allNodes(weights), ...voters]))
+    voters.length > 0 || more.length > 0
+      ? Array.from(new Set([...allNodes(weights), ...voters, ...more]))
       : allNodes(weights)
 
   const { scores } = await loadScores({
