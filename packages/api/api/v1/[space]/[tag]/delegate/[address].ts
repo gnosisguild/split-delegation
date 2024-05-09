@@ -35,17 +35,16 @@ export const POST = async (req: Request) => {
     },
   })
 
-  const { address, ...rest } = delegateStats({
+  const stats = delegateStats({
     totalSupply,
     votingPower,
     delegatorCount,
   }).find((entry) => entry.address == delegate) as DelegateStats
 
   const response = {
-    ...rest,
+    ...stats,
     chainId: chain.id,
     blockNumber,
-    delegate: address,
     delegators: bfs(inverse(weights), delegate),
   }
 

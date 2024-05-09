@@ -42,7 +42,7 @@ export const POST = async (req: Request) => {
   const response = {
     chainId: chain.id,
     blockNumber,
-    delegator,
+    address: delegator,
     delegates: delegates.map((delegate) =>
       allDelegateStats.find((s) => s.address == delegate)
     ),
