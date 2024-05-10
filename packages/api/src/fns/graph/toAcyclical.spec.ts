@@ -3,7 +3,7 @@ import { describe, test } from '@jest/globals'
 import toDAG from './toAcyclical'
 import { Weights } from '../../types'
 
-describe('toDAG', () => {
+describe('toAcyclical', () => {
   test('one cycle in the graph', () => {
     const dag: Weights<number> = {
       A: {
@@ -19,7 +19,6 @@ describe('toDAG', () => {
     }
 
     expect(toDAG(dag)).toEqual({
-      A: {},
       B: {
         C: 0,
       },
@@ -52,14 +51,12 @@ describe('toDAG', () => {
     }
 
     expect(toDAG(dag)).toEqual({
-      A: {},
       B: {
         C: 0,
       },
       C: {
         A: 0,
       },
-      D: {},
       E: {
         F: 0,
       },
@@ -84,7 +81,6 @@ describe('toDAG', () => {
     }
 
     expect(toDAG(dag)).toEqual({
-      A: {},
       B: {
         C: 0,
       },

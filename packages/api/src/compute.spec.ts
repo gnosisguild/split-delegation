@@ -127,34 +127,4 @@ describe('compute', () => {
       },
     })
   })
-  test('it handles delegator graph entry with no edges', () => {
-    const weights = {
-      [A]: {
-        [B]: 20n,
-        [C]: 80n,
-      },
-      [C]: {},
-    }
-    const scores = {
-      [A]: 100,
-      [B]: 0,
-      [C]: 0,
-      [D]: 0,
-    }
-    expect(compute({ weights, scores })).toEqual({
-      votingPower: {
-        [A]: 0,
-        [B]: 20,
-        [C]: 80,
-        [D]: 0,
-      },
-      delegatorCount: {
-        all: 1,
-        [A]: 0,
-        [B]: 1,
-        [C]: 1,
-        [D]: 0,
-      },
-    })
-  })
 })

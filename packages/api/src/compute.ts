@@ -3,7 +3,6 @@ import { Address } from 'viem'
 import { distribute } from '../src/fns/bag'
 import bfs from './fns/graph/bfs'
 import filterVertices from './fns/graph/filterVertices'
-import filterNoEdge from './fns/graph/filterNoEdge'
 import inverse from './fns/graph/inverse'
 import kahn from './fns/graph/sort'
 import toAcyclical from './fns/graph/toAcyclical'
@@ -24,8 +23,6 @@ export default function compute({
     .map((weights) => (voters ? filterVertices(weights, voters) : weights))
     // Break any potential cycles in the delegator weights
     .map((weights) => toAcyclical(weights))
-    // Remove any empty nodes that may remain after cycle busting
-    .map((weights) => filterNoEdge(weights))
 
   const order = kahn(weights)
 
