@@ -2,7 +2,7 @@ import { Address } from 'viem'
 
 import { distribute } from '../src/fns/bag'
 import bfs from './fns/graph/bfs'
-import filterEdges from './fns/graph/filterEdges'
+import filterVertices from './fns/graph/filterVertices'
 import filterNoEdge from './fns/graph/filterNoEdge'
 import inverse from './fns/graph/inverse'
 import kahn from './fns/graph/sort'
@@ -21,7 +21,7 @@ export default function compute({
 }) {
   ;[weights] = [weights]
     // Filter out the addresses exercising voting right, from delegator weights
-    .map((weights) => (voters ? filterEdges(weights, voters) : weights))
+    .map((weights) => (voters ? filterVertices(weights, voters) : weights))
     // Break any potential cycles in the delegator weights
     .map((weights) => toAcyclical(weights))
     // Remove any empty nodes that may remain after cycle busting
