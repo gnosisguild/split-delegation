@@ -3,13 +3,13 @@ import { Address } from 'viem'
 import { Weights } from '../../types'
 
 export default function bfs<T>(weights: Weights<T>, root: string): Address[] {
-  const queue: string[] = [root]
   const visited: Record<string, boolean> = {}
+  const queue: string[] = [root]
 
   while (queue.length > 0) {
-    const node = queue.pop() as Address
+    const node = queue.shift() as Address
     for (const neighbor of Object.keys(weights[node] || {})) {
-      if (!visited[neighbor as Address]) {
+      if (!visited[neighbor]) {
         visited[neighbor] = true
         queue.push(neighbor)
       }
