@@ -10,7 +10,7 @@ export function merge(
   return Object.fromEntries(
     keys.map((key) => [
       key,
-      bags.reduce((result, bag) => result + bag[key] || 0, 0),
+      bags.reduce((result, bag) => result + (bag[key] || 0), 0),
     ])
   )
 }
