@@ -11,42 +11,40 @@ import { Weights } from '../../types'
  */
 
 export default function kahn<T>(dag: Weights<T>): string[] {
-  const inDegree = new Map<string, number>()
   const addresses = allNodes(dag)
+
+  const inDegree = new Map<string, number>()
   for (const address of addresses) {
     inDegree.set(address, 0)
   }
 
   for (const address of addresses) {
-    for (const neighbor of neighbors(dag, address)) {
-      inDegree.set(neighbor, (inDegree.get(neighbor) as number) + 1)
+    for (const neighbor of Object.keys(dag[address] || {})) {
+      inDegree.set(neighbor, inDegree.get(neighbor)! + 1)
     }
   }
 
   const pending: string[] = []
-  for (const address of addresses) {
-    if (inDegree.get(address) == 0) {
+  for (const [address, value] of inDegree.entries()) {
+    if (value == 0) {
       pending.push(address)
     }
   }
 
-  const result: string[] = []
+  const sorted: string[] = []
   while (pending.length) {
-    const address = pending.shift() as string
-    for (const neighbor of neighbors(dag, address)) {
-      inDegree.set(neighbor, (inDegree.get(neighbor) as number) - 1)
+    const address = pending.shift()!
+    sorted.push(address)
+
+    for (const neighbor of Object.keys(dag[address] || {})) {
+      inDegree.set(neighbor, inDegree.get(neighbor)! - 1)
       if (inDegree.get(neighbor) == 0) {
         pending.push(neighbor)
       }
     }
-    result.push(address)
   }
 
-  assert(addresses.length == result.length, 'Expected no cycles')
+  assert(addresses.length == sorted.length, 'Expected no cycles')
 
-  return result
-}
-
-function neighbors<T>(dag: Weights<T>, node: string): string[] {
-  return Object.keys(dag[node] || {})
+  return sorted
 }
