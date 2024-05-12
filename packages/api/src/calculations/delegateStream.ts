@@ -4,44 +4,53 @@ import bfs from '../fns/graph/bfs'
 
 import { Weights } from '../types'
 
-export default function (
-  weights: Weights<bigint>,
-  address: string,
+export default function ({
+  weights,
+  score,
+  order,
+  fromDelegator,
+}: {
+  weights: Weights<bigint>
   score: number
-) {
-  const nodes = [address, ...bfs(weights, address)]
+  order?: string[]
+  fromDelegator: string
+}) {
   const result = Object.fromEntries(
-    nodes.map((node) => [
-      node,
+    [fromDelegator, ...bfs(weights, fromDelegator)].map((address) => [
+      address,
       {
-        address: node,
-        delegatedPower: node == address ? score : 0,
-        breakdown: { direct: 0, transient: 0 },
+        address,
+        direct: false,
+        delegatedPower: address == fromDelegator ? score : 0,
       },
     ])
   )
 
-  const order = [address, ...kahn(weights, nodes)].filter(
-    (node) => !!weights[node]
-  )
+  const isReachable = (node: string) => !!result[node]
+  const isDelegator = (node: string) => !!weights[node]
+
+  /*
+   * Compute order if not provided.
+   */
+  order = order || kahn(weights)
+
+  /*
+   * Only go over nodes which are reachable and have delegations
+   */
+  order = order.filter(isReachable).filter(isDelegator)
 
   for (const from of order) {
     for (const [to, value] of distribute(
       weights[from],
       result[from].delegatedPower
     )) {
-      const _from = result[from]
-      const _to = result[to]
-
-      _from.breakdown.transient += value
-      _from.delegatedPower -= value
-
-      _to.breakdown.direct += from == address ? value : 0
-      _to.delegatedPower += value
+      result[from].delegatedPower -= value
+      result[to].direct = from == fromDelegator
+      result[to].delegatedPower += value
     }
   }
 
   return Object.entries(result)
-    .filter(([k]) => k != address)
+    .filter(([k]) => k != fromDelegator)
     .map(([, v]) => v)
 }

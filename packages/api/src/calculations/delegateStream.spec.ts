@@ -12,7 +12,9 @@ describe('delegateStream', () => {
 
   test('node without delegations', () => {
     const weights = {}
-    expect(delegateStream(weights, A, 1000)).toEqual([])
+    expect(delegateStream({ weights, fromDelegator: A, score: 1000 })).toEqual(
+      []
+    )
   })
 
   test('direct delegation', () => {
@@ -24,23 +26,25 @@ describe('delegateStream', () => {
       },
     }
 
-    expect(delegateStream(weights, A, 1000)).toEqual([
+    expect(delegateStream({ weights, fromDelegator: A, score: 1000 })).toEqual([
       {
         address: B,
+        direct: true,
         delegatedPower: 200,
-        breakdown: { transient: 0, direct: 200 },
       },
       {
         address: C,
+        direct: true,
         delegatedPower: 300,
-        breakdown: { transient: 0, direct: 300 },
       },
       {
         address: D,
+        direct: true,
         delegatedPower: 500,
-        breakdown: { transient: 0, direct: 500 },
       },
     ])
+
+    expect(delegateStream({ weights, fromDelegator: B, score: 20 })).toEqual([])
   })
 
   test('transitive delegation', () => {
@@ -54,28 +58,45 @@ describe('delegateStream', () => {
         [E]: 50n,
       },
     }
-    expect(delegateStream(weights, A, 1000)).toEqual([
+    expect(delegateStream({ weights, fromDelegator: A, score: 30 })).toEqual([
       {
         address: B,
+        direct: true,
         delegatedPower: 0,
-        breakdown: { transient: 500, direct: 500 },
       },
       {
         address: C,
-        delegatedPower: 500,
-        breakdown: { transient: 0, direct: 500 },
+        direct: true,
+        delegatedPower: 15,
       },
       {
         address: D,
-        delegatedPower: 250,
-        breakdown: { transient: 0, direct: 0 },
+        direct: false,
+        delegatedPower: 7.5,
       },
       {
         address: E,
-        delegatedPower: 250,
-        breakdown: { transient: 0, direct: 0 },
+        direct: false,
+        delegatedPower: 7.5,
       },
     ])
+
+    expect(delegateStream({ weights, fromDelegator: B, score: 100 })).toEqual([
+      {
+        address: D,
+        direct: true,
+        delegatedPower: 50,
+      },
+      {
+        address: E,
+        direct: true,
+        delegatedPower: 50,
+      },
+    ])
+
+    expect(delegateStream({ weights, fromDelegator: D, score: 100 })).toEqual(
+      []
+    )
   })
 
   test('transitive delegation with a forward edge', () => {
@@ -95,26 +116,26 @@ describe('delegateStream', () => {
       },
     }
 
-    expect(delegateStream(weights, A, 1000)).toEqual([
+    expect(delegateStream({ weights, fromDelegator: A, score: 1000 })).toEqual([
       {
         address: B,
+        direct: true,
         delegatedPower: 0,
-        breakdown: { transient: 300, direct: 300 },
       },
       {
         address: C,
+        direct: true,
         delegatedPower: 0,
-        breakdown: { transient: 700, direct: 700 },
       },
       {
         address: D,
+        direct: false,
         delegatedPower: 0,
-        breakdown: { transient: 1000, direct: 0 },
       },
       {
         address: E,
+        direct: false,
         delegatedPower: 1000,
-        breakdown: { transient: 0, direct: 0 },
       },
     ])
   })
