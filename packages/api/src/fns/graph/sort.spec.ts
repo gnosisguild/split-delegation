@@ -70,21 +70,4 @@ describe('sort', () => {
 
     expect(() => kahn(dag)).toThrow()
   })
-
-  test('sorts only a subset', () => {
-    const dag: Weights<number> = {
-      A: {
-        B: 0,
-        C: 0,
-      },
-      C: {
-        B: 0,
-      },
-      D: {
-        E: 0,
-      },
-    }
-
-    expect(kahn(dag, ['A', 'B', 'C'])).toEqual(['A', 'C', 'B'])
-  })
 })
