@@ -23,6 +23,11 @@ export default function ({
    */
   order = order || kahn(weights)
 
+  // make it stop at the destination
+  weights = Object.fromEntries(
+    Object.entries(weights).filter(([key]) => key != toDelegate)
+  )
+
   return delegators.map((delegator) =>
     flow({
       weights,
@@ -49,11 +54,6 @@ function flow({
 }) {
   const from = delegator
   const to = delegate
-
-  // make it stop at the destination
-  weights = Object.fromEntries(
-    Object.entries(weights).filter(([key]) => key != to)
-  )
 
   const { direct, delegatedPower } = delegateStream({
     weights,

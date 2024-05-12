@@ -4,6 +4,7 @@ import basisPoints from '../../../../src/fns/basisPoints'
 import delegateStream from '../../../../src/calculations/delegateStream'
 import delegatorStream from '../../../../src/calculations/delegatorStream'
 import kahn from '../../../../src/fns/graph/sort'
+import toAcyclical from '../../../../src/fns/graph/toAcyclical'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
@@ -31,7 +32,8 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
   })
-  const order = kahn(weights) as Address[]
+
+  const order = kahn(toAcyclical(weights)) as Address[]
 
   const { scores } = await loadScores({
     chain,
