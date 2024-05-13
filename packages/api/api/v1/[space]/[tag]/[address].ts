@@ -1,5 +1,7 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
+import calculateDelegations from '../../../../src/calculations/delegations'
+import calculateVotingPower from '../../../../src/calculations/votingPower'
 import kahn from '../../../../src/fns/graph/sort'
 import toAcyclical from '../../../../src/fns/graph/toAcyclical'
 
@@ -10,8 +12,6 @@ import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 import { syncTip } from '../../../../src/commands/sync'
 
 import { DelegatorRequestBody } from '../../../../src/types'
-import calculateDelegations from '../../../../src/calculations/delegations'
-import calculateVotingPower from '../../../../src/calculations/votingPower'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
@@ -48,10 +48,9 @@ export const POST = async (req: Request) => {
     percentOfDelegators,
     delegates,
     delegators,
-  } = calculateVotingPower({
+  } = calculateDelegations({
     weights,
-    scores,
-    delegations: calculateDelegations({ weights, order }),
+    votingPower: calculateVotingPower({ weights, scores, order }),
     totalSupply,
     address,
   })

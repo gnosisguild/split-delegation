@@ -1,67 +1,37 @@
-import { formatUnits, parseUnits } from 'viem'
-
-import basisPoints from '../fns/basisPoints'
-import distribute from '../fns/distribute'
-import formatDecimal from '../fns/formatDecimal'
-
-import { Delegations, Scores, Weights } from '../types'
+import { distribute } from '../fns/bag'
+import { Scores, Weights } from '../types'
 
 export default function calculateVotingPower({
   weights,
   scores,
-  delegations,
-  totalSupply,
-  address,
+  order,
 }: {
   weights: Weights<bigint>
   scores: Scores
-  delegations: Delegations
-  totalSupply: number
-  address: string
+  order: string[]
 }) {
-  const total = (address: string) =>
-    Object.values(weights[address]).reduce((p, v) => p + v, 0n) as bigint
-
-  const powerIn = delegations[address].delegators.map(
-    ({ address: delegator, weight }) => ({
-      address: delegator,
-      value: weightedScore(scores[delegator], weight, total(delegator)),
-    })
+  const addresses = Object.keys(scores)
+  const inPower: Scores = { ...scores }
+  const outPower: Scores = Object.fromEntries(
+    addresses.map((address) => [address, 0])
   )
 
-  const delegatedPower = powerIn.reduce((p, { value }) => p + value, 0)
-  const votingPower = delegatedPower + scores[address]
+  for (const address of order) {
+    const delegator =
+      Object.keys(weights[address] || {}).length > 0 ? address : null
 
-  const delegators = powerIn.map(({ address: delegator, value }) => ({
-    address: delegator,
-    direct: !!weights[delegator][address],
-    votingPower: value,
-    percentPowerIn: basisPoints(value, votingPower),
-  }))
-
-  const delegates = distribute(delegations[address].delegates, votingPower).map(
-    ({ address: delegate, value }) => ({
-      address: delegate,
-      direct: !!weights[address][delegate],
-      votingPower: value,
-      percentPowerOut: basisPoints(value, votingPower),
-    })
-  )
-
-  return {
-    votingPower,
-    percentOfVotingPower: basisPoints(votingPower, totalSupply),
-    percentOfDelegators: basisPoints(
-      delegators.length,
-      Object.keys(weights).length
-    ),
-    delegators,
-    delegates,
+    if (delegator) {
+      const distribution = distribute(weights[delegator], inPower[delegator])
+      for (const [delegate, power] of distribution) {
+        outPower[delegator] += power
+        inPower[delegate] += power
+      }
+    }
   }
-}
 
-function weightedScore(score: number, weight: bigint, total: bigint) {
-  return Number(
-    formatUnits((weight * parseUnits(formatDecimal(score), 18)) / total, 18)
-  )
+  const result: Scores = {}
+  for (const address of addresses) {
+    result[address] = inPower[address] - outPower[address]
+  }
+  return result
 }
