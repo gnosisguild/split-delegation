@@ -1,11 +1,11 @@
 import { Address } from 'viem'
 
-import { distribute } from '../src/fns/bag'
 import bfs from './fns/graph/bfs'
 import filterVertices from './fns/graph/filterVertices'
 import inverse from './fns/graph/inverse'
 import kahn from './fns/graph/sort'
 import toAcyclical from './fns/graph/toAcyclical'
+import votingPower from './calculations/votingPower'
 
 import { Scores, Weights } from '../src/types'
 
@@ -30,41 +30,6 @@ export default function compute({
     votingPower: votingPower({ weights, scores, order }),
     delegatorCount: delegatorCount({ weights, scores }),
   }
-}
-
-function votingPower({
-  weights,
-  scores,
-  order,
-}: {
-  weights: Weights<bigint>
-  scores: Scores
-  order: string[]
-}) {
-  const addresses = Object.keys(scores)
-  const inPower: Scores = { ...scores }
-  const outPower: Scores = Object.fromEntries(
-    addresses.map((address) => [address, 0])
-  )
-
-  for (const address of order) {
-    const delegator =
-      Object.keys(weights[address] || {}).length > 0 ? address : null
-
-    if (delegator) {
-      const distribution = distribute(weights[delegator], inPower[delegator])
-      for (const [delegate, power] of distribution) {
-        outPower[delegator] += power
-        inPower[delegate] += power
-      }
-    }
-  }
-
-  const result: Scores = {}
-  for (const address of addresses) {
-    result[address] = inPower[address] - outPower[address]
-  }
-  return result
 }
 
 function delegatorCount({
