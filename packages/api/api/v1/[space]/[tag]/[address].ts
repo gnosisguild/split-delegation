@@ -10,8 +10,8 @@ import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 import { syncTip } from '../../../../src/commands/sync'
 
 import { DelegatorRequestBody } from '../../../../src/types'
-import calculateDelegations from 'src/calculations/delegations'
-import calculateVotingPower from 'src/calculations/votingPower'
+import calculateDelegations from '../../../../src/calculations/delegations'
+import calculateVotingPower from '../../../../src/calculations/votingPower'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
