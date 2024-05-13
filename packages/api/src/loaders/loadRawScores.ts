@@ -16,7 +16,7 @@ export default async function loadRawScores({
   blockNumber: number
   space: string
   strategies: any[]
-  addresses: Address[]
+  addresses: string[]
 }) {
   const result = await _load({
     chain,
@@ -45,7 +45,7 @@ async function _load({
   blockNumber: number
   space: string
   strategies: any[]
-  addresses: Address[]
+  addresses: string[]
 }): Promise<Scores> {
   const CHUNK = 3000
   let result = {}
@@ -78,7 +78,7 @@ async function loadWithRetry({
   blockNumber: number
   space: string
   strategies: any
-  addresses: Address[]
+  addresses: string[]
 }): Promise<Scores> {
   try {
     const results = await snapshot.utils.getScores(

@@ -2,7 +2,7 @@ import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import delegateStats, { DelegateStats } from '../fns/delegateStats'
-import loadPower from './loadPower'
+import createVotingPower from '../actions/createVotingPower'
 
 import prisma from '../../prisma/singleton'
 
@@ -58,7 +58,7 @@ async function _load({
     }
   }
 
-  const { votingPower, delegatorCount } = await loadPower({
+  const votingPower = await createVotingPower({
     chain,
     blockNumber,
     space,
@@ -67,7 +67,7 @@ async function _load({
 
   const result = delegateStats({
     votingPower,
-    delegatorCount,
+    delegatorCount: {},
     totalSupply,
   })
 

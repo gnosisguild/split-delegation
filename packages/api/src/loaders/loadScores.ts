@@ -18,7 +18,7 @@ export default async function loadScores({
   blockNumber: number
   space: string
   strategies: any[]
-  addresses: Address[]
+  addresses: string[]
 }) {
   const start = timerStart()
   const { scores } = await _load({
@@ -45,7 +45,7 @@ async function _load({
   blockNumber: number
   space: string
   strategies: any[]
-  addresses: Address[]
+  addresses: string[]
 }) {
   const key = cacheKey({
     chain,
@@ -55,7 +55,7 @@ async function _load({
   })
 
   const { scores } = await cacheGet(key)
-  const missing: Address[] = []
+  const missing: string[] = []
   for (const address of addresses) {
     if (typeof scores[address] != 'number') {
       missing.push(address)

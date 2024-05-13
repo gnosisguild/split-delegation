@@ -1,6 +1,6 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
-import loadPower from '../../../../src/loaders/loadPower'
+import createVotingPower from '../../../../src/actions/createVotingPower'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
@@ -23,7 +23,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { votingPower } = await loadPower({
+  const votingPower = await createVotingPower({
     chain,
     blockNumber,
     space,
@@ -31,11 +31,11 @@ export const POST = async (req: Request) => {
     addresses: { voters: addresses },
   })
 
-  const response = Object.fromEntries(
+  const result = Object.fromEntries(
     addresses.map((address) => [address, votingPower[address]])
   )
 
-  return new Response(JSON.stringify(response), {
+  return new Response(JSON.stringify(result), {
     headers: { 'Content-Type': 'application/json' },
   })
 }

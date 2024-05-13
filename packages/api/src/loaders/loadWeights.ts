@@ -7,6 +7,7 @@ import loadEvents from './loadEvents'
 import createRegistry from '../fns/createRegistry'
 import createWeights from '../fns/createWeights'
 import parseRows from '../fns/parseRows'
+import toAcyclical from '../fns/graph/toAcyclical'
 
 import { Weights } from '../types'
 
@@ -66,7 +67,7 @@ async function _load({
     blockTimestamp: Number(block.timestamp),
   })
   const registry = createRegistry(parseRows(events))
-  const weights = createWeights(registry, Number(block.timestamp))
+  const weights = toAcyclical(createWeights(registry, Number(block.timestamp)))
 
   await cachePut(key, weights)
 

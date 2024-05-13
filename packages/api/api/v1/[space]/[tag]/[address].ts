@@ -3,7 +3,6 @@ import { Address, BlockTag, getAddress } from 'viem'
 import calculateDelegations from '../../../../src/calculations/delegations'
 import calculateVotingPower from '../../../../src/calculations/votingPower'
 import kahn from '../../../../src/fns/graph/sort'
-import toAcyclical from '../../../../src/fns/graph/toAcyclical'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
@@ -32,9 +31,7 @@ export const POST = async (req: Request) => {
     space,
   })
 
-  // TODO will make this prettier
-  const _weights = toAcyclical(weights)
-  const order = kahn(_weights, [address]) as Address[]
+  const order = kahn(weights, [address]) as Address[]
 
   const { scores } = await loadScores({
     chain,
@@ -52,7 +49,7 @@ export const POST = async (req: Request) => {
     delegators,
   } = calculateDelegations({
     weights,
-    votingPower: calculateVotingPower({ weights: _weights, scores, order }),
+    votingPower: calculateVotingPower({ weights, scores, order }),
     totalSupply,
     address,
   })
