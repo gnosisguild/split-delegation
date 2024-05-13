@@ -10,8 +10,8 @@ import { Weights } from '../../types'
  * @returns {string[]} - An array containing the sorted nodes of the DAG.
  */
 
-export default function kahn<T>(dag: Weights<T>): string[] {
-  const addresses: string[] = allNodes(dag)
+export default function kahn<T>(dag: Weights<T>, more?: string[]): string[] {
+  const addresses: string[] = allNodes(dag, more)
 
   const inDegree = new Map<string, number>()
   for (const address of addresses) {

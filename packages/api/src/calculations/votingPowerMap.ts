@@ -1,7 +1,7 @@
 import { distribute } from '../fns/bag'
 import { Scores, Weights } from '../types'
 
-export default function votingPowerMap({
+export default function calculateVotingPowerMap({
   weights,
   scores,
   order,

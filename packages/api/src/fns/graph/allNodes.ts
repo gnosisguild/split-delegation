@@ -1,14 +1,17 @@
 import { Address } from 'viem'
 import { Weights } from '../../types'
 
-export default function allNodes<T>(weights: Weights<T>): Address[] {
-  const set = new Set<Address>()
+export default function allNodes<T>(
+  weights: Weights<T>,
+  more?: string[]
+): Address[] {
+  const set = new Set<string>(more || [])
   for (const delegator of Object.keys(weights)) {
-    set.add(delegator as Address)
+    set.add(delegator)
 
     for (const delegate of Object.keys(weights[delegator])) {
-      set.add(delegate as Address)
+      set.add(delegate)
     }
   }
-  return Array.from(set).sort()
+  return Array.from(set).sort() as Address[]
 }

@@ -32,14 +32,14 @@ export const POST = async (req: Request) => {
     space,
   })
 
-  const order = kahn(toAcyclical(weights)) as Address[]
+  const order = kahn(toAcyclical(weights), [address]) as Address[]
 
   const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: order.includes(address) ? order : [...order, address],
+    addresses: order,
   })
 
   const {
