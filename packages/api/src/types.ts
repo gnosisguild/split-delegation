@@ -35,6 +35,14 @@ export type Scores = {
   [key: string]: number
 }
 
+export type Delegations = Record<
+  string,
+  {
+    delegates: { address: string; weight: bigint }[]
+    delegators: { address: string; weight: bigint }[]
+  }
+>
+
 export type DelegateRequestBody = {
   totalSupply: number
   strategies: any[]
