@@ -1,8 +1,6 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
 import basisPoints from '../../../../src/fns/basisPoints'
-import delegateStream from '../../../../src/calculations/delegateStream'
-import delegatorStream from '../../../../src/calculations/delegatorStream'
 import kahn from '../../../../src/fns/graph/sort'
 import toAcyclical from '../../../../src/fns/graph/toAcyclical'
 
@@ -13,6 +11,8 @@ import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 import { syncTip } from '../../../../src/commands/sync'
 
 import { DelegatorRequestBody } from '../../../../src/types'
+import calculateDelegations from 'src/calculations/delegations'
+import calculateVotingPower from 'src/calculations/votingPower'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
@@ -43,32 +43,21 @@ export const POST = async (req: Request) => {
     addresses: order.includes(address) ? order : [...order, address],
   })
 
-  const delegators = delegatorStream({
+  const delegations = calculateDelegations({ weights, order })
+
+  const votingPower = calculateVotingPower({
     weights,
     scores,
-    order,
-    toDelegate: address,
+    delegations,
+    address,
   })
-
-  const delegates = delegateStream({
-    weights,
-    score: scores[address]!,
-    order,
-    fromDelegator: address,
-  })
-
-  const delegatedPower = delegators.reduce(
-    (prev, { delegatedPower }) => prev + delegatedPower,
-    0
-  )
-  const votingPower = delegatedPower + scores[address]
 
   const response = {
     chainId: chain.id,
     blockNumber,
     address,
-    delegators,
-    delegates,
+    delegators: delegations[address].delegators,
+    delegates: delegations[address].delegates,
     votingPower,
     percentOfVotingPower: basisPoints(votingPower, totalSupply),
   }

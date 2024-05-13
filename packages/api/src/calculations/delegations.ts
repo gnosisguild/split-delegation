@@ -11,7 +11,7 @@ type Result = Record<
   }
 >
 
-export default function ({
+export default function calculateDelegations({
   weights,
   order,
 }: {

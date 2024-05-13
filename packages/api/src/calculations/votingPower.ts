@@ -4,7 +4,7 @@ import formatDecimal from '../fns/formatDecimal'
 
 import { Delegations, Scores, Weights } from '../types'
 
-export default function ({
+export default function calculateVotingPower({
   weights,
   scores,
   delegations,
