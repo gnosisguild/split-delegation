@@ -1,6 +1,5 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
-import basisPoints from '../../../../src/fns/basisPoints'
 import kahn from '../../../../src/fns/graph/sort'
 import toAcyclical from '../../../../src/fns/graph/toAcyclical'
 
@@ -43,12 +42,17 @@ export const POST = async (req: Request) => {
     addresses: order.includes(address) ? order : [...order, address],
   })
 
-  const delegations = calculateDelegations({ weights, order })
-
-  const votingPower = calculateVotingPower({
+  const {
+    votingPower,
+    percentOfVotingPower,
+    percentOfDelegators,
+    delegates,
+    delegators,
+  } = calculateVotingPower({
     weights,
     scores,
-    delegations,
+    delegations: calculateDelegations({ weights, order }),
+    totalSupply,
     address,
   })
 
@@ -56,10 +60,11 @@ export const POST = async (req: Request) => {
     chainId: chain.id,
     blockNumber,
     address,
-    delegators: delegations[address].delegators,
-    delegates: delegations[address].delegates,
     votingPower,
-    percentOfVotingPower: basisPoints(votingPower, totalSupply),
+    percentOfVotingPower,
+    percentOfDelegators,
+    delegates,
+    delegators,
   }
 
   return new Response(JSON.stringify(response), {
