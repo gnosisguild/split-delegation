@@ -28,34 +28,31 @@ export default function calculateDelegations({
   ) as Result
 
   for (const origin of order) {
-    const delegates = findDelegates(
+    const delegates = collectDelegates(
       weights,
-      origin,
       origin,
       Object.values(weights[origin] || {}).reduce((p, v) => p + v, 0n)
     )
 
-    for (const { from, to, weight } of delegates) {
-      add(result[to].delegators, { address: from, weight })
-      add(result[from].delegates, { address: to, weight })
+    for (const { to, weight } of delegates) {
+      setInResult(result[to].delegators, { address: origin, weight })
+      setInResult(result[origin].delegates, { address: to, weight })
     }
   }
 
   return result
 }
 
-function findDelegates(
+function collectDelegates(
   weights: Weights<bigint>,
-  origin: string,
   from: string,
   weight: bigint
-): { from: string; to: string; weight: bigint }[] {
+): { to: string; weight: bigint }[] {
   if (!weights[from]) {
     return []
   }
 
   const direct = distribute(weights[from], weight).map(([to, weight]) => ({
-    from: origin,
     to,
     weight,
   }))
@@ -63,12 +60,12 @@ function findDelegates(
   return [
     ...direct,
     ...direct.flatMap(({ to, weight }) =>
-      findDelegates(weights, origin, to, weight)
+      collectDelegates(weights, to, weight)
     ),
   ]
 }
 
-function add(
+function setInResult(
   entries: { address: string; weight: bigint }[],
   { address, weight }: { address: string; weight: bigint }
 ) {
