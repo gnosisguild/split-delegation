@@ -32,7 +32,9 @@ export const POST = async (req: Request) => {
     space,
   })
 
-  const order = kahn(toAcyclical(weights), [address]) as Address[]
+  // TODO will make this prettier
+  const _weights = toAcyclical(weights)
+  const order = kahn(_weights, [address]) as Address[]
 
   const { scores } = await loadScores({
     chain,
@@ -50,7 +52,7 @@ export const POST = async (req: Request) => {
     delegators,
   } = calculateDelegations({
     weights,
-    votingPower: calculateVotingPower({ weights, scores, order }),
+    votingPower: calculateVotingPower({ weights: _weights, scores, order }),
     totalSupply,
     address,
   })
