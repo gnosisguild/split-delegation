@@ -20,7 +20,7 @@ export default function createEntities(
     const { account, spaceId } = decodeLog(log)
     assert(typeof log.transactionIndex == 'number')
     assert(typeof log.logIndex == 'number')
-    return withEventId({
+    return withId({
       chainId,
       registry: log.address,
       blockNumber: Number(log.blockNumber),
@@ -35,7 +35,14 @@ export default function createEntities(
   })
 }
 
-function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
+function withId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
+  return {
+    ...event,
+    id: eventId(event),
+  }
+}
+
+export function eventId(event: Omit<DelegationEvent, 'id'>): string {
   const {
     chainId,
     registry,
@@ -74,8 +81,5 @@ function withEventId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
       ]
     )
   )
-  return {
-    ...event,
-    id: `${chainId}-${blockNumber}-${registry}-${hash.slice(2, 2 + 16)}`,
-  }
+  return `${chainId}-${blockNumber}-${registry}-${hash.slice(2, 2 + 16)}`
 }

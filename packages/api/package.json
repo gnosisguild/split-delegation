@@ -14,9 +14,9 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:prod": "prisma migrate deploy",
     "heal": "prisma generate && ts-node src/commands heal",
+    "integrity": "prisma generate && ts-node src/commands integrity",
     "pin": "prisma generate && ts-node src/commands pin",
     "sync": "prisma generate && ts-node src/commands sync",
-    "trim": "prisma generate && ts-node src/commands trim",
     "postinstall": "prisma generate"
   },
   "dependencies": {

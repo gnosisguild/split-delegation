@@ -1,4 +1,4 @@
-export default function prefix(venue: 'Sync' | 'Heal') {
+export default function prefix(venue: 'Audit' | 'Sync' | 'Heal' | 'Integrity') {
   function ts() {
     const date = new Date(Date.now())
     const hours = String(date.getHours()).padStart(2, '0')

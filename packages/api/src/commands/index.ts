@@ -2,6 +2,7 @@ import { command, run, subcommands } from 'cmd-ts'
 
 import count from './count'
 import heal from './heal'
+import integrity from './integrity'
 import pin from './pin'
 import sync from './sync'
 import trim from './trim'
@@ -24,6 +25,15 @@ const healCommand = command({
   args: {},
   handler: async () => {
     await heal()
+  },
+})
+
+const integrityCommand = command({
+  name: 'integrity',
+  description: 'Asserts row data integrity',
+  args: {},
+  handler: async () => {
+    await integrity()
   },
 })
 
@@ -60,6 +70,7 @@ run(
     cmds: {
       count: countCommand,
       heal: healCommand,
+      integrity: integrityCommand,
       pin: pinCommand,
       sync: syncCommand,
       trim: trimCommand,
