@@ -23,7 +23,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const votingPower = await createVotingPower({
+  const { votingPower } = await createVotingPower({
     chain,
     blockNumber,
     space,

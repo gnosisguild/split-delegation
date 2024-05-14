@@ -57,5 +57,5 @@ export default async function createVotingPower({
   })
   console.log(`[VotingPower] ${space}, done in ${timerEnd(start)}ms`)
 
-  return votingPower
+  return { weights, votingPower }
 }

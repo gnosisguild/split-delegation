@@ -78,7 +78,7 @@ async function cacheGetOrCalculate({
     addresses: order,
   })
 
-  const votingPower = await calculateVotingPower({
+  const votingPower = calculateVotingPower({
     weights,
     scores,
     order,
