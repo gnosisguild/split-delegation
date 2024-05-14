@@ -4,10 +4,11 @@ import { gnosis, mainnet } from 'viem/chains'
 
 import { rangeToStints } from '../fns/rangeToStints'
 import { timerEnd, timerStart } from '../fns/timer'
-import parseLogs from '../fns/parseLogs'
+import createEntities from '../fns/createEntities'
+import prefix from '../fns/prefix'
 
 import createClient from '../loaders/createClient'
-import loadEntries from '../loaders/loadEntries'
+import loadLogs from '../loaders/loadLogs'
 import resolveBlockTag from '../loaders/resolveBlockTag'
 
 import config from '../../config.json'
@@ -94,12 +95,12 @@ async function _sync({
 
   let total = 0
   for (const { fromBlock, toBlock, verbose, count, perc } of stints) {
-    const entries = await loadEntries({ contracts, fromBlock, toBlock, client })
-
-    const rows = parseLogs(entries)
+    const entities = createEntities(
+      await loadLogs({ contracts, fromBlock, toBlock, client })
+    )
 
     const { count: writeCount } = await prisma.delegationEvent.createMany({
-      data: rows,
+      data: entities,
       skipDuplicates: true,
     })
     total += writeCount
@@ -122,21 +123,6 @@ async function _sync({
     })
   }
   return total
-}
-
-function prefix(venue: 'Sync') {
-  function ts() {
-    const date = new Date(Date.now())
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    const seconds = String(date.getSeconds()).padStart(2, '0')
-    const milliseconds = String(date.getMilliseconds()).padStart(3, '0')
-
-    // Format the output to show minutes, seconds, and milliseconds
-    return `${hours}:${minutes}:${seconds}.${milliseconds}`
-  }
-
-  return `[${ts()} ${venue}]`
 }
 
 async function blockRange(

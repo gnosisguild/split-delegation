@@ -13,7 +13,7 @@ import { DelegationEvent } from '@prisma/client'
 
 import { decodeLog } from './decodeLog'
 
-export default function parseLogs(
+export default function createEntities(
   entries: { chainId: number; blockTimestamp: number; log: Log }[]
 ): DelegationEvent[] {
   return entries.map(({ chainId, blockTimestamp, log }) => {

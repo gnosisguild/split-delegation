@@ -1,6 +1,7 @@
 import { command, run, subcommands } from 'cmd-ts'
 
 import count from './count'
+import heal from './heal'
 import pin from './pin'
 import sync from './sync'
 import trim from './trim'
@@ -13,6 +14,16 @@ const countCommand = command({
   args: {},
   handler: async () => {
     await count()
+  },
+})
+
+const healCommand = command({
+  name: 'heal',
+  description:
+    'Produces a diff between RPC and DB. Fixes integrity by applying a patch',
+  args: {},
+  handler: async () => {
+    await heal()
   },
 })
 
@@ -48,6 +59,7 @@ run(
     name: 'entrypoint',
     cmds: {
       count: countCommand,
+      heal: healCommand,
       pin: pinCommand,
       sync: syncCommand,
       trim: trimCommand,
