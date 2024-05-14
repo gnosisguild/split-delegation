@@ -1,8 +1,9 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import delegateStats, { DelegateStats } from '../calculations/delegateStats'
+import createDelegationCascade from './createDelegationCascade'
 import createVotingPower from './createVotingPower'
+import delegateStats, { DelegateStats } from '../calculations/delegateStats'
 
 import prisma from '../../prisma/singleton'
 
@@ -65,9 +66,20 @@ async function cacheGetOrCalculate({
     strategies,
   })
 
+  const delegations = await createDelegationCascade({
+    chain,
+    blockNumber,
+    space,
+  })
+
   const result = delegateStats({
     votingPower,
-    delegatorCount: {},
+    delegatorCount: Object.fromEntries(
+      Object.keys(delegations).map((address) => [
+        address,
+        delegations[address].delegators.length,
+      ])
+    ),
     totalSupply,
   })
 
