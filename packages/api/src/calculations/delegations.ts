@@ -3,7 +3,7 @@ import kahn from '../fns/graph/sort'
 
 import { Delegations, Weights } from '../types'
 
-export default function calculateDelegation({
+export default function calculateDelegations({
   weights,
   order,
 }: {
@@ -20,7 +20,7 @@ export default function calculateDelegation({
   ) as Delegations
 
   for (const origin of order) {
-    const delegates = collectDelegates(
+    const delegates = cascade(
       weights,
       origin,
       Object.values(weights[origin] || {}).reduce((p, v) => p + v, 0n)
@@ -35,7 +35,7 @@ export default function calculateDelegation({
   return result
 }
 
-function collectDelegates(
+function cascade(
   weights: Weights<bigint>,
   from: string,
   weight: bigint
@@ -51,9 +51,7 @@ function collectDelegates(
 
   return [
     ...direct,
-    ...direct.flatMap(({ to, weight }) =>
-      collectDelegates(weights, to, weight)
-    ),
+    ...direct.flatMap(({ to, weight }) => cascade(weights, to, weight)),
   ]
 }
 

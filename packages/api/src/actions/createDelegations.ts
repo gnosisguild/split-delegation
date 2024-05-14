@@ -1,7 +1,7 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import calculateDelegationCascade from '../calculations/delegations'
+import calculateDelegations from '../calculations/delegations'
 import loadWeights from '../loaders/loadWeights'
 import revive from '../fns/revive'
 
@@ -24,7 +24,7 @@ export default async function ({
     blockNumber,
     space,
   })
-  console.log(`[DelegationCascade] ${space}, done in ${timerEnd(start)}ms`)
+  console.log(`[Delegations] ${space}, done in ${timerEnd(start)}ms`)
 
   return result
 }
@@ -56,7 +56,7 @@ async function cacheGetOrCalculate({
     blockNumber,
     space,
   })
-  const result = calculateDelegationCascade({ weights })
+  const result = calculateDelegations({ weights })
 
   await cachePut(key, result)
 
@@ -75,7 +75,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'createDelegationCascade',
+        name: 'delegations',
         chainId: chain.id,
         blockNumber,
         space,
@@ -87,10 +87,10 @@ function cacheKey({
 async function cacheGet(key: string): Promise<Delegations | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`[DelegationCascade] Cache Hit ${key.slice(0, 18)}`)
+    console.log(`[Delegations] Cache Hit ${key.slice(0, 18)}`)
     return JSON.parse(hit.value, revive)
   } else {
-    console.log(`[DelegationCascade] Cache Miss ${key.slice(0, 18)}`)
+    console.log(`[Delegations] Cache Miss ${key.slice(0, 18)}`)
     return null
   }
 }
@@ -102,5 +102,5 @@ async function cachePut(key: string, delegations: Delegations) {
     create: { key, value },
     update: { key, value },
   })
-  console.log(`[DelegationCascade] Cache Put ${key.slice(0, 18)}`)
+  console.log(`[Delegations] Cache Put ${key.slice(0, 18)}`)
 }

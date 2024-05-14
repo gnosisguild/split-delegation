@@ -1,9 +1,12 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createDelegationCascade from './createDelegationCascade'
-import createVotingPower from './createVotingPower'
+import calculateDelegations from '../calculations/delegations'
+import calculateVotingPower from '../calculations/votingPower'
 import delegateStats, { DelegateStats } from '../calculations/delegateStats'
+import kahn from '../fns/graph/sort'
+import loadScores from '../loaders/loadScores'
+import loadWeights from '../loaders/loadWeights'
 
 import prisma from '../../prisma/singleton'
 
@@ -59,18 +62,29 @@ async function cacheGetOrCalculate({
     }
   }
 
-  const votingPower = await createVotingPower({
+  const { weights } = await loadWeights({
+    chain,
+    blockNumber,
+    space,
+  })
+
+  const order = kahn(weights)
+
+  const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
+    addresses: order,
   })
 
-  const delegations = await createDelegationCascade({
-    chain,
-    blockNumber,
-    space,
+  const votingPower = await calculateVotingPower({
+    weights,
+    scores,
+    order,
   })
+
+  const delegations = calculateDelegations({ weights })
 
   const result = delegateStats({
     votingPower,
@@ -100,7 +114,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'createTopDelegates',
+        name: 'topDelegates',
         chainId: chain.id,
         blockNumber,
         space,
