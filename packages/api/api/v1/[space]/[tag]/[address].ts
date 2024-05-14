@@ -1,10 +1,8 @@
-import { Address, BlockTag, getAddress } from 'viem'
+import { BlockTag, getAddress } from 'viem'
 
-import calculateDelegations from '../../../../src/calculations/delegations'
-import calculateVotingPower from '../../../../src/calculations/votingPower'
-import kahn from '../../../../src/fns/graph/sort'
-
-import loadScores from '../../../../src/loaders/loadScores'
+import calculateAddressView from '../../../../src/calculations/addressView'
+import createDelegationCascade from '../../../../src/actions/createDelegationCascade'
+import createVotingPower from '../../../../src/actions/createVotingPower'
 import loadWeights from '../../../../src/loaders/loadWeights'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
@@ -31,14 +29,17 @@ export const POST = async (req: Request) => {
     space,
   })
 
-  const order = kahn(weights, [address]) as Address[]
-
-  const { scores } = await loadScores({
+  const votingPowerMap = await createVotingPower({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: order,
+  })
+
+  const delegations = await createDelegationCascade({
+    chain,
+    blockNumber,
+    space,
   })
 
   const {
@@ -47,9 +48,10 @@ export const POST = async (req: Request) => {
     percentOfDelegators,
     delegates,
     delegators,
-  } = calculateDelegations({
+  } = calculateAddressView({
     weights,
-    votingPower: calculateVotingPower({ weights, scores, order }),
+    delegations,
+    votingPower: votingPowerMap,
     totalSupply,
     address,
   })

@@ -1,73 +1,70 @@
-import { formatUnits, parseUnits } from 'viem'
-
-import basisPoints from '../fns/basisPoints'
-import cascade from './cascade'
-import formatDecimal from '../fns/formatDecimal'
+import { distribute } from '../fns/bag'
 import kahn from '../fns/graph/sort'
 
-import { Weights } from '../types'
+import { Delegations, Weights } from '../types'
 
-export default function calculateDelegations({
+export default function calculateDelegation({
   weights,
-  votingPower,
-  totalSupply,
-  address,
+  order,
 }: {
   weights: Weights<bigint>
-  votingPower: Record<string, number>
-  totalSupply: number
-  address: string
+  order?: string[]
 }) {
-  const cascades = cascade({ weights, order: kahn(weights) })
-  const total = (address: string) =>
-    Object.values(weights[address]).reduce((p, v) => p + v, 0n)
+  /*
+   * Compute order if not provided.
+   */
+  order = order || kahn(weights)
 
-  const delegators = cascades[address].delegators
-    .map(({ address: delegator, weight }) => ({
-      address: delegator,
-      direct: !!weights[delegator][address],
-      delegatedPower: weightedScore(
-        votingPower[delegator],
-        weight,
-        total(delegator)
-      ),
-    }))
-    .map(({ delegatedPower, ...rest }) => ({
-      ...rest,
-      delegatedPower,
-      percentPowerIn: basisPoints(delegatedPower, votingPower[address]),
-    }))
+  const result = Object.fromEntries(
+    order.map((address) => [address, { delegators: [], delegates: [] }])
+  ) as Delegations
 
-  const delegates = cascades[address].delegates
-    .map(({ address: delegate, weight }) => ({
-      address: delegate,
-      direct: !!weights[address][delegate],
-      delegatedPower: weightedScore(
-        votingPower[address],
-        weight,
-        total(address)
-      ),
-    }))
-    .map(({ delegatedPower, ...rest }) => ({
-      ...rest,
-      delegatedPower,
-      percentPowerOut: basisPoints(delegatedPower, votingPower[address]),
-    }))
+  for (const origin of order) {
+    const delegates = collectDelegates(
+      weights,
+      origin,
+      Object.values(weights[origin] || {}).reduce((p, v) => p + v, 0n)
+    )
 
-  return {
-    votingPower,
-    percentOfVotingPower: basisPoints(votingPower[address], totalSupply),
-    percentOfDelegators: basisPoints(
-      delegators.length,
-      Object.keys(weights).length
-    ),
-    delegators,
-    delegates,
+    for (const { to, weight } of delegates) {
+      setInResult(result[to].delegators, { address: origin, weight })
+      setInResult(result[origin].delegates, { address: to, weight })
+    }
   }
+
+  return result
 }
 
-function weightedScore(score: number, weight: bigint, total: bigint) {
-  return Number(
-    formatUnits((weight * parseUnits(formatDecimal(score), 18)) / total, 18)
-  )
+function collectDelegates(
+  weights: Weights<bigint>,
+  from: string,
+  weight: bigint
+): { to: string; weight: bigint }[] {
+  if (!weights[from]) {
+    return []
+  }
+
+  const direct = distribute(weights[from], weight).map(([to, weight]) => ({
+    to,
+    weight,
+  }))
+
+  return [
+    ...direct,
+    ...direct.flatMap(({ to, weight }) =>
+      collectDelegates(weights, to, weight)
+    ),
+  ]
+}
+
+function setInResult(
+  entries: { address: string; weight: bigint }[],
+  { address, weight }: { address: string; weight: bigint }
+) {
+  const index = entries.findIndex((entry) => entry.address === address)
+  if (index === -1) {
+    entries.push({ address, weight })
+  } else {
+    entries[index].weight += weight
+  }
 }

@@ -1,8 +1,8 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import delegateStats, { DelegateStats } from '../fns/delegateStats'
-import createVotingPower from '../actions/createVotingPower'
+import delegateStats, { DelegateStats } from '../calculations/delegateStats'
+import createVotingPower from './createVotingPower'
 
 import prisma from '../../prisma/singleton'
 
@@ -20,19 +20,19 @@ export default async function ({
   totalSupply: number
 }): Promise<DelegateStats[]> {
   const start = timerStart()
-  const delegateStats = await _load({
+  const result = await cacheGetOrCalculate({
     chain,
     blockNumber,
     space,
     strategies,
     totalSupply,
   })
-  console.log(`[Load Top] ${space}, done in ${timerEnd(start)}ms`)
+  console.log(`[TopDelegates] ${space}, done in ${timerEnd(start)}ms`)
 
-  return delegateStats
+  return result
 }
 
-async function _load({
+async function cacheGetOrCalculate({
   chain,
   blockNumber,
   space,
@@ -88,8 +88,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'loadTopDelegates',
-        v: '1',
+        name: 'createTopDelegates',
         chainId: chain.id,
         blockNumber,
         space,
@@ -101,10 +100,10 @@ function cacheKey({
 async function cacheGet(key: string): Promise<DelegateStats[] | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`[Load Top] Cache Hit ${key.slice(0, 18)}`)
+    console.log(`[TopDelegates] Cache Hit ${key.slice(0, 18)}`)
     return JSON.parse(hit.value)
   } else {
-    console.log(`[Load Top] Cache Miss ${key.slice(0, 18)}`)
+    console.log(`[TopDelegates] Cache Miss ${key.slice(0, 18)}`)
     return null
   }
 }
@@ -116,5 +115,5 @@ async function cachePut(key: string, delegateStats: DelegateStats[]) {
     create: { key, value },
     update: { key, value },
   })
-  console.log(`[Load Top] Cache Put ${key.slice(0, 18)}`)
+  console.log(`[TopDelegates] Cache Put ${key.slice(0, 18)}`)
 }

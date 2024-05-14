@@ -1,3 +1,4 @@
+import basisPoints from '../fns/basisPoints'
 import { Scores } from '../types'
 
 export type DelegateStats = {
@@ -21,15 +22,13 @@ export default function delegateStats({
   return Object.keys(votingPower).map((address) => ({
     address,
     delegatorCount: delegatorCount[address],
-    percentOfDelegators: bps(delegatorCount[address], allDelegatorCount),
+    percentOfDelegators: basisPoints(
+      delegatorCount[address],
+      allDelegatorCount
+    ),
     votingPower: votingPower[address],
-    percentOfVotingPower: bps(votingPower[address], totalSupply),
+    percentOfVotingPower: basisPoints(votingPower[address], totalSupply),
   }))
-}
-
-function bps(score: number, total: number) {
-  if (total == 0) return 0
-  return Math.round((score * 10000) / total)
 }
 
 export function orderByCount(a: DelegateStats, b: DelegateStats) {

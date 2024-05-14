@@ -1,8 +1,11 @@
 import { BlockTag } from 'viem'
 
-import { orderByCount, orderByPower } from '../../../../src/fns/delegateStats'
+import {
+  orderByCount,
+  orderByPower,
+} from '../../../../src/calculations/delegateStats'
+import createTopDelegates from '../../../../src/actions/createTopDelegates'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
-import loadDelegates from '../../../../src/loaders/loadDelegates'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -26,7 +29,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const _result = await loadDelegates({
+  const topDelegates = await createTopDelegates({
     chain,
     blockNumber,
     space,
@@ -34,14 +37,12 @@ export const POST = async (req: Request) => {
     totalSupply,
   })
 
-  const result = _result
-    .sort(orderBy == 'count' ? orderByCount : orderByPower)
-    .slice(offset, offset + limit)
-
   const response = {
     chainId: chain.id,
     blockNumber,
-    delegates: result,
+    delegates: topDelegates
+      .sort(orderBy == 'count' ? orderByCount : orderByPower)
+      .slice(offset, offset + limit),
   }
 
   return new Response(JSON.stringify(response), {

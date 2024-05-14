@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Address, Chain, keccak256, toBytes } from 'viem'
+import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import loadRawScores from './loadRawScores'

@@ -1,9 +1,9 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import cascade from './cascade'
+import calculateDelegations from './delegations'
 
-describe('cascade', () => {
+describe('calculateDelegations', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
@@ -12,7 +12,7 @@ describe('cascade', () => {
 
   test('node without delegations', () => {
     const weights = {}
-    expect(cascade({ weights })).toEqual({})
+    expect(calculateDelegations({ weights })).toEqual({})
   })
 
   test('direct delegation', () => {
@@ -25,7 +25,7 @@ describe('cascade', () => {
       },
     }
 
-    expect(cascade({ weights })).toEqual({
+    expect(calculateDelegations({ weights })).toEqual({
       [A]: {
         delegators: [],
         delegates: [{ address: C, weight: 100n }],
@@ -56,7 +56,7 @@ describe('cascade', () => {
       },
     }
 
-    expect(cascade({ weights })).toEqual({
+    expect(calculateDelegations({ weights })).toEqual({
       [A]: {
         delegators: [],
         delegates: [
@@ -108,7 +108,7 @@ describe('cascade', () => {
       },
     }
 
-    expect(cascade({ weights })).toEqual({
+    expect(calculateDelegations({ weights })).toEqual({
       [A]: {
         delegators: [],
         delegates: [
