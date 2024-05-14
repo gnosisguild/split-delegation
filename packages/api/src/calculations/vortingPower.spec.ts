@@ -1,9 +1,10 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import compute from './compute'
+import calculateVotingPower from './votingPower'
+import kahn from '../fns/graph/sort'
 
-describe('compute', () => {
+describe('votingPower', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
@@ -25,20 +26,13 @@ describe('compute', () => {
       [C]: 20,
       [D]: 30,
     }
-    expect(compute({ weights, scores })).toEqual({
-      votingPower: {
-        [A]: 0,
-        [B]: 0,
-        [C]: 800 + 20,
-        [D]: 300 + 30,
-      },
-      delegatorCount: {
-        all: 2,
-        [A]: 0,
-        [B]: 1,
-        [C]: 1,
-        [D]: 2,
-      },
+    expect(
+      calculateVotingPower({ weights, scores, order: kahn(weights) })
+    ).toEqual({
+      [A]: 0,
+      [B]: 0,
+      [C]: 800 + 20,
+      [D]: 300 + 30,
     })
   })
 
@@ -62,20 +56,13 @@ describe('compute', () => {
       [D]: 500,
     }
 
-    expect(compute({ weights, scores })).toEqual({
-      votingPower: {
-        [A]: 0,
-        [B]: 0,
-        [C]: 0,
-        [D]: 3500,
-      },
-      delegatorCount: {
-        all: 3,
-        [A]: 0,
-        [B]: 1,
-        [C]: 1,
-        [D]: 3,
-      },
+    expect(
+      calculateVotingPower({ weights, scores, order: kahn(weights) })
+    ).toEqual({
+      [A]: 0,
+      [B]: 0,
+      [C]: 0,
+      [D]: 3500,
     })
   })
 
@@ -92,20 +79,13 @@ describe('compute', () => {
       [C]: 0,
       [D]: 30,
     }
-    expect(compute({ weights, scores })).toEqual({
-      votingPower: {
-        [A]: 0,
-        [B]: 200,
-        [C]: 800,
-        [D]: 30,
-      },
-      delegatorCount: {
-        all: 1,
-        [A]: 0,
-        [B]: 1,
-        [C]: 1,
-        [D]: 0,
-      },
+    expect(
+      calculateVotingPower({ weights, scores, order: kahn(weights) })
+    ).toEqual({
+      [A]: 0,
+      [B]: 200,
+      [C]: 800,
+      [D]: 30,
     })
   })
 
@@ -115,16 +95,11 @@ describe('compute', () => {
       [A]: 50,
       [B]: 60,
     }
-    expect(compute({ weights, scores })).toEqual({
-      votingPower: {
-        [A]: 50,
-        [B]: 60,
-      },
-      delegatorCount: {
-        all: 0,
-        [A]: 0,
-        [B]: 0,
-      },
+    expect(
+      calculateVotingPower({ weights, scores, order: kahn(weights) })
+    ).toEqual({
+      [A]: 50,
+      [B]: 60,
     })
   })
 })
