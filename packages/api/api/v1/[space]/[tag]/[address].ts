@@ -27,6 +27,9 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
+    addresses: {
+      include: [address],
+    },
   })
 
   const delegations = calculateDelegations({ weights })
