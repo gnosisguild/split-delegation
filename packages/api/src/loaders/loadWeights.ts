@@ -7,19 +7,12 @@ import loadEvents from './loadEvents'
 import createRegistry from '../fns/createRegistry'
 import createWeights from '../fns/createWeights'
 import parseRows from '../fns/parseRows'
+import revive from '../fns/revive'
 import toAcyclical from '../fns/graph/toAcyclical'
 
 import { Weights } from '../types'
 
 import prisma from '../../prisma/singleton'
-
-// Allow BigInt to be serialized to JSON
-Object.defineProperty(BigInt.prototype, 'toJSON', {
-  get() {
-    'use strict'
-    return () => String(this)
-  },
-})
 
 export default async function loadWeights({
   chain,
@@ -115,12 +108,4 @@ async function cachePut(key: string, weights: Weights<bigint>) {
     update: { key, value },
   })
   console.log(`[Load Weights] Cache Put ${key.slice(0, 18)}`)
-}
-
-function revive(key: string, value: string) {
-  const digits = /^\d+$/
-  if (typeof value == 'string' && digits.test(value)) {
-    return BigInt(value)
-  }
-  return value
 }

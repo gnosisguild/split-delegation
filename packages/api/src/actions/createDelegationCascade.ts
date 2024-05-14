@@ -3,6 +3,7 @@ import { Chain, keccak256, toBytes } from 'viem'
 import { timerEnd, timerStart } from '../fns/timer'
 import calculateDelegationCascade from '../calculations/delegations'
 import loadWeights from '../loaders/loadWeights'
+import revive from '../fns/revive'
 
 import { Delegations } from '../types'
 
@@ -87,7 +88,7 @@ async function cacheGet(key: string): Promise<Delegations | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
     console.log(`[DelegationCascade] Cache Hit ${key.slice(0, 18)}`)
-    return JSON.parse(hit.value)
+    return JSON.parse(hit.value, revive)
   } else {
     console.log(`[DelegationCascade] Cache Miss ${key.slice(0, 18)}`)
     return null

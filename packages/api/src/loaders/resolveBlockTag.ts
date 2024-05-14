@@ -4,7 +4,7 @@ import { gnosis, mainnet } from 'viem/chains'
 import createClient from './createClient'
 import loadPin from './loadPin'
 
-export default async function loadBlockTag(
+export default async function resolveBlockTag(
   blockTag: BlockTag | number | 'pin',
   networkish: any
 ): Promise<{ blockNumber: number; chain: Chain }> {

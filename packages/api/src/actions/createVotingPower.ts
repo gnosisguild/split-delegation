@@ -1,4 +1,4 @@
-import { Address, Chain } from 'viem'
+import { Chain } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import calculateVotingPower from '../calculations/votingPower'
@@ -19,8 +19,8 @@ export default async function createVotingPower({
   space: string
   strategies: any[]
   addresses?: {
-    voters?: Address[]
-    more?: Address[]
+    voters?: string[]
+    more?: string[]
   }
 }) {
   let { weights } = await loadWeights({
