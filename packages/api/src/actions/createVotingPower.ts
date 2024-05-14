@@ -12,7 +12,7 @@ export default async function createVotingPower({
   blockNumber,
   space,
   strategies,
-  addresses: { voters = [], more = [] } = {},
+  addresses: { voters = [], include = [] } = {},
 }: {
   chain: Chain
   blockNumber: number
@@ -20,7 +20,7 @@ export default async function createVotingPower({
   strategies: any[]
   addresses?: {
     voters?: string[]
-    more?: string[]
+    include?: string[]
   }
 }) {
   let { weights } = await loadWeights({
@@ -37,8 +37,8 @@ export default async function createVotingPower({
   const order = kahn(weights)
 
   const addresses =
-    voters.length > 0 || more.length > 0
-      ? Array.from(new Set([...order, ...voters, ...more]))
+    voters.length > 0 || include.length > 0
+      ? Array.from(new Set([...order, ...voters, ...include]))
       : order
 
   const { scores } = await loadScores({
