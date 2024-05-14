@@ -40,7 +40,6 @@ function cacheKey({ chain }: { chain: Chain }) {
     toBytes(
       JSON.stringify({
         name: 'pin',
-        v: '2',
         chainId: chain.id,
       })
     )

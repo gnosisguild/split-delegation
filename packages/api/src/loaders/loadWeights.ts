@@ -80,7 +80,6 @@ function cacheKey({
     toBytes(
       JSON.stringify({
         name: 'loadWeights',
-        v: '1',
         chainId: chain.id,
         blockNumber,
         space,

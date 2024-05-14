@@ -51,7 +51,6 @@ async function _load({
     chain,
     blockNumber,
     space,
-    strategies,
   })
 
   const { scores } = await cacheGet(key)
@@ -87,22 +86,18 @@ function cacheKey({
   chain,
   blockNumber,
   space,
-  strategies,
 }: {
   chain: Chain
   blockNumber: number
   space: string
-  strategies: any[]
 }) {
   return keccak256(
     toBytes(
       JSON.stringify({
         name: 'loadScores',
-        v: '1',
         chainId: chain.id,
         blockNumber,
         space,
-        strategies,
       })
     )
   )
