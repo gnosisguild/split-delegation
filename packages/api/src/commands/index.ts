@@ -1,13 +1,22 @@
 import { command, run, subcommands } from 'cmd-ts'
 
+import audit from './audit'
 import count from './count'
 import heal from './heal'
 import integrity from './integrity'
 import pin from './pin'
 import sync from './sync'
-import trim from './trim'
 
 import 'dotenv/config'
+
+const auditCommand = command({
+  name: 'audit',
+  description: '',
+  args: {},
+  handler: async () => {
+    await audit()
+  },
+})
 
 const countCommand = command({
   name: 'count',
@@ -55,25 +64,16 @@ const syncCommand = command({
   },
 })
 
-const trimCommand = command({
-  name: 'trim',
-  description: 'Produces slim down version of Safe allocations',
-  args: {},
-  handler: async () => {
-    await trim()
-  },
-})
-
 run(
   subcommands({
     name: 'entrypoint',
     cmds: {
+      audit: auditCommand,
       count: countCommand,
       heal: healCommand,
       integrity: integrityCommand,
       pin: pinCommand,
       sync: syncCommand,
-      trim: trimCommand,
     },
   }),
   process.argv.slice(2)

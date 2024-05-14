@@ -16,3 +16,10 @@ export function compare({
     ),
   }
 }
+
+export function count(entry: {
+  create: DelegationEvent[]
+  delete: DelegationEvent[]
+}) {
+  return entry.create.length + entry.delete.length
+}

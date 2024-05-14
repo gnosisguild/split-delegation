@@ -13,6 +13,7 @@
     "format": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,graphql}\" --write",
     "migrate:dev": "prisma migrate dev",
     "migrate:prod": "prisma migrate deploy",
+    "audit": "prisma generate && ts-node src/commands audit",
     "heal": "prisma generate && ts-node src/commands heal",
     "integrity": "prisma generate && ts-node src/commands integrity",
     "pin": "prisma generate && ts-node src/commands pin",
