@@ -21,37 +21,43 @@ export default function calculateAddressView({
   const total = (address: string) =>
     Object.values(weights[address]).reduce((p, v) => p + v, 0n)
 
-  const delegators = delegations[address].delegators
-    .map(({ address: delegator, weight }) => ({
-      address: delegator,
-      direct: !!weights[delegator][address],
-      delegatedPower: weightedScore(
-        votingPower[delegator],
-        weight,
-        total(delegator)
-      ),
-    }))
-    .map(({ delegatedPower, ...rest }) => ({
-      ...rest,
-      delegatedPower,
-      percentPowerIn: basisPoints(delegatedPower, votingPower[address]),
-    }))
+  const isDelegatorOrDelegate = !!delegations[address]
 
-  const delegates = delegations[address].delegates
-    .map(({ address: delegate, weight }) => ({
-      address: delegate,
-      direct: !!weights[address][delegate],
-      delegatedPower: weightedScore(
-        votingPower[address],
-        weight,
-        total(address)
-      ),
-    }))
-    .map(({ delegatedPower, ...rest }) => ({
-      ...rest,
-      delegatedPower,
-      percentPowerOut: basisPoints(delegatedPower, votingPower[address]),
-    }))
+  const delegators = isDelegatorOrDelegate
+    ? delegations[address].delegators
+        .map(({ address: delegator, weight }) => ({
+          address: delegator,
+          direct: !!weights[delegator][address],
+          delegatedPower: weightedScore(
+            votingPower[delegator],
+            weight,
+            total(delegator)
+          ),
+        }))
+        .map(({ delegatedPower, ...rest }) => ({
+          ...rest,
+          delegatedPower,
+          percentPowerIn: basisPoints(delegatedPower, votingPower[address]),
+        }))
+    : []
+
+  const delegates = isDelegatorOrDelegate
+    ? delegations[address].delegates
+        .map(({ address: delegate, weight }) => ({
+          address: delegate,
+          direct: !!weights[address][delegate],
+          delegatedPower: weightedScore(
+            votingPower[address],
+            weight,
+            total(address)
+          ),
+        }))
+        .map(({ delegatedPower, ...rest }) => ({
+          ...rest,
+          delegatedPower,
+          percentPowerOut: basisPoints(delegatedPower, votingPower[address]),
+        }))
+    : []
 
   return {
     votingPower,
