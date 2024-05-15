@@ -6,7 +6,7 @@ import { Weights } from '../../types'
 
 describe('filterEdge', () => {
   test('it removes an edge', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 1,
         C: 1,
@@ -26,7 +26,7 @@ describe('filterEdge', () => {
     })
   })
   test('it also removes the vertex if no more edges are left', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 1,
         C: 1,

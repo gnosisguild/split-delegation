@@ -11,7 +11,7 @@ describe('createWeights', () => {
   test('it sets a delegation', () => {
     const registry = {
       [A]: {
-        delegation: [{ delegate: B, ratio: 100n }],
+        delegation: [{ delegate: B, weight: 100 }],
         expiration: 0,
         optOut: false,
       },
@@ -20,7 +20,7 @@ describe('createWeights', () => {
 
     expect(result).toEqual({
       [A]: {
-        [B]: 100n,
+        [B]: 100,
       },
     })
   })
@@ -29,8 +29,8 @@ describe('createWeights', () => {
     const registry = {
       [A]: {
         delegation: [
-          { delegate: B, ratio: 50n },
-          { delegate: C, ratio: 50n },
+          { delegate: B, weight: 50 },
+          { delegate: C, weight: 50 },
         ],
         expiration: 0,
         optOut: false,
@@ -45,7 +45,7 @@ describe('createWeights', () => {
 
     expect(result).toEqual({
       [A]: {
-        [B]: 50n,
+        [B]: 50,
       },
     })
   })
@@ -54,14 +54,14 @@ describe('createWeights', () => {
     const registry = {
       [A]: {
         delegation: [
-          { delegate: B, ratio: 50n },
-          { delegate: C, ratio: 50n },
+          { delegate: B, weight: 50 },
+          { delegate: C, weight: 50 },
         ],
         expiration: 1999,
         optOut: false,
       },
       [B]: {
-        delegation: [{ delegate: C, ratio: 100n }],
+        delegation: [{ delegate: C, weight: 100 }],
         expiration: 2025,
         optOut: false,
       },
@@ -70,7 +70,7 @@ describe('createWeights', () => {
 
     expect(result).toEqual({
       [B]: {
-        [C]: 100n,
+        [C]: 100,
       },
     })
   })
@@ -79,14 +79,14 @@ describe('createWeights', () => {
     const registry = {
       [A]: {
         delegation: [
-          { delegate: B, ratio: 50n },
-          { delegate: C, ratio: 50n },
+          { delegate: B, weight: 50 },
+          { delegate: C, weight: 50 },
         ],
         expiration: 0,
         optOut: false,
       },
       [B]: {
-        delegation: [{ delegate: C, ratio: 100n }],
+        delegation: [{ delegate: C, weight: 100 }],
         expiration: 1999,
         optOut: true,
       },
@@ -95,7 +95,7 @@ describe('createWeights', () => {
 
     expect(result).toEqual({
       [A]: {
-        [C]: 50n,
+        [C]: 50,
       },
     })
   })
@@ -108,7 +108,7 @@ describe('createWeights', () => {
         optOut: false,
       },
       [B]: {
-        delegation: [{ delegate: C, ratio: 100n }],
+        delegation: [{ delegate: C, weight: 100 }],
         expiration: 0,
         optOut: true,
       },
@@ -117,7 +117,7 @@ describe('createWeights', () => {
 
     expect(result).toEqual({
       [B]: {
-        [C]: 100n,
+        [C]: 100,
       },
     })
   })

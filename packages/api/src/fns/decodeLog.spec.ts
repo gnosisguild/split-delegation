@@ -125,7 +125,7 @@ describe('decodeLog', () => {
     expect(delegation).toEqual([
       {
         delegate: getAddress('0x6cc5b30Cd0A93C1F85C7868f5F2620AB8c458190'),
-        ratio: BigInt(40),
+        weight: 40,
       },
     ])
     expect(expiration).toEqual(1876538446)

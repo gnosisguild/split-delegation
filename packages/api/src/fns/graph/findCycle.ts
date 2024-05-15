@@ -9,7 +9,7 @@ import { Weights } from '../../types'
  *
  * @returns {boolean} Returns cycle if one detected, otherwise null.
  */
-export default function findCycle<T>(graph: Weights<T>): string[] | null {
+export default function findCycle<T>(graph: Weights): string[] | null {
   const visited = new Set<string>()
   const path: string[] = []
 
@@ -21,8 +21,8 @@ export default function findCycle<T>(graph: Weights<T>): string[] | null {
   return null
 }
 
-function dfs<T>(
-  graph: Weights<T>,
+function dfs(
+  graph: Weights,
   node: string,
   visited: Set<string>,
   path: string[]
@@ -49,6 +49,6 @@ function dfs<T>(
   return null
 }
 
-function neighbors<T>(graph: Weights<T>, node: string): string[] {
+function neighbors<T>(graph: Weights, node: string): string[] {
   return Object.keys(graph[node] || {})
 }

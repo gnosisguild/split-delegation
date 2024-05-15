@@ -4,7 +4,7 @@ import filterEdge from './filterEdge'
 
 import { Weights } from '../../types'
 
-export default function toAcyclical<T>(graph: Weights<T>): Weights<T> {
+export default function toAcyclical(graph: Weights): Weights {
   while (true) {
     const cycle = findCycle(graph)
     if (!cycle) {

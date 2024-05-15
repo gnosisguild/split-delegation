@@ -27,7 +27,6 @@ describe('delegateStats', () => {
       delegatorCount,
     })
 
-    // TODO expand these tests
     expect(result).toEqual([
       {
         address: A,

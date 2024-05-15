@@ -7,7 +7,6 @@ import loadEvents from './loadEvents'
 import createRegistry from '../fns/createRegistry'
 import createWeights from '../fns/createWeights'
 import parseRows from '../fns/parseRows'
-import revive from '../fns/revive'
 import toAcyclical from '../fns/graph/toAcyclical'
 
 import { Weights } from '../types'
@@ -88,18 +87,16 @@ function cacheKey({
   )
 }
 
-async function cacheGet(
-  key: string
-): Promise<{ weights: Weights<bigint> } | null> {
+async function cacheGet(key: string): Promise<{ weights: Weights } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
     console.log(`[Load Weights] Cache Hit ${key.slice(0, 18)}`)
-    return JSON.parse(hit.value, revive)
+    return JSON.parse(hit.value)
   }
   return null
 }
 
-async function cachePut(key: string, weights: Weights<bigint>) {
+async function cachePut(key: string, weights: Weights) {
   const value = JSON.stringify({ weights })
   await prisma.cache.upsert({
     where: { key },

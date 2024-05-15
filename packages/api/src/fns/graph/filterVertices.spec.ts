@@ -6,7 +6,7 @@ import { Weights } from '../../types'
 
 describe('filterVertices', () => {
   test('removes a vertex', () => {
-    const weights: Weights<number> = {
+    const weights: Weights = {
       A: {
         B: 0,
       },
@@ -19,7 +19,7 @@ describe('filterVertices', () => {
     })
   })
   test('nothing to remove', () => {
-    const weights: Weights<number> = {
+    const weights: Weights = {
       A: {
         B: 0,
       },

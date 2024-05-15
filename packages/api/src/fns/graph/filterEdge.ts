@@ -1,10 +1,6 @@
 import { Weights } from '../../types'
 
-export default function <T>(
-  weights: Weights<T>,
-  from: string,
-  to: string
-): Weights<T> {
+export default function (weights: Weights, from: string, to: string): Weights {
   const entries = Object.entries(weights)
     .map(([key, value]) => [
       key,

@@ -21,7 +21,7 @@ describe('createRegistry', () => {
         chainId: 1,
         registry: REGISTRY_V1,
         set: {
-          delegation: [{ delegate: B, ratio: 100n }],
+          delegation: [{ delegate: B, weight: 100 }],
           expiration: 0,
         },
       },
@@ -30,7 +30,7 @@ describe('createRegistry', () => {
 
     expect(result).toEqual({
       [A]: {
-        delegation: [{ delegate: B, ratio: 100n }],
+        delegation: [{ delegate: B, weight: 100 }],
         expiration: 0,
         optOut: false,
       },
@@ -52,7 +52,7 @@ describe('createRegistry', () => {
         registry: REGISTRY_V1,
         account: A,
         set: {
-          delegation: [{ delegate: B, ratio: 100n }],
+          delegation: [{ delegate: B, weight: 100 }],
           expiration: 1000,
         },
       },
@@ -84,7 +84,7 @@ describe('createRegistry', () => {
         registry: REGISTRY_V1,
         account: A,
         set: {
-          delegation: [{ delegate: B, ratio: 123n }],
+          delegation: [{ delegate: B, weight: 123 }],
           expiration: 123,
         },
       },
@@ -93,7 +93,7 @@ describe('createRegistry', () => {
         registry: REGISTRY_V1,
         account: A,
         set: {
-          delegation: [{ delegate: B, ratio: 345n }],
+          delegation: [{ delegate: B, weight: 345 }],
           expiration: 567,
         },
       },
@@ -107,7 +107,7 @@ describe('createRegistry', () => {
 
     expect(createRegistry(actions)).toEqual({
       [A]: {
-        delegation: [{ delegate: B, ratio: 345n }],
+        delegation: [{ delegate: B, weight: 345 }],
         expiration: 567,
         optOut: false,
       },
@@ -121,7 +121,7 @@ describe('createRegistry', () => {
         registry: REGISTRY_V1,
         account: A,
         set: {
-          delegation: [{ delegate: B, ratio: 345n }],
+          delegation: [{ delegate: B, weight: 345 }],
           expiration: 567,
         },
       },
@@ -135,7 +135,7 @@ describe('createRegistry', () => {
 
     expect(createRegistry(actions)).toEqual({
       [A]: {
-        delegation: [{ delegate: B, ratio: 345n }],
+        delegation: [{ delegate: B, weight: 345 }],
         expiration: 567,
         optOut: false,
       },
@@ -150,8 +150,8 @@ describe('createRegistry', () => {
         account: A,
         set: {
           delegation: [
-            { delegate: B, ratio: 3n },
-            { delegate: C, ratio: 4n },
+            { delegate: B, weight: 3 },
+            { delegate: C, weight: 4 },
           ],
           expiration: 0,
         },
@@ -167,8 +167,8 @@ describe('createRegistry', () => {
     expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
-          { delegate: B, ratio: 3n },
-          { delegate: C, ratio: 4n },
+          { delegate: B, weight: 3 },
+          { delegate: C, weight: 4 },
         ],
         expiration: 0,
         optOut: false,
@@ -189,8 +189,8 @@ describe('createRegistry', () => {
         account: A,
         set: {
           delegation: [
-            { delegate: B, ratio: 3n },
-            { delegate: C, ratio: 4n },
+            { delegate: B, weight: 3 },
+            { delegate: C, weight: 4 },
           ],
           expiration: 0,
         },
@@ -206,8 +206,8 @@ describe('createRegistry', () => {
     expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
-          { delegate: B, ratio: 3n },
-          { delegate: C, ratio: 4n },
+          { delegate: B, weight: 3 },
+          { delegate: C, weight: 4 },
         ],
         expiration: 0,
         optOut: false,
@@ -244,8 +244,8 @@ describe('createRegistry', () => {
         account: A,
         set: {
           delegation: [
-            { delegate: B, ratio: 3n },
-            { delegate: C, ratio: 4n },
+            { delegate: B, weight: 3 },
+            { delegate: C, weight: 4 },
           ],
           expiration: 123,
         },
@@ -261,8 +261,8 @@ describe('createRegistry', () => {
     expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
-          { delegate: B, ratio: 3n },
-          { delegate: C, ratio: 4n },
+          { delegate: B, weight: 3 },
+          { delegate: C, weight: 4 },
         ],
         expiration: 456,
         optOut: false,
@@ -278,8 +278,8 @@ describe('createRegistry', () => {
         account: A,
         set: {
           delegation: [
-            { delegate: B, ratio: 3n },
-            { delegate: C, ratio: 4n },
+            { delegate: B, weight: 3 },
+            { delegate: C, weight: 4 },
           ],
           expiration: 123,
         },
@@ -295,8 +295,8 @@ describe('createRegistry', () => {
     expect(createRegistry(actions)).toEqual({
       [A]: {
         delegation: [
-          { delegate: B, ratio: 3n },
-          { delegate: C, ratio: 4n },
+          { delegate: B, weight: 3 },
+          { delegate: C, weight: 4 },
         ],
         expiration: 123,
         optOut: false,
@@ -312,8 +312,8 @@ describe('createRegistry', () => {
         account: A,
         set: {
           delegation: [
-            { delegate: B, ratio: 50n },
-            { delegate: C, ratio: 50n },
+            { delegate: B, weight: 50 },
+            { delegate: C, weight: 50 },
           ],
           expiration: 0,
         },
@@ -323,7 +323,7 @@ describe('createRegistry', () => {
         registry: REGISTRY_V1,
         account: B,
         set: {
-          delegation: [{ delegate: C, ratio: 50n }],
+          delegation: [{ delegate: C, weight: 50 }],
           expiration: 1999,
         },
       },
@@ -342,14 +342,14 @@ describe('createRegistry', () => {
     expect(result).toEqual({
       [A]: {
         delegation: [
-          { delegate: B, ratio: 50n },
-          { delegate: C, ratio: 50n },
+          { delegate: B, weight: 50 },
+          { delegate: C, weight: 50 },
         ],
         expiration: 0,
         optOut: false,
       },
       [B]: {
-        delegation: [{ delegate: C, ratio: 50n }],
+        delegation: [{ delegate: C, weight: 50 }],
         expiration: 1999,
         optOut: true,
       },

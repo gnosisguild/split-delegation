@@ -31,7 +31,7 @@ type Slice = {
 }
 
 type Venue = {
-  delegation: { delegate: Address; ratio: bigint }[]
+  delegation: { delegate: Address; weight: number }[]
   expiration: number
   optOut: boolean
 }

@@ -6,7 +6,7 @@ import { Weights } from '../../types'
 
 describe('findCycle', () => {
   test('no back edge, no forward edge', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
       },
@@ -18,7 +18,7 @@ describe('findCycle', () => {
     expect(findCycle(dag)).toEqual(null)
   })
   test('yes back edge, no forward edge', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
       },
@@ -35,7 +35,7 @@ describe('findCycle', () => {
     expect(findCycle(dag)).toEqual(['B', 'C', 'D'])
   })
   test('no back edge, yes forward edge', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
         C: 0,
@@ -54,7 +54,7 @@ describe('findCycle', () => {
     expect(findCycle(dag)).toEqual(null)
   })
   test('yes back edge, yes forward edge', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         D: 0,
         B: 0,

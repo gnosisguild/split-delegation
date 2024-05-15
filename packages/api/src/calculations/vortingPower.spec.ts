@@ -13,11 +13,11 @@ describe('votingPower', () => {
   test('it works when all requested nodes present in delegation graph', () => {
     const weights = {
       [A]: {
-        [B]: 20n,
-        [C]: 80n,
+        [B]: 20,
+        [C]: 80,
       },
       [B]: {
-        [D]: 100n,
+        [D]: 100,
       },
     }
     const scores = {
@@ -39,14 +39,14 @@ describe('votingPower', () => {
   test('it works with a forward edge', () => {
     const weights = {
       [A]: {
-        [B]: 50n,
-        [C]: 50n,
+        [B]: 50,
+        [C]: 50,
       },
       [B]: {
-        [D]: 100n,
+        [D]: 100,
       },
       [C]: {
-        [D]: 100n,
+        [D]: 100,
       },
     }
     const scores = {
@@ -69,8 +69,8 @@ describe('votingPower', () => {
   test('it works when some requested nodes not present in delegation graph', () => {
     const weights = {
       [A]: {
-        [B]: 20n,
-        [C]: 80n,
+        [B]: 20,
+        [C]: 80,
       },
     }
     const scores = {

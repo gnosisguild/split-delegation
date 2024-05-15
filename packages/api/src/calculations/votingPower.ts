@@ -6,7 +6,7 @@ export default function calculateVotingPower({
   scores,
   order,
 }: {
-  weights: Weights<bigint>
+  weights: Weights
   scores: Scores
   order: string[]
 }) {

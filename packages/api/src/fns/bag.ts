@@ -15,10 +15,10 @@ export function merge(
   )
 }
 
-export function distribute<T extends number | bigint>(
-  bag: Record<string, bigint>,
-  value: T
-): [string, T][] {
+export function distribute(
+  bag: Record<string, number>,
+  value: number
+): [string, number][] {
   const keys = Object.keys(bag).sort()
   const weights = keys.map((key) => bag[key])
   const result = proportionally(value, weights)

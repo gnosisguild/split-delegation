@@ -1,8 +1,4 @@
-import { formatUnits, parseUnits } from 'viem'
-
 import basisPoints from '../fns/basisPoints'
-import formatDecimal from '../fns/formatDecimal'
-
 import { Delegations, Weights } from '../types'
 
 export default function calculateAddressView({
@@ -12,14 +8,14 @@ export default function calculateAddressView({
   totalSupply,
   address,
 }: {
-  weights: Weights<bigint>
+  weights: Weights
   delegations: Delegations
   votingPower: Record<string, number>
   totalSupply: number
   address: string
 }) {
   const total = (address: string) =>
-    Object.values(weights[address]).reduce((p, v) => p + v, 0n)
+    Object.values(weights[address]).reduce((p, v) => p + v, 0)
 
   const isDelegatorOrDelegate = !!delegations[address]
 
@@ -71,8 +67,6 @@ export default function calculateAddressView({
   }
 }
 
-function weightedScore(score: number, weight: bigint, total: bigint) {
-  return Number(
-    formatUnits((weight * parseUnits(formatDecimal(score), 18)) / total, 18)
-  )
+function weightedScore(score: number, weight: number, total: number) {
+  return (weight * score) / total
 }

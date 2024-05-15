@@ -6,7 +6,7 @@ import { Weights } from '../../types'
 
 describe('sort', () => {
   test('no cycles', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         C: 0,
         B: 0,
@@ -27,7 +27,7 @@ describe('sort', () => {
   })
 
   test('with partition', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
       },
@@ -55,7 +55,7 @@ describe('sort', () => {
   })
 
   test('throws on cycle', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
         C: 0,

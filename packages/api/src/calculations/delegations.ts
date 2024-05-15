@@ -7,7 +7,7 @@ export default function calculateDelegations({
   weights,
   order,
 }: {
-  weights: Weights<bigint>
+  weights: Weights
   order?: string[]
 }) {
   /*
@@ -23,7 +23,7 @@ export default function calculateDelegations({
     const delegates = cascade(
       weights,
       origin,
-      Object.values(weights[origin] || {}).reduce((p, v) => p + v, 0n)
+      Object.values(weights[origin] || {}).reduce((p, v) => p + v, 0)
     )
 
     for (const { to, weight } of delegates) {
@@ -36,10 +36,10 @@ export default function calculateDelegations({
 }
 
 function cascade(
-  weights: Weights<bigint>,
+  weights: Weights,
   from: string,
-  weight: bigint
-): { to: string; weight: bigint }[] {
+  weight: number
+): { to: string; weight: number }[] {
   if (!weights[from]) {
     return []
   }
@@ -56,8 +56,8 @@ function cascade(
 }
 
 function setInResult(
-  entries: { address: string; weight: bigint }[],
-  { address, weight }: { address: string; weight: bigint }
+  entries: { address: string; weight: number }[],
+  { address, weight }: { address: string; weight: number }
 ) {
   const index = entries.findIndex((entry) => entry.address === address)
   if (index === -1) {

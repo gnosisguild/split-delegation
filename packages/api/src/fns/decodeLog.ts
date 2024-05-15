@@ -124,9 +124,7 @@ export function decodeSetClearDelegate({ topics }: { topics: string[] }) {
 
   return {
     spaceId,
-    //account: `0x${accountAsTopic.slice(-40)}` as Address,
     account,
-    //delegate: `0x${delegateAsTopic.slice(-40)}` as Address,
     delegate,
   }
 }
@@ -153,7 +151,7 @@ export function decodeDelegationUpdated({
     spaceId: spaceId(space),
     delegation: delegation.map(([delegate, ratio]) => ({
       delegate: getAddress(delegate),
-      ratio,
+      weight: capRatio(ratio),
     })),
     expiration: capExpiration(expiration),
   }
@@ -231,7 +229,11 @@ export function decodeOptOut({
 }
 
 function capExpiration(expiration: bigint): number {
-  return expiration > BigInt(Number.MAX_SAFE_INTEGER)
+  return expiration > BigInt(Number.MAX_SAFE_INTEGER) ? 0 : Number(expiration)
+}
+
+function capRatio(ratio: bigint): number {
+  return ratio > BigInt(Number.MAX_SAFE_INTEGER)
     ? Number.MAX_SAFE_INTEGER
-    : Number(expiration)
+    : Number(ratio)
 }

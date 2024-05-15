@@ -1,9 +1,9 @@
 import { Weights } from '../../types'
 
-export default function filterVertices<T>(
-  weights: Weights<T>,
+export default function filterVertices(
+  weights: Weights,
   vertices: string[]
-): Weights<T> {
+): Weights {
   const exclusion = new Set(vertices)
 
   return Object.fromEntries(

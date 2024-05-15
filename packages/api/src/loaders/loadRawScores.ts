@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Address, Chain, getAddress } from 'viem'
+import { Chain, getAddress } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
 import { merge } from '../fns/bag'

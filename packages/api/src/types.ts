@@ -7,7 +7,7 @@ export type DelegationAction = {
 } & (
   | {
       set: {
-        delegation: { delegate: Address; ratio: bigint }[]
+        delegation: { delegate: Address; weight: number }[]
         expiration: number
       }
     }
@@ -19,15 +19,15 @@ export type DelegationAction = {
 export type Registry = Record<
   string,
   {
-    delegation: { delegate: Address; ratio: bigint }[]
+    delegation: { delegate: Address; weight: number }[]
     expiration: number
     optOut: boolean
   }
 >
 
-export type Weights<W> = {
+export type Weights = {
   [key: string]: {
-    [key: string]: W
+    [key: string]: number
   }
 }
 
@@ -38,8 +38,8 @@ export type Scores = {
 export type Delegations = Record<
   string,
   {
-    delegates: { address: string; weight: bigint }[]
-    delegators: { address: string; weight: bigint }[]
+    delegates: { address: string; weight: number }[]
+    delegators: { address: string; weight: number }[]
   }
 >
 

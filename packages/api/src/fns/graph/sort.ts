@@ -6,11 +6,11 @@ import { Weights } from '../../types'
  * Performs a topological sort using Kahn's algorithm on a directed acyclic
  * graph (DAG).
  *
- * @param {Weights<T>} dag - The directed acyclic graph to be sorted.
+ * @param {Weights} dag - The directed acyclic graph to be sorted.
  * @returns {string[]} - An array containing the sorted nodes of the DAG.
  */
 
-export default function kahn<T>(dag: Weights<T>, more?: string[]): string[] {
+export default function kahn<T>(dag: Weights, more?: string[]): string[] {
   const addresses: string[] = allNodes(dag, more)
 
   const inDegree = new Map<string, number>()

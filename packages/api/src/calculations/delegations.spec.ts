@@ -18,26 +18,26 @@ describe('calculateDelegations', () => {
   test('direct delegation', () => {
     const weights = {
       [A]: {
-        [C]: 100n,
+        [C]: 100,
       },
       [B]: {
-        [C]: 100n,
+        [C]: 100,
       },
     }
 
     expect(calculateDelegations({ weights })).toEqual({
       [A]: {
         delegators: [],
-        delegates: [{ address: C, weight: 100n }],
+        delegates: [{ address: C, weight: 100 }],
       },
       [B]: {
         delegators: [],
-        delegates: [{ address: C, weight: 100n }],
+        delegates: [{ address: C, weight: 100 }],
       },
       [C]: {
         delegators: [
-          { address: A, weight: 100n },
-          { address: B, weight: 100n },
+          { address: A, weight: 100 },
+          { address: B, weight: 100 },
         ],
         delegates: [],
       },
@@ -47,12 +47,12 @@ describe('calculateDelegations', () => {
   test('transitive delegation', () => {
     const weights = {
       [A]: {
-        [B]: 50n,
-        [C]: 50n,
+        [B]: 50,
+        [C]: 50,
       },
       [B]: {
-        [D]: 50n,
-        [E]: 50n,
+        [D]: 50,
+        [E]: 50,
       },
     }
 
@@ -60,31 +60,31 @@ describe('calculateDelegations', () => {
       [A]: {
         delegators: [],
         delegates: [
-          { address: B, weight: 50n },
-          { address: C, weight: 50n },
-          { address: D, weight: 25n },
-          { address: E, weight: 25n },
+          { address: B, weight: 50 },
+          { address: C, weight: 50 },
+          { address: D, weight: 25 },
+          { address: E, weight: 25 },
         ],
       },
       [B]: {
-        delegators: [{ address: A, weight: 50n }],
+        delegators: [{ address: A, weight: 50 }],
         delegates: [
-          { address: D, weight: 50n },
-          { address: E, weight: 50n },
+          { address: D, weight: 50 },
+          { address: E, weight: 50 },
         ],
       },
-      [C]: { delegators: [{ address: A, weight: 50n }], delegates: [] },
+      [C]: { delegators: [{ address: A, weight: 50 }], delegates: [] },
       [D]: {
         delegators: [
-          { address: A, weight: 25n },
-          { address: B, weight: 50n },
+          { address: A, weight: 25 },
+          { address: B, weight: 50 },
         ],
         delegates: [],
       },
       [E]: {
         delegators: [
-          { address: A, weight: 25n },
-          { address: B, weight: 50n },
+          { address: A, weight: 25 },
+          { address: B, weight: 50 },
         ],
         delegates: [],
       },
@@ -94,17 +94,17 @@ describe('calculateDelegations', () => {
   test('transitive delegation with a forward edge', () => {
     const weights = {
       [A]: {
-        [B]: 30n,
-        [C]: 70n,
+        [B]: 30,
+        [C]: 70,
       },
       [B]: {
-        [D]: 100n,
+        [D]: 100,
       },
       [C]: {
-        [D]: 100n,
+        [D]: 100,
       },
       [D]: {
-        [E]: 100n,
+        [E]: 100,
       },
     }
 
@@ -112,40 +112,40 @@ describe('calculateDelegations', () => {
       [A]: {
         delegators: [],
         delegates: [
-          { address: B, weight: 30n },
-          { address: C, weight: 70n },
-          { address: D, weight: 100n },
-          { address: E, weight: 100n },
+          { address: B, weight: 30 },
+          { address: C, weight: 70 },
+          { address: D, weight: 100 },
+          { address: E, weight: 100 },
         ],
       },
       [B]: {
-        delegators: [{ address: A, weight: 30n }],
+        delegators: [{ address: A, weight: 30 }],
         delegates: [
-          { address: D, weight: 100n },
-          { address: E, weight: 100n },
+          { address: D, weight: 100 },
+          { address: E, weight: 100 },
         ],
       },
       [C]: {
-        delegators: [{ address: A, weight: 70n }],
+        delegators: [{ address: A, weight: 70 }],
         delegates: [
-          { address: D, weight: 100n },
-          { address: E, weight: 100n },
+          { address: D, weight: 100 },
+          { address: E, weight: 100 },
         ],
       },
       [D]: {
         delegators: [
-          { address: A, weight: 100n },
-          { address: B, weight: 100n },
-          { address: C, weight: 100n },
+          { address: A, weight: 100 },
+          { address: B, weight: 100 },
+          { address: C, weight: 100 },
         ],
-        delegates: [{ address: E, weight: 100n }],
+        delegates: [{ address: E, weight: 100 }],
       },
       [E]: {
         delegators: [
-          { address: A, weight: 100n },
-          { address: B, weight: 100n },
-          { address: C, weight: 100n },
-          { address: D, weight: 100n },
+          { address: A, weight: 100 },
+          { address: B, weight: 100 },
+          { address: C, weight: 100 },
+          { address: D, weight: 100 },
         ],
         delegates: [],
       },

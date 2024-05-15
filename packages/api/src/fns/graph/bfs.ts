@@ -2,7 +2,7 @@ import { Address } from 'viem'
 
 import { Weights } from '../../types'
 
-export default function bfs<T>(weights: Weights<T>, root: string): Address[] {
+export default function bfs(weights: Weights, root: string): Address[] {
   const visited: Record<string, boolean> = {}
   const queue: string[] = [root]
 

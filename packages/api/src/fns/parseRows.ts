@@ -32,7 +32,7 @@ export default function parseRows(
         chainId,
         registry: registry as Address,
         account: account as Address,
-        set: { delegation: [{ delegate, ratio: 100n }], expiration: 0 },
+        set: { delegation: [{ delegate, weight: 100 }], expiration: 0 },
       }
     }
 

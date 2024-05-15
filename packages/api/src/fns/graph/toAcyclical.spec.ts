@@ -5,7 +5,7 @@ import { Weights } from '../../types'
 
 describe('toAcyclical', () => {
   test('one cycle in the graph', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
         C: 0,
@@ -29,7 +29,7 @@ describe('toAcyclical', () => {
   })
 
   test('two cycles in the graph', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
       },
@@ -67,7 +67,7 @@ describe('toAcyclical', () => {
   })
 
   test('one node makes two cycles in the graph', () => {
-    const dag: Weights<number> = {
+    const dag: Weights = {
       A: {
         B: 0,
         C: 0,

@@ -4,12 +4,12 @@ import { Registry, Weights } from '../types'
 export default function createWeights(
   registry: Registry,
   when: number
-): Weights<bigint> {
+): Weights {
   const optedOut = new Set(
     Object.keys(registry).filter((account) => registry[account].optOut == true)
   )
 
-  type Entries = [string, { delegate: Address; ratio: bigint }[]]
+  type Entries = [string, { delegate: Address; weight: number }[]]
   const isExpired = (expiration: number) => expiration != 0 && expiration < when
 
   const entries = Object.entries(registry)
@@ -29,11 +29,11 @@ export default function createWeights(
     // exclude empty bags
     .filter(([, delegation]) => delegation.length > 0)
 
-  const result: Weights<bigint> = {}
+  const result: Weights = {}
   for (const [delegator, delegation] of entries) {
     result[delegator] = {}
-    for (const { delegate, ratio } of delegation) {
-      result[delegator][delegate] = ratio
+    for (const { delegate, weight } of delegation) {
+      result[delegator][delegate] = weight
     }
   }
   return result
