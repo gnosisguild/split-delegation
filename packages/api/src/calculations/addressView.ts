@@ -56,7 +56,7 @@ export default function calculateAddressView({
     : []
 
   return {
-    votingPower,
+    votingPower: votingPower[address],
     percentOfVotingPower: basisPoints(votingPower[address], totalSupply),
     percentOfDelegators: basisPoints(
       delegators.length,
