@@ -52,14 +52,11 @@ function cascade(
     return []
   }
 
-  const direct = proportionally(weights[from], weight).map(([to, weight]) => ({
-    to,
-    weight,
-  }))
+  const distribution = proportionally(weights[from], weight)
 
   return [
-    ...direct,
-    ...direct.flatMap(({ to, weight }) => cascade(weights, to, weight)),
+    ...distribution,
+    ...distribution.flatMap(({ to, weight }) => cascade(weights, to, weight)),
   ]
 }
 
