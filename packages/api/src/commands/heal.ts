@@ -5,7 +5,7 @@ import { DelegationEvent } from '@prisma/client'
 import { compare } from '../fns/diff'
 import { rangeToStints } from '../fns/rangeToStints'
 import { timerEnd, timerStart } from '../fns/timer'
-import createEntities from '../fns/createEntities'
+import logToRows from '../decoding/logToRows'
 import prefix from '../fns/prefix'
 
 import createClient from '../loaders/createClient'
@@ -65,7 +65,7 @@ async function _heal({
   for (const { fromBlock, toBlock, perc, verbose } of stints) {
     const [prev, next] = await Promise.all([
       loadEntities({ fromBlock, toBlock }),
-      createEntities(await loadLogs({ contracts, fromBlock, toBlock, client })),
+      logToRows(await loadLogs({ contracts, fromBlock, toBlock, client })),
     ])
 
     const diff = compare({ prev, next })

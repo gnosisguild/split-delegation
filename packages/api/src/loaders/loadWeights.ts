@@ -4,9 +4,9 @@ import { timerEnd, timerStart } from '../fns/timer'
 import createClient from './createClient'
 import loadEvents from './loadEvents'
 
-import createRegistry from '../fns/createRegistry'
-import createWeights from '../fns/createWeights'
-import parseRows from '../fns/parseRows'
+import createRegistry from '../fns/delegations/createRegistry'
+import createWeights from '../fns/delegations/createWeights'
+import rowToAction from '../decoding/rowToAction'
 import toAcyclical from '../fns/graph/toAcyclical'
 
 import { Weights } from '../types'
@@ -54,11 +54,11 @@ async function _load({
   const block = await createClient(chain).getBlock({
     blockNumber: BigInt(blockNumber),
   })
-  const events = await loadEvents({
+  const rows = await loadEvents({
     space,
     blockTimestamp: Number(block.timestamp),
   })
-  const registry = createRegistry(parseRows(events))
+  const registry = createRegistry(rowToAction(rows))
   const weights = toAcyclical(createWeights(registry, Number(block.timestamp)))
 
   await cachePut(key, weights)

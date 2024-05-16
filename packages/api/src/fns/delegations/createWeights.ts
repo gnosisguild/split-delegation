@@ -1,5 +1,5 @@
 import { Address } from 'viem'
-import { Registry, Weights } from '../types'
+import { Registry, Weights } from '../../types'
 
 export default function createWeights(
   registry: Registry,

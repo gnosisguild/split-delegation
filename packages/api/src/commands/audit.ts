@@ -4,7 +4,7 @@ import { mainnet } from 'viem/chains'
 import { compare, count } from '../fns/diff'
 import { rangeToStints } from '../fns/rangeToStints'
 import { timerEnd, timerStart } from '../fns/timer'
-import createEntities from '../fns/createEntities'
+import logToRows from '../decoding/logToRows'
 import prefix from '../fns/prefix'
 
 import createClient from '../loaders/createClient'
@@ -40,7 +40,7 @@ export default async function audit() {
     let found = 0
     for (const { fromBlock, toBlock, perc } of stints) {
       const prev = await loadEntities({ fromBlock, toBlock })
-      const next = createEntities(
+      const next = logToRows(
         await loadLogs({
           contracts,
           fromBlock,

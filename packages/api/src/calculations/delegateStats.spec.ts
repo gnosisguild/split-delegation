@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
 import delegateStats from './delegateStats'
-import calculateDelegations from './delegations'
+import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 
 describe('delegateStats', () => {
   const A = 'A' as Address
@@ -21,7 +21,7 @@ describe('delegateStats', () => {
         [E]: 100,
       },
     }
-    const delegations = calculateDelegations({ weights })
+    const delegations = createDelegationGraph({ weights })
 
     const scores = {
       [A]: 1000,

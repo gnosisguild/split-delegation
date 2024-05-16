@@ -1,9 +1,9 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import calculateDelegations from './delegations'
+import createDelegationGraph from './createDelegationGraph'
 
-describe('calculateDelegations', () => {
+describe('createDelegationGraph', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
@@ -12,7 +12,7 @@ describe('calculateDelegations', () => {
 
   test('node without delegations', () => {
     const weights = {}
-    expect(calculateDelegations({ weights })).toEqual({})
+    expect(createDelegationGraph({ weights })).toEqual({})
   })
 
   test('direct delegation', () => {
@@ -25,7 +25,7 @@ describe('calculateDelegations', () => {
       },
     }
 
-    expect(calculateDelegations({ weights })).toEqual({
+    expect(createDelegationGraph({ weights })).toEqual({
       [A]: {
         incoming: [],
         outgoing: [{ address: C, direct: true, weight: 100, ratio: 1 }],
@@ -56,7 +56,7 @@ describe('calculateDelegations', () => {
       },
     }
 
-    expect(calculateDelegations({ weights })).toEqual({
+    expect(createDelegationGraph({ weights })).toEqual({
       [A]: {
         incoming: [],
         outgoing: [
@@ -111,7 +111,7 @@ describe('calculateDelegations', () => {
       },
     }
 
-    expect(calculateDelegations({ weights })).toEqual({
+    expect(createDelegationGraph({ weights })).toEqual({
       [A]: {
         incoming: [],
         outgoing: [

@@ -1,5 +1,4 @@
 import {
-  Address,
   Hash,
   Hex,
   decodeAbiParameters,
@@ -8,7 +7,7 @@ import {
   parseAbiParameters,
   toBytes,
 } from 'viem'
-import spaceId from './spaceId'
+import spaceId from '../fns/spaceId'
 
 // V1 events
 /*

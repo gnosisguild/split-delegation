@@ -4,7 +4,7 @@ import { gnosis, mainnet } from 'viem/chains'
 
 import { rangeToStints } from '../fns/rangeToStints'
 import { timerEnd, timerStart } from '../fns/timer'
-import createEntities from '../fns/createEntities'
+import logToRows from '../decoding/logToRows'
 import prefix from '../fns/prefix'
 
 import createClient from '../loaders/createClient'
@@ -95,7 +95,7 @@ async function _sync({
 
   let total = 0
   for (const { fromBlock, toBlock, verbose, count, perc } of stints) {
-    const entities = createEntities(
+    const entities = logToRows(
       await loadLogs({ contracts, fromBlock, toBlock, client })
     )
 

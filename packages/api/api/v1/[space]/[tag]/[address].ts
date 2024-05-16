@@ -1,9 +1,9 @@
 import { BlockTag, getAddress } from 'viem'
 
-import calculateAddressView from '../../../../src/calculations/addressView'
-import calculateDelegations from '../../../../src/calculations/delegations'
-
 import allNodes from '../../../../src/fns/graph/allNodes'
+import calculateAddressView from '../../../../src/calculations/addressView'
+import createDelegationGraph from '../../../../src/fns/delegations/createDelegationGraph'
+
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
@@ -34,7 +34,7 @@ export const POST = async (req: Request) => {
     addresses: Array.from(new Set([...allNodes(weights), address])),
   })
 
-  const delegations = calculateDelegations({ weights })
+  const delegations = createDelegationGraph({ weights })
 
   const {
     votingPower,

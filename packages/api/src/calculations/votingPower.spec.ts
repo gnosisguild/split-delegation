@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import calculateDelegations from './delegations'
+import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import calculateVotingPower from './votingPower'
 
 describe('votingPower', () => {
@@ -27,7 +27,7 @@ describe('votingPower', () => {
       [D]: 30,
     }
 
-    const delegations = calculateDelegations({ weights })
+    const delegations = createDelegationGraph({ weights })
 
     expect(
       calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
@@ -59,7 +59,7 @@ describe('votingPower', () => {
       [D]: 500,
     }
 
-    const delegations = calculateDelegations({ weights })
+    const delegations = createDelegationGraph({ weights })
 
     expect(
       calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
@@ -84,7 +84,7 @@ describe('votingPower', () => {
       [C]: 0,
       [D]: 30,
     }
-    const delegations = calculateDelegations({ weights })
+    const delegations = createDelegationGraph({ weights })
 
     expect(
       calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
@@ -105,7 +105,7 @@ describe('votingPower', () => {
       [D]: 400,
     }
 
-    const delegations = calculateDelegations({ weights })
+    const delegations = createDelegationGraph({ weights })
 
     expect(
       calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })

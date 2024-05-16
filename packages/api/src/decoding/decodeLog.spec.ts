@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals'
 import { Log, getAddress, stringToHex } from 'viem'
 
-import spaceId from './spaceId'
+import spaceId from '../fns/spaceId'
 
 import {
   decodeDelegationUpdated,

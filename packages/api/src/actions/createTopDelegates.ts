@@ -1,7 +1,7 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import calculateDelegations from '../calculations/delegations'
+import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import delegateStats, {
   DelegateStats,
   top,
@@ -83,7 +83,7 @@ async function cacheGetOrCalculate({
   const result = top(
     delegateStats({
       weights,
-      delegations: calculateDelegations({ weights }),
+      delegations: createDelegationGraph({ weights }),
       scores,
       totalSupply,
     })

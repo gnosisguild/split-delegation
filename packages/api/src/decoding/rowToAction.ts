@@ -14,7 +14,7 @@ import {
 
 import { DelegationAction } from '../types'
 
-export default function parseRows(
+export default function rowToAction(
   rows: {
     chainId: number
     registry: string

@@ -1,9 +1,9 @@
-import kahn from '../fns/graph/sort'
-import proportionally from '../fns/proportionally'
+import kahn from '../graph/sort'
+import proportionally from '../proportionally'
 
-import { DelegationGraph, Weights } from '../types'
+import { DelegationGraph, Weights } from '../../types'
 
-export default function calculateDelegations({
+export default function createDelegationGraph({
   weights,
   order,
 }: {
