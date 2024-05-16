@@ -18,13 +18,13 @@ export default function delegateStats({
   votingPower: Scores
   delegatorCount: Scores
 }): DelegateStats[] {
-  const allDelegatorCount = delegatorCount.all
+  const totalDelegatorCount = delegatorCount.total
   return Object.keys(votingPower).map((address) => ({
     address,
     delegatorCount: delegatorCount[address],
     percentOfDelegators: basisPoints(
       delegatorCount[address],
-      allDelegatorCount
+      totalDelegatorCount
     ),
     votingPower: votingPower[address],
     percentOfVotingPower: basisPoints(votingPower[address], totalSupply),

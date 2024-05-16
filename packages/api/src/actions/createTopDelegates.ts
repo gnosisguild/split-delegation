@@ -8,6 +8,8 @@ import kahn from '../fns/graph/sort'
 import loadScores from '../loaders/loadScores'
 import loadWeights from '../loaders/loadWeights'
 
+import { Scores } from 'src/types'
+
 import prisma from '../../prisma/singleton'
 
 export default async function ({
@@ -88,11 +90,10 @@ async function cacheGetOrCalculate({
 
   const result = delegateStats({
     votingPower,
-    delegatorCount: Object.fromEntries(
-      Object.keys(delegations).map((address) => [
-        address,
-        delegations[address].delegators.length,
-      ])
+    delegatorCount: Object.entries(delegations).reduce(
+      (result, [address, { delegators }]) =>
+        Object.assign(result, { [address]: delegators.length }),
+      { total: Object.keys(weights).length } as Scores
     ),
     totalSupply,
   })
