@@ -31,11 +31,13 @@ describe('delegateStats', () => {
       [E]: 30,
     }
 
+    const totalSupply = 1000 + 30 + 50 + 20 + 30
+
     const result = delegateStats({
       weights,
       delegations,
       scores,
-      totalSupply: 100,
+      totalSupply,
     })
 
     expect(result).toEqual([
@@ -44,21 +46,21 @@ describe('delegateStats', () => {
         delegatorCount: 1,
         votingPower: 530,
         percentOfDelegators: 5000,
-        percentOfVotingPower: 3000,
+        percentOfVotingPower: Math.round((530 * 10000) / totalSupply),
       },
       {
         address: C,
         delegatorCount: 1,
         percentOfDelegators: 5000,
         votingPower: 550,
-        percentOfVotingPower: 5000,
+        percentOfVotingPower: Math.round((550 * 10000) / totalSupply),
       },
       {
         address: E,
         delegatorCount: 1,
         percentOfDelegators: 5000,
         votingPower: 50,
-        percentOfVotingPower: 3000,
+        percentOfVotingPower: Math.round((50 * 10000) / totalSupply),
       },
     ])
   })
