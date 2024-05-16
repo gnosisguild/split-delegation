@@ -2,7 +2,10 @@ import { BlockTag, getAddress } from 'viem'
 
 import calculateAddressView from '../../../../src/calculations/addressView'
 import calculateDelegations from '../../../../src/calculations/delegations'
-import createVotingPower from '../../../../src/actions/createVotingPower'
+
+import allNodes from '../../../../src/fns/graph/allNodes'
+import loadScores from '../../../../src/loaders/loadScores'
+import loadWeights from '../../../../src/loaders/loadWeights'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
@@ -22,14 +25,13 @@ export const POST = async (req: Request) => {
 
   await syncTip(chain, blockNumber)
 
-  const { weights, votingPower: votingPowerMap } = await createVotingPower({
+  const { weights } = await loadWeights({ chain, blockNumber, space })
+  const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: {
-      include: [address],
-    },
+    addresses: Array.from(new Set([...allNodes(weights), address])),
   })
 
   const delegations = calculateDelegations({ weights })
@@ -43,7 +45,7 @@ export const POST = async (req: Request) => {
   } = calculateAddressView({
     address,
     delegations,
-    votingPower: votingPowerMap,
+    scores,
     totalSupply,
     totalDelegators: Object.keys(weights).length,
   })

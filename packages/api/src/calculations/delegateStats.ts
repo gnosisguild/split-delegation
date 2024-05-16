@@ -1,5 +1,5 @@
-import basisPoints from '../fns/basisPoints'
-import { Scores } from '../types'
+import { DelegationGraph, Scores, Weights } from '../types'
+import calculateAddressView from './addressView'
 
 export type DelegateStats = {
   address: string
@@ -10,25 +10,50 @@ export type DelegateStats = {
 }
 
 export default function delegateStats({
+  weights,
+  delegations,
+  scores,
   totalSupply,
-  votingPower,
-  delegatorCount,
 }: {
+  weights: Weights
+  delegations: DelegationGraph
+  scores: Scores
   totalSupply: number
-  votingPower: Scores
-  delegatorCount: Scores
 }): DelegateStats[] {
-  const totalDelegatorCount = delegatorCount.total
-  return Object.keys(votingPower).map((address) => ({
-    address,
-    delegatorCount: delegatorCount[address],
-    percentOfDelegators: basisPoints(
-      delegatorCount[address],
-      totalDelegatorCount
-    ),
-    votingPower: votingPower[address],
-    percentOfVotingPower: basisPoints(votingPower[address], totalSupply),
-  }))
+  const delegators = Object.keys(weights)
+  const delegates = Array.from(
+    new Set(
+      Object.values(weights)
+        .map((value) => Object.keys(value))
+        .flat()
+    )
+  )
+
+  return delegates
+    .map((delegate) =>
+      calculateAddressView({
+        delegations,
+        scores,
+        totalDelegators: delegators.length,
+        totalSupply,
+        address: delegate,
+      })
+    )
+    .map(
+      ({
+        address,
+        votingPower,
+        delegators,
+        percentOfVotingPower,
+        percentOfDelegators,
+      }) => ({
+        address,
+        delegatorCount: delegators.length,
+        percentOfDelegators,
+        votingPower,
+        percentOfVotingPower,
+      })
+    )
 }
 
 export function orderByCount(a: DelegateStats, b: DelegateStats) {

@@ -2,13 +2,10 @@ import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import calculateDelegations from '../calculations/delegations'
-import calculateVotingPower from '../calculations/votingPower'
 import delegateStats, { DelegateStats } from '../calculations/delegateStats'
 import kahn from '../fns/graph/sort'
 import loadScores from '../loaders/loadScores'
 import loadWeights from '../loaders/loadWeights'
-
-import { Scores } from 'src/types'
 
 import prisma from '../../prisma/singleton'
 
@@ -80,21 +77,10 @@ async function cacheGetOrCalculate({
     addresses: order,
   })
 
-  const votingPower = calculateVotingPower({
-    weights,
-    scores,
-    order,
-  })
-
-  const delegations = calculateDelegations({ weights })
-
   const result = delegateStats({
-    votingPower,
-    delegatorCount: Object.entries(delegations).reduce(
-      (result, [address, { incoming }]) =>
-        Object.assign(result, { [address]: incoming.length }),
-      { total: Object.keys(weights).length } as Scores
-    ),
+    weights,
+    delegations: calculateDelegations({ weights }),
+    scores,
     totalSupply,
   })
 

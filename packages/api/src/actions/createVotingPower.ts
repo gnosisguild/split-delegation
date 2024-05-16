@@ -1,7 +1,8 @@
 import { Chain } from 'viem'
 
+import { calculateForAddress } from '../calculations/votingPower'
 import { timerEnd, timerStart } from '../fns/timer'
-import calculateVotingPower from '../calculations/votingPower'
+import calculateDelegations from '../calculations/delegations'
 import filterVertices from '../fns/graph/filterVertices'
 import kahn from '../fns/graph/sort'
 import loadScores from '../loaders/loadScores'
@@ -50,12 +51,15 @@ export default async function createVotingPower({
   })
 
   const start = timerStart()
-  const votingPower = await calculateVotingPower({
-    weights,
-    scores,
-    order,
-  })
+  const delegations = calculateDelegations({ weights, order })
+  const result = Object.fromEntries(
+    addresses.map((address) => [
+      address,
+      calculateForAddress({ delegations, scores, address }),
+    ])
+  )
+
   console.log(`[VotingPower] ${space}, done in ${timerEnd(start)}ms`)
 
-  return { weights, votingPower }
+  return { weights, scores, votingPower: result }
 }

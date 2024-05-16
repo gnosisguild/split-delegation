@@ -1,8 +1,8 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
+import calculateDelegations from './delegations'
 import calculateVotingPower from './votingPower'
-import kahn from '../fns/graph/sort'
 
 describe('votingPower', () => {
   const A = 'A' as Address
@@ -26,8 +26,11 @@ describe('votingPower', () => {
       [C]: 20,
       [D]: 30,
     }
+
+    const delegations = calculateDelegations({ weights })
+
     expect(
-      calculateVotingPower({ weights, scores, order: kahn(weights) })
+      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
     ).toEqual({
       [A]: 0,
       [B]: 0,
@@ -56,8 +59,10 @@ describe('votingPower', () => {
       [D]: 500,
     }
 
+    const delegations = calculateDelegations({ weights })
+
     expect(
-      calculateVotingPower({ weights, scores, order: kahn(weights) })
+      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
     ).toEqual({
       [A]: 0,
       [B]: 0,
@@ -79,8 +84,10 @@ describe('votingPower', () => {
       [C]: 0,
       [D]: 30,
     }
+    const delegations = calculateDelegations({ weights })
+
     expect(
-      calculateVotingPower({ weights, scores, order: kahn(weights) })
+      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
     ).toEqual({
       [A]: 0,
       [B]: 200,
@@ -92,14 +99,21 @@ describe('votingPower', () => {
   test('it works with an empty delegation graph', () => {
     const weights = {}
     const scores = {
-      [A]: 50,
-      [B]: 60,
+      [A]: 100,
+      [B]: 200,
+      [C]: 300,
+      [D]: 400,
     }
+
+    const delegations = calculateDelegations({ weights })
+
     expect(
-      calculateVotingPower({ weights, scores, order: kahn(weights) })
+      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
     ).toEqual({
-      [A]: 50,
-      [B]: 60,
+      [A]: 100,
+      [B]: 200,
+      [C]: 300,
+      [D]: 400,
     })
   })
 })

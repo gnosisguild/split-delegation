@@ -1,42 +1,43 @@
-import proportionally from '../fns/proportionally'
-import { Scores, Weights } from '../types'
+import { DelegationGraph, Scores } from '../types'
 
 export default function calculateVotingPower({
-  weights,
+  delegations,
   scores,
-  order,
   addresses,
 }: {
-  weights: Weights
+  delegations: DelegationGraph
   scores: Scores
-  order: string[]
-  addresses?: string[]
+  addresses: string[]
 }) {
-  addresses = addresses || Object.keys(scores)
-  const inPower: Scores = { ...scores }
-  const outPower: Scores = Object.fromEntries(
-    addresses.map((address) => [address, 0])
+  return Object.fromEntries(
+    addresses.map((address) => [
+      address,
+      calculateForAddress({ delegations, scores, address }),
+    ])
   )
+}
 
-  for (const address of order) {
-    const delegator =
-      Object.keys(weights[address] || {}).length > 0 ? address : null
-
-    if (delegator) {
-      const distribution = proportionally(
-        weights[delegator],
-        inPower[delegator]
-      )
-      for (const [delegate, power] of distribution) {
-        outPower[delegator] += power
-        inPower[delegate] += power
-      }
-    }
+export function calculateForAddress({
+  delegations,
+  scores,
+  address,
+}: {
+  delegations: DelegationGraph
+  scores: Scores
+  address: string
+}) {
+  const { incoming, outgoing } = delegations[address] || {
+    incoming: [],
+    outgoing: [],
   }
+  const inPower = incoming
+    .map(({ address: delegate, ratio }) => scores[delegate]! * ratio)
+    .reduce((p, n) => p + n, 0)
+  const ownPower = scores[address]!
+  const outPower = outgoing
+    .filter(({ direct }) => direct)
+    .map(({ ratio }) => (inPower + ownPower) * ratio)
+    .reduce((p, n) => p + n, 0)
 
-  const result: Scores = {}
-  for (const address of addresses) {
-    result[address] = inPower[address] - outPower[address]
-  }
-  return result
+  return inPower + ownPower - outPower
 }
