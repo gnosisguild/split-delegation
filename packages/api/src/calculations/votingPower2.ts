@@ -1,6 +1,6 @@
 import { DelegationGraph, Scores } from '../types'
 
-export default function calculateVotingPower({
+export default function calculateVotingPower2({
   delegations,
   scores,
   addresses,

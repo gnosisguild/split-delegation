@@ -5,12 +5,14 @@ export default function calculateVotingPower({
   weights,
   scores,
   order,
+  addresses,
 }: {
   weights: Weights
   scores: Scores
   order: string[]
+  addresses?: string[]
 }) {
-  const addresses = Object.keys(scores)
+  addresses = addresses || Object.keys(scores)
   const inPower: Scores = { ...scores }
   const outPower: Scores = Object.fromEntries(
     addresses.map((address) => [address, 0])
