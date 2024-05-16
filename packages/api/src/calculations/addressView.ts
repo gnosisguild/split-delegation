@@ -17,7 +17,6 @@ export default function calculateAddressView({
   address: string
 }) {
   const isDelegatorOrDelegate = !!delegations[address]
-
   const votingPower = calculateVotingPower({ delegations, scores, address })
 
   const delegators = isDelegatorOrDelegate
@@ -44,8 +43,8 @@ export default function calculateAddressView({
 
   return {
     address,
-    votingPower: calculateVotingPower({ delegations, scores, address }),
-    percentOfVotingPower: basisPoints(scores[address], totalSupply),
+    votingPower: votingPower,
+    percentOfVotingPower: basisPoints(votingPower, totalSupply),
     percentOfDelegators: basisPoints(delegators.length, totalDelegators),
     delegators,
     delegates,
