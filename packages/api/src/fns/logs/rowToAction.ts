@@ -12,7 +12,7 @@ import {
   isSetDelegate,
 } from './decodeLog'
 
-import { DelegationAction } from '../types'
+import { DelegationAction } from '../../types'
 
 export default function rowToAction(
   rows: {

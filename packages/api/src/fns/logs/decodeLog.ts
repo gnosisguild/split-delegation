@@ -7,7 +7,7 @@ import {
   parseAbiParameters,
   toBytes,
 } from 'viem'
-import spaceId from '../fns/spaceId'
+import spaceId from '../spaceId'
 
 // V1 events
 /*

@@ -4,7 +4,7 @@ import { gnosis, mainnet } from 'viem/chains'
 
 import { rangeToStints } from '../fns/rangeToStints'
 import { timerEnd, timerStart } from '../fns/timer'
-import logToRows from '../decoding/logToRows'
+import logToRows from '../fns/logs/logToRows'
 import prefix from '../fns/prefix'
 
 import createClient from '../loaders/createClient'

@@ -1,6 +1,6 @@
 import { DelegationEvent } from '@prisma/client'
 
-import { eventId } from '../decoding/logToRows'
+import { eventId } from '../fns/logs/logToRows'
 import { timerEnd, timerStart } from '../fns/timer'
 import prefix from '../fns/prefix'
 

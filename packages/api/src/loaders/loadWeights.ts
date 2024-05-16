@@ -6,7 +6,7 @@ import loadEvents from './loadEvents'
 
 import createRegistry from '../fns/delegations/createRegistry'
 import createWeights from '../fns/delegations/createWeights'
-import rowToAction from '../decoding/rowToAction'
+import rowToAction from '../fns/logs/rowToAction'
 import toAcyclical from '../fns/graph/toAcyclical'
 
 import { Weights } from '../types'
