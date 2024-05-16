@@ -2,7 +2,10 @@ import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import calculateDelegations from '../calculations/delegations'
-import delegateStats, { DelegateStats } from '../calculations/delegateStats'
+import delegateStats, {
+  DelegateStats,
+  top,
+} from '../calculations/delegateStats'
 import kahn from '../fns/graph/sort'
 import loadScores from '../loaders/loadScores'
 import loadWeights from '../loaders/loadWeights'
@@ -77,12 +80,14 @@ async function cacheGetOrCalculate({
     addresses: order,
   })
 
-  const result = delegateStats({
-    weights,
-    delegations: calculateDelegations({ weights }),
-    scores,
-    totalSupply,
-  })
+  const result = top(
+    delegateStats({
+      weights,
+      delegations: calculateDelegations({ weights }),
+      scores,
+      totalSupply,
+    })
+  )
 
   await cachePut(key, result)
 
