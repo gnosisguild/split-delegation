@@ -3,23 +3,6 @@ import { DelegationGraph, Scores } from '../types'
 export default function calculateVotingPower({
   delegations,
   scores,
-  addresses,
-}: {
-  delegations: DelegationGraph
-  scores: Scores
-  addresses: string[]
-}) {
-  return Object.fromEntries(
-    addresses.map((address) => [
-      address,
-      calculateForAddress({ delegations, scores, address }),
-    ])
-  )
-}
-
-export function calculateForAddress({
-  delegations,
-  scores,
   address,
 }: {
   delegations: DelegationGraph

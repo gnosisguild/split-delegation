@@ -1,7 +1,7 @@
 import { Chain } from 'viem'
 
-import { calculateForAddress } from '../calculations/votingPower'
 import { timerEnd, timerStart } from '../fns/timer'
+import calculateVotingPower from '../calculations/votingPower'
 import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import filterVertices from '../fns/graph/filterVertices'
 import kahn from '../fns/graph/sort'
@@ -55,7 +55,7 @@ export default async function createVotingPower({
   const result = Object.fromEntries(
     addresses.map((address) => [
       address,
-      calculateForAddress({ delegations, scores, address }),
+      calculateVotingPower({ delegations, scores, address }),
     ])
   )
 

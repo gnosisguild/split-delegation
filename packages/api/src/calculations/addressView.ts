@@ -1,5 +1,4 @@
-import { calculateForAddress as calculateVotingPower } from './votingPower'
-import basisPoints from '../fns/basisPoints'
+import calculateVotingPower from './votingPower'
 
 import { DelegationGraph, Scores } from '../types'
 
@@ -49,4 +48,9 @@ export default function calculateAddressView({
     delegators,
     delegates,
   }
+}
+
+function basisPoints(score: number, total: number) {
+  if (total == 0) return 0
+  return Math.round((score * 10000) / total)
 }

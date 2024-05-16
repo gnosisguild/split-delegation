@@ -29,9 +29,12 @@ describe('votingPower', () => {
 
     const delegations = createDelegationGraph({ weights })
 
-    expect(
-      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
-    ).toEqual({
+    expect({
+      [A]: calculateVotingPower({ delegations, scores, address: A }),
+      [B]: calculateVotingPower({ delegations, scores, address: B }),
+      [C]: calculateVotingPower({ delegations, scores, address: C }),
+      [D]: calculateVotingPower({ delegations, scores, address: D }),
+    }).toEqual({
       [A]: 0,
       [B]: 0,
       [C]: 800 + 20,
@@ -61,9 +64,12 @@ describe('votingPower', () => {
 
     const delegations = createDelegationGraph({ weights })
 
-    expect(
-      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
-    ).toEqual({
+    expect({
+      [A]: calculateVotingPower({ delegations, scores, address: A }),
+      [B]: calculateVotingPower({ delegations, scores, address: B }),
+      [C]: calculateVotingPower({ delegations, scores, address: C }),
+      [D]: calculateVotingPower({ delegations, scores, address: D }),
+    }).toEqual({
       [A]: 0,
       [B]: 0,
       [C]: 0,
@@ -86,9 +92,12 @@ describe('votingPower', () => {
     }
     const delegations = createDelegationGraph({ weights })
 
-    expect(
-      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
-    ).toEqual({
+    expect({
+      [A]: calculateVotingPower({ delegations, scores, address: A }),
+      [B]: calculateVotingPower({ delegations, scores, address: B }),
+      [C]: calculateVotingPower({ delegations, scores, address: C }),
+      [D]: calculateVotingPower({ delegations, scores, address: D }),
+    }).toEqual({
       [A]: 0,
       [B]: 200,
       [C]: 800,
@@ -107,9 +116,12 @@ describe('votingPower', () => {
 
     const delegations = createDelegationGraph({ weights })
 
-    expect(
-      calculateVotingPower({ delegations, scores, addresses: [A, B, C, D] })
-    ).toEqual({
+    expect({
+      [A]: calculateVotingPower({ delegations, scores, address: A }),
+      [B]: calculateVotingPower({ delegations, scores, address: B }),
+      [C]: calculateVotingPower({ delegations, scores, address: C }),
+      [D]: calculateVotingPower({ delegations, scores, address: D }),
+    }).toEqual({
       [A]: 100,
       [B]: 200,
       [C]: 300,
