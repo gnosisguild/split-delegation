@@ -15,7 +15,7 @@ describe('delegateStats', () => {
       [C]: 50,
     }
     const delegatorCount = {
-      all: 5,
+      total: 5,
       [A]: 3,
       [B]: 2,
       [C]: 0,

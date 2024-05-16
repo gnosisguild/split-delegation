@@ -2,7 +2,7 @@ import assert from 'assert'
 import { Chain, getAddress } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
-import { merge } from '../fns/bag'
+import merge from '../fns/merge'
 import { Scores } from '../types'
 
 export default async function loadRawScores({

@@ -1,4 +1,4 @@
-import { distribute } from '../fns/bag'
+import proportionally from '../fns/proportionally'
 import { Scores, Weights } from '../types'
 
 export default function calculateVotingPower({
@@ -21,7 +21,10 @@ export default function calculateVotingPower({
       Object.keys(weights[address] || {}).length > 0 ? address : null
 
     if (delegator) {
-      const distribution = distribute(weights[delegator], inPower[delegator])
+      const distribution = proportionally(
+        weights[delegator],
+        inPower[delegator]
+      )
       for (const [delegate, power] of distribution) {
         outPower[delegator] += power
         inPower[delegate] += power

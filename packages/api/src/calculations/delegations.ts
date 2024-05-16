@@ -1,5 +1,5 @@
-import { distribute } from '../fns/bag'
 import kahn from '../fns/graph/sort'
+import proportionally from '../fns/proportionally'
 
 import { Delegations, Weights } from '../types'
 
@@ -44,7 +44,7 @@ function cascade(
     return []
   }
 
-  const direct = distribute(weights[from], weight).map(([to, weight]) => ({
+  const direct = proportionally(weights[from], weight).map(([to, weight]) => ({
     to,
     weight,
   }))
