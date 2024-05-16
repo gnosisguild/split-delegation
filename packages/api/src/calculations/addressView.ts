@@ -1,34 +1,27 @@
 import basisPoints from '../fns/basisPoints'
-import { Delegations, Weights } from '../types'
+import { DelegationGraph } from '../types'
 
 export default function calculateAddressView({
-  weights,
+  address,
   delegations,
   votingPower,
+  totalDelegators,
   totalSupply,
-  address,
 }: {
-  weights: Weights
-  delegations: Delegations
-  votingPower: Record<string, number>
-  totalSupply: number
   address: string
+  delegations: DelegationGraph
+  votingPower: Record<string, number>
+  totalDelegators: number
+  totalSupply: number
 }) {
-  const total = (address: string) =>
-    Object.values(weights[address]).reduce((p, v) => p + v, 0)
-
   const isDelegatorOrDelegate = !!delegations[address]
 
   const delegators = isDelegatorOrDelegate
-    ? delegations[address].delegators
-        .map(({ address: delegator, weight }) => ({
+    ? delegations[address].incoming
+        .map(({ address: delegator, direct, ratio }) => ({
           address: delegator,
-          direct: !!weights[delegator][address],
-          delegatedPower: weightedScore(
-            votingPower[delegator],
-            weight,
-            total(delegator)
-          ),
+          direct,
+          delegatedPower: ratio * votingPower[delegator],
         }))
         .map(({ delegatedPower, ...rest }) => ({
           ...rest,
@@ -38,15 +31,11 @@ export default function calculateAddressView({
     : []
 
   const delegates = isDelegatorOrDelegate
-    ? delegations[address].delegates
-        .map(({ address: delegate, weight }) => ({
+    ? delegations[address].outgoing
+        .map(({ address: delegate, direct, ratio }) => ({
           address: delegate,
-          direct: !!weights[address][delegate],
-          delegatedPower: weightedScore(
-            votingPower[address],
-            weight,
-            total(address)
-          ),
+          direct,
+          delegatedPower: ratio * votingPower[address],
         }))
         .map(({ delegatedPower, ...rest }) => ({
           ...rest,
@@ -58,15 +47,8 @@ export default function calculateAddressView({
   return {
     votingPower: votingPower[address],
     percentOfVotingPower: basisPoints(votingPower[address], totalSupply),
-    percentOfDelegators: basisPoints(
-      delegators.length,
-      Object.keys(weights).length
-    ),
+    percentOfDelegators: basisPoints(delegators.length, totalDelegators),
     delegators,
     delegates,
   }
-}
-
-function weightedScore(score: number, weight: number, total: number) {
-  return (weight * score) / total
 }

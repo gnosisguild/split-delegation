@@ -27,19 +27,19 @@ describe('calculateDelegations', () => {
 
     expect(calculateDelegations({ weights })).toEqual({
       [A]: {
-        delegators: [],
-        delegates: [{ address: C, weight: 100 }],
+        incoming: [],
+        outgoing: [{ address: C, direct: true, weight: 100, ratio: 1 }],
       },
       [B]: {
-        delegators: [],
-        delegates: [{ address: C, weight: 100 }],
+        incoming: [],
+        outgoing: [{ address: C, direct: true, weight: 100, ratio: 1 }],
       },
       [C]: {
-        delegators: [
-          { address: A, weight: 100 },
-          { address: B, weight: 100 },
+        incoming: [
+          { address: A, direct: true, weight: 100, ratio: 1 },
+          { address: B, direct: true, weight: 100, ratio: 1 },
         ],
-        delegates: [],
+        outgoing: [],
       },
     })
   })
@@ -58,35 +58,38 @@ describe('calculateDelegations', () => {
 
     expect(calculateDelegations({ weights })).toEqual({
       [A]: {
-        delegators: [],
-        delegates: [
-          { address: B, weight: 50 },
-          { address: C, weight: 50 },
-          { address: D, weight: 25 },
-          { address: E, weight: 25 },
+        incoming: [],
+        outgoing: [
+          { address: B, direct: true, weight: 50, ratio: 0.5 },
+          { address: C, direct: true, weight: 50, ratio: 0.5 },
+          { address: D, direct: false, weight: 25, ratio: 0.25 },
+          { address: E, direct: false, weight: 25, ratio: 0.25 },
         ],
       },
       [B]: {
-        delegators: [{ address: A, weight: 50 }],
-        delegates: [
-          { address: D, weight: 50 },
-          { address: E, weight: 50 },
+        incoming: [{ address: A, direct: true, weight: 50, ratio: 0.5 }],
+        outgoing: [
+          { address: D, direct: true, weight: 50, ratio: 0.5 },
+          { address: E, direct: true, weight: 50, ratio: 0.5 },
         ],
       },
-      [C]: { delegators: [{ address: A, weight: 50 }], delegates: [] },
+      [C]: {
+        incoming: [{ address: A, direct: true, weight: 50, ratio: 0.5 }],
+        outgoing: [],
+      },
       [D]: {
-        delegators: [
-          { address: A, weight: 25 },
-          { address: B, weight: 50 },
+        incoming: [
+          { address: A, direct: false, weight: 25, ratio: 0.25 },
+          { address: B, direct: true, weight: 50, ratio: 0.5 },
         ],
-        delegates: [],
+        outgoing: [],
       },
       [E]: {
-        delegators: [
-          { address: A, weight: 25 },
-          { address: B, weight: 50 },
+        incoming: [
+          { address: A, direct: false, weight: 25, ratio: 0.25 },
+          { address: B, direct: true, weight: 50, ratio: 0.5 },
         ],
-        delegates: [],
+        outgoing: [],
       },
     })
   })
@@ -110,44 +113,44 @@ describe('calculateDelegations', () => {
 
     expect(calculateDelegations({ weights })).toEqual({
       [A]: {
-        delegators: [],
-        delegates: [
-          { address: B, weight: 30 },
-          { address: C, weight: 70 },
-          { address: D, weight: 100 },
-          { address: E, weight: 100 },
+        incoming: [],
+        outgoing: [
+          { address: B, direct: true, weight: 30, ratio: 0.3 },
+          { address: C, direct: true, weight: 70, ratio: 0.7 },
+          { address: D, direct: false, weight: 100, ratio: 1 },
+          { address: E, direct: false, weight: 100, ratio: 1 },
         ],
       },
       [B]: {
-        delegators: [{ address: A, weight: 30 }],
-        delegates: [
-          { address: D, weight: 100 },
-          { address: E, weight: 100 },
+        incoming: [{ address: A, direct: true, weight: 30, ratio: 0.3 }],
+        outgoing: [
+          { address: D, direct: true, weight: 100, ratio: 1 },
+          { address: E, direct: false, weight: 100, ratio: 1 },
         ],
       },
       [C]: {
-        delegators: [{ address: A, weight: 70 }],
-        delegates: [
-          { address: D, weight: 100 },
-          { address: E, weight: 100 },
+        incoming: [{ address: A, direct: true, weight: 70, ratio: 0.7 }],
+        outgoing: [
+          { address: D, direct: true, weight: 100, ratio: 1 },
+          { address: E, direct: false, weight: 100, ratio: 1 },
         ],
       },
       [D]: {
-        delegators: [
-          { address: A, weight: 100 },
-          { address: B, weight: 100 },
-          { address: C, weight: 100 },
+        incoming: [
+          { address: A, direct: false, weight: 100, ratio: 1 },
+          { address: B, direct: true, weight: 100, ratio: 1 },
+          { address: C, direct: true, weight: 100, ratio: 1 },
         ],
-        delegates: [{ address: E, weight: 100 }],
+        outgoing: [{ address: E, direct: true, weight: 100, ratio: 1 }],
       },
       [E]: {
-        delegators: [
-          { address: A, weight: 100 },
-          { address: B, weight: 100 },
-          { address: C, weight: 100 },
-          { address: D, weight: 100 },
+        incoming: [
+          { address: A, direct: false, weight: 100, ratio: 1 },
+          { address: B, direct: false, weight: 100, ratio: 1 },
+          { address: C, direct: false, weight: 100, ratio: 1 },
+          { address: D, direct: true, weight: 100, ratio: 1 },
         ],
-        delegates: [],
+        outgoing: [],
       },
     })
   })

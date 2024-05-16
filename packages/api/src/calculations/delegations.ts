@@ -1,7 +1,7 @@
 import kahn from '../fns/graph/sort'
 import proportionally from '../fns/proportionally'
 
-import { Delegations, Weights } from '../types'
+import { DelegationGraph, Weights } from '../types'
 
 export default function calculateDelegations({
   weights,
@@ -16,19 +16,27 @@ export default function calculateDelegations({
   order = order || kahn(weights)
 
   const result = Object.fromEntries(
-    order.map((address) => [address, { delegators: [], delegates: [] }])
-  ) as Delegations
+    order.map((address) => [address, { incoming: [], outgoing: [] }])
+  ) as DelegationGraph
 
   for (const origin of order) {
-    const delegates = cascade(
-      weights,
-      origin,
-      Object.values(weights[origin] || {}).reduce((p, v) => p + v, 0)
+    const total = Object.values(weights[origin] || {}).reduce(
+      (p, v) => p + v,
+      0
     )
 
-    for (const { to, weight } of delegates) {
-      setInResult(result[to].delegators, { address: origin, weight })
-      setInResult(result[origin].delegates, { address: to, weight })
+    for (const { to, weight } of cascade(weights, origin, total)) {
+      const direct = typeof weights[origin][to] == 'number'
+      setInResult(
+        result[to].incoming,
+        { address: origin, weight, direct },
+        total
+      )
+      setInResult(
+        result[origin].outgoing,
+        { address: to, weight, direct },
+        total
+      )
     }
   }
 
@@ -56,13 +64,25 @@ function cascade(
 }
 
 function setInResult(
-  entries: { address: string; weight: number }[],
-  { address, weight }: { address: string; weight: number }
+  entries: {
+    address: string
+    weight: number
+    ratio: number
+    direct: boolean
+  }[],
+  {
+    address,
+    weight,
+    direct,
+  }: { address: string; weight: number; direct: boolean },
+  total: number
 ) {
-  const index = entries.findIndex((entry) => entry.address === address)
-  if (index === -1) {
-    entries.push({ address, weight })
-  } else {
-    entries[index].weight += weight
+  let entry = entries.find((entry) => entry.address === address)
+  if (!entry) {
+    entry = { address, direct, weight: 0, ratio: 0 }
+    entries.push(entry)
   }
+
+  entry.weight += weight
+  entry.ratio = entry.weight / total
 }

@@ -91,8 +91,8 @@ async function cacheGetOrCalculate({
   const result = delegateStats({
     votingPower,
     delegatorCount: Object.entries(delegations).reduce(
-      (result, [address, { delegators }]) =>
-        Object.assign(result, { [address]: delegators.length }),
+      (result, [address, { incoming }]) =>
+        Object.assign(result, { [address]: incoming.length }),
       { total: Object.keys(weights).length } as Scores
     ),
     totalSupply,

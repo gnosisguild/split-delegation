@@ -41,11 +41,11 @@ export const POST = async (req: Request) => {
     delegates,
     delegators,
   } = calculateAddressView({
-    weights,
+    address,
     delegations,
     votingPower: votingPowerMap,
     totalSupply,
-    address,
+    totalDelegators: Object.keys(weights).length,
   })
 
   const response = {
