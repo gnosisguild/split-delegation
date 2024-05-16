@@ -18,16 +18,15 @@ export default function calculateAddressView({
 }) {
   const isDelegatorOrDelegate = !!delegations[address]
 
+  const votingPower = calculateVotingPower({ delegations, scores, address })
+
   const delegators = isDelegatorOrDelegate
     ? delegations[address].incoming.map(
         ({ address: delegator, direct, ratio }) => ({
           address: delegator,
           direct,
           delegatedPower: ratio * scores[delegator]!,
-          percentPowerIn: basisPoints(
-            ratio * scores[delegator]!,
-            scores[address]
-          ),
+          percentPowerIn: basisPoints(ratio * scores[delegator]!, votingPower),
         })
       )
     : []
@@ -37,11 +36,8 @@ export default function calculateAddressView({
         ({ address: delegate, direct, ratio }) => ({
           address: delegate,
           direct,
-          delegatedPower: ratio * scores[address]!,
-          percentPowerOut: basisPoints(
-            ratio * scores[address]!,
-            scores[address]!
-          ),
+          delegatedPower: ratio * votingPower,
+          percentPowerOut: basisPoints(ratio * votingPower, votingPower),
         })
       )
     : []
