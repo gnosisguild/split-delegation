@@ -2,9 +2,9 @@ import assert from 'assert'
 import findCycle from './findCycle'
 import filterEdge from './filterEdge'
 
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
-export default function toAcyclical(graph: Weights): Weights {
+export default function toAcyclical(graph: Graph): Graph {
   while (true) {
     const cycle = findCycle(graph)
     if (!cycle) {

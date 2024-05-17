@@ -1,17 +1,17 @@
 import assert from 'assert'
 import allNodes from './allNodes'
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 /**
  * Performs a topological sort using Kahn's algorithm on a directed acyclic
  * graph (DAG).
  *
- * @param {Weights} dag - The directed acyclic graph to be sorted.
+ * @param {Graph} graph - The directed acyclic graph to be sorted.
  * @returns {string[]} - An array containing the sorted nodes of the DAG.
  */
 
-export default function kahn<T>(dag: Weights, more?: string[]): string[] {
-  const addresses: string[] = allNodes(dag, more)
+export default function kahn<T>(graph: Graph, more?: string[]): string[] {
+  const addresses: string[] = allNodes(graph, more)
 
   const inDegree = new Map<string, number>()
   for (const address of addresses) {
@@ -19,7 +19,7 @@ export default function kahn<T>(dag: Weights, more?: string[]): string[] {
   }
 
   for (const address of addresses) {
-    for (const neighbor of Object.keys(dag[address] || {})) {
+    for (const neighbor of Object.keys(graph[address] || {})) {
       inDegree.set(neighbor, inDegree.get(neighbor)! + 1)
     }
   }
@@ -36,7 +36,7 @@ export default function kahn<T>(dag: Weights, more?: string[]): string[] {
     const address = pending.shift()!
     sorted.push(address)
 
-    for (const neighbor of Object.keys(dag[address] || {})) {
+    for (const neighbor of Object.keys(graph[address] || {})) {
       inDegree.set(neighbor, inDegree.get(neighbor)! - 1)
       if (inDegree.get(neighbor) == 0) {
         pending.push(neighbor)

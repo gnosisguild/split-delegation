@@ -1,6 +1,6 @@
 import calculateVotingPower from './votingPower'
 
-import { DelegationGraph, Scores } from '../types'
+import { DelegationDAG, Scores } from '../types'
 
 export default function addressStats({
   delegations,
@@ -9,7 +9,7 @@ export default function addressStats({
   totalSupply,
   address,
 }: {
-  delegations: DelegationGraph
+  delegations: DelegationDAG
   scores: Scores
   totalDelegators: number
   totalSupply: number

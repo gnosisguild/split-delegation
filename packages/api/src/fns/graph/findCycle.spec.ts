@@ -2,11 +2,11 @@ import { describe, test } from '@jest/globals'
 
 import findCycle from './findCycle'
 
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 describe('findCycle', () => {
   test('no back edge, no forward edge', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
       },
@@ -15,10 +15,10 @@ describe('findCycle', () => {
       },
     }
 
-    expect(findCycle(dag)).toEqual(null)
+    expect(findCycle(graph)).toEqual(null)
   })
   test('yes back edge, no forward edge', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
       },
@@ -32,10 +32,10 @@ describe('findCycle', () => {
         B: 0,
       },
     }
-    expect(findCycle(dag)).toEqual(['B', 'C', 'D'])
+    expect(findCycle(graph)).toEqual(['B', 'C', 'D'])
   })
   test('no back edge, yes forward edge', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
         C: 0,
@@ -51,10 +51,10 @@ describe('findCycle', () => {
         E: 0,
       },
     }
-    expect(findCycle(dag)).toEqual(null)
+    expect(findCycle(graph)).toEqual(null)
   })
   test('yes back edge, yes forward edge', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         D: 0,
         B: 0,
@@ -72,6 +72,6 @@ describe('findCycle', () => {
         B: 0,
       },
     }
-    expect(findCycle(dag)).toEqual(['D', 'E', 'B', 'C'])
+    expect(findCycle(graph)).toEqual(['D', 'E', 'B', 'C'])
   })
 })

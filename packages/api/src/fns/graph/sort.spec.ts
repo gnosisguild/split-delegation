@@ -2,11 +2,11 @@ import { describe, test } from '@jest/globals'
 
 import kahn from './sort'
 
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 describe('sort', () => {
   test('no cycles', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         C: 0,
         B: 0,
@@ -23,11 +23,11 @@ describe('sort', () => {
       },
     }
 
-    expect(kahn(dag)).toEqual(['A', 'B', 'C', 'D', 'E'])
+    expect(kahn(graph)).toEqual(['A', 'B', 'C', 'D', 'E'])
   })
 
   test('with partition', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
       },
@@ -44,7 +44,7 @@ describe('sort', () => {
       F: {},
     }
 
-    const result = kahn(dag)
+    const result = kahn(graph)
     expect(result.indexOf('A')).toBeLessThan(result.indexOf('B'))
     expect(result.indexOf('B')).toBeLessThan(result.indexOf('C'))
     expect(result.indexOf('C')).toBeGreaterThan(-1)
@@ -55,7 +55,7 @@ describe('sort', () => {
   })
 
   test('throws on cycle', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
         C: 0,
@@ -68,6 +68,6 @@ describe('sort', () => {
       },
     }
 
-    expect(() => kahn(dag)).toThrow()
+    expect(() => kahn(graph)).toThrow()
   })
 })

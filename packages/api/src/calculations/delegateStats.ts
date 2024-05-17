@@ -1,4 +1,4 @@
-import { DelegationGraph, Scores, Weights } from '../types'
+import { DelegationDAG, Scores, Graph } from '../types'
 import addressStats from './addressStats'
 
 export type DelegateStats = {
@@ -15,8 +15,8 @@ export default function delegateStats({
   scores,
   totalSupply,
 }: {
-  weights: Weights
-  delegations: DelegationGraph
+  weights: Graph
+  delegations: DelegationDAG
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {

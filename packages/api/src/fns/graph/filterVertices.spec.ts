@@ -2,24 +2,24 @@ import { describe, test } from '@jest/globals'
 
 import filterVertices from './filterVertices'
 
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 describe('filterVertices', () => {
   test('removes a vertex', () => {
-    const weights: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
       },
       B: {},
     }
-    expect(filterVertices(weights, ['B'])).toEqual({
+    expect(filterVertices(graph, ['B'])).toEqual({
       A: {
         B: 0,
       },
     })
   })
   test('nothing to remove', () => {
-    const weights: Weights = {
+    const graph: Graph = {
       A: {
         B: 0,
       },
@@ -28,7 +28,7 @@ describe('filterVertices', () => {
       },
     }
 
-    expect(filterVertices(weights, ['D'])).toEqual({
+    expect(filterVertices(graph, ['D'])).toEqual({
       A: {
         B: 0,
       },
@@ -37,7 +37,7 @@ describe('filterVertices', () => {
       },
     })
 
-    expect(filterVertices(weights, [])).toEqual({
+    expect(filterVertices(graph, [])).toEqual({
       A: {
         B: 0,
       },

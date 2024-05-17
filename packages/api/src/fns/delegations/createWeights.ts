@@ -1,11 +1,8 @@
 import { Address } from 'viem'
 import { Registry } from './types'
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
-export default function createWeights(
-  registry: Registry,
-  when: number
-): Weights {
+export default function createWeights(registry: Registry, when: number): Graph {
   const optedOut = new Set(
     Object.keys(registry).filter((account) => registry[account].optOut == true)
   )
@@ -30,7 +27,7 @@ export default function createWeights(
     // exclude empty bags
     .filter(([, delegation]) => delegation.length > 0)
 
-  const result: Weights = {}
+  const result: Graph = {}
   for (const [delegator, delegation] of entries) {
     result[delegator] = {}
     for (const { delegate, weight } of delegation) {

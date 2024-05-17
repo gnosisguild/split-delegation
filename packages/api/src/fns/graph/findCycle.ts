@@ -1,4 +1,4 @@
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 /**
  * Detects cycles in a directed graph using Depth First Search (DFS).
@@ -9,7 +9,7 @@ import { Weights } from '../../types'
  *
  * @returns {boolean} Returns cycle if one detected, otherwise null.
  */
-export default function findCycle<T>(graph: Weights): string[] | null {
+export default function findCycle<T>(graph: Graph): string[] | null {
   const visited = new Set<string>()
   const path: string[] = []
 
@@ -22,7 +22,7 @@ export default function findCycle<T>(graph: Weights): string[] | null {
 }
 
 function dfs(
-  graph: Weights,
+  graph: Graph,
   node: string,
   visited: Set<string>,
   path: string[]
@@ -49,6 +49,6 @@ function dfs(
   return null
 }
 
-function neighbors<T>(graph: Weights, node: string): string[] {
+function neighbors<T>(graph: Graph, node: string): string[] {
   return Object.keys(graph[node] || {})
 }

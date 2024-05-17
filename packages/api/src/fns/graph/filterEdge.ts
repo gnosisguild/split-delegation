@@ -1,6 +1,6 @@
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
-export default function (weights: Weights, from: string, to: string): Weights {
+export default function (weights: Graph, from: string, to: string): Graph {
   const entries = Object.entries(weights)
     .map(([key, value]) => [
       key,

@@ -2,11 +2,11 @@ import { describe, test } from '@jest/globals'
 
 import filterEdge from './filterEdge'
 
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 describe('filterEdge', () => {
   test('it removes an edge', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 1,
         C: 1,
@@ -16,7 +16,7 @@ describe('filterEdge', () => {
       },
     }
 
-    expect(filterEdge(dag, 'A', 'B')).toEqual({
+    expect(filterEdge(graph, 'A', 'B')).toEqual({
       A: {
         C: 1,
       },
@@ -26,7 +26,7 @@ describe('filterEdge', () => {
     })
   })
   test('it also removes the vertex if no more edges are left', () => {
-    const dag: Weights = {
+    const graph: Graph = {
       A: {
         B: 1,
         C: 1,
@@ -36,7 +36,7 @@ describe('filterEdge', () => {
       },
     }
 
-    expect(filterEdge(dag, 'D', 'E')).toEqual({
+    expect(filterEdge(graph, 'D', 'E')).toEqual({
       A: {
         B: 1,
         C: 1,

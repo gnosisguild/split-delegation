@@ -9,7 +9,7 @@ describe('bfs', () => {
   const D = 'D' as Address
 
   test('case 1', () => {
-    const weights = {
+    const graph = {
       [A]: {
         [B]: 20,
         [C]: 80,
@@ -19,14 +19,14 @@ describe('bfs', () => {
       },
     }
 
-    expect(bfs(weights, A)).toEqual([B, C, D])
-    expect(bfs(weights, B)).toEqual([D])
-    expect(bfs(weights, C)).toEqual([])
-    expect(bfs(weights, D)).toEqual([])
+    expect(bfs(graph, A)).toEqual([B, C, D])
+    expect(bfs(graph, B)).toEqual([D])
+    expect(bfs(graph, C)).toEqual([])
+    expect(bfs(graph, D)).toEqual([])
   })
 
   test('case 2', () => {
-    const weights = {
+    const graph = {
       [A]: {
         [B]: 50,
         [C]: 50,
@@ -39,9 +39,9 @@ describe('bfs', () => {
       },
     }
 
-    expect(bfs(weights, A)).toEqual([B, C, D])
-    expect(bfs(weights, B)).toEqual([D])
-    expect(bfs(weights, C)).toEqual([D])
-    expect(bfs(weights, D)).toEqual([])
+    expect(bfs(graph, A)).toEqual([B, C, D])
+    expect(bfs(graph, B)).toEqual([D])
+    expect(bfs(graph, C)).toEqual([D])
+    expect(bfs(graph, D)).toEqual([])
   })
 })

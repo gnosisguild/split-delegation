@@ -9,7 +9,7 @@ import createWeights from '../fns/delegations/createWeights'
 import rowToAction from '../fns/logs/rowToAction'
 import toAcyclical from '../fns/graph/toAcyclical'
 
-import { Weights } from '../types'
+import { Graph } from '../types'
 
 import prisma from '../../prisma/singleton'
 
@@ -87,7 +87,7 @@ function cacheKey({
   )
 }
 
-async function cacheGet(key: string): Promise<{ weights: Weights } | null> {
+async function cacheGet(key: string): Promise<{ weights: Graph } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
     console.log(`[Load Weights] Cache Hit ${key.slice(0, 18)}`)
@@ -96,7 +96,7 @@ async function cacheGet(key: string): Promise<{ weights: Weights } | null> {
   return null
 }
 
-async function cachePut(key: string, weights: Weights) {
+async function cachePut(key: string, weights: Graph) {
   const value = JSON.stringify({ weights })
   await prisma.cache.upsert({
     where: { key },

@@ -1,13 +1,13 @@
 import kahn from '../graph/sort'
 import proportionally from '../proportionally'
 
-import { DelegationGraph, Weights } from '../../types'
+import { DelegationDAG, Graph } from '../../types'
 
 export default function createDelegationGraph({
   weights,
   order,
 }: {
-  weights: Weights
+  weights: Graph
   order?: string[]
 }) {
   /*
@@ -17,7 +17,7 @@ export default function createDelegationGraph({
 
   const result = Object.fromEntries(
     order.map((address) => [address, { incoming: [], outgoing: [] }])
-  ) as DelegationGraph
+  ) as DelegationDAG
 
   for (const origin of order) {
     const total = Object.values(weights[origin] || {}).reduce(
@@ -44,7 +44,7 @@ export default function createDelegationGraph({
 }
 
 function cascade(
-  weights: Weights,
+  weights: Graph,
   from: string,
   weight: number
 ): { to: string; weight: number }[] {

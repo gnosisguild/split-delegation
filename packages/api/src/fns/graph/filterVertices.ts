@@ -1,12 +1,12 @@
-import { Weights } from '../../types'
+import { Graph } from '../../types'
 
 export default function filterVertices(
-  weights: Weights,
+  graph: Graph,
   vertices: string[]
-): Weights {
+): Graph {
   const exclusion = new Set(vertices)
 
   return Object.fromEntries(
-    Object.entries(weights).filter(([vertex]) => !exclusion.has(vertex))
+    Object.entries(graph).filter(([vertex]) => !exclusion.has(vertex))
   )
 }

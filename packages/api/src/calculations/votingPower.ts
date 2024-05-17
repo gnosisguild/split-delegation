@@ -1,11 +1,11 @@
-import { DelegationGraph, Scores } from '../types'
+import { DelegationDAG, Scores } from '../types'
 
 export default function calculateVotingPower({
   delegations,
   scores,
   address,
 }: {
-  delegations: DelegationGraph
+  delegations: DelegationDAG
   scores: Scores
   address: string
 }) {
