@@ -4,7 +4,8 @@ import {
   orderByCount,
   orderByPower,
 } from '../../../../src/calculations/delegateStats'
-import createTopDelegates from '../../../../src/actions/createTopDelegates'
+
+import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
@@ -29,7 +30,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const topDelegates = await createTopDelegates({
+  const topDelegates = await loadTopDelegates({
     chain,
     blockNumber,
     space,

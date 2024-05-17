@@ -5,8 +5,8 @@ import calculateVotingPower from '../calculations/votingPower'
 import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import filterVertices from '../fns/graph/filterVertices'
 import kahn from '../fns/graph/sort'
-import loadScores from '../loaders/loadScores'
-import loadWeights from '../loaders/loadWeights'
+import loadScores from './loadScores'
+import loadWeights from './loadWeights'
 
 export default async function createVotingPower({
   chain,
