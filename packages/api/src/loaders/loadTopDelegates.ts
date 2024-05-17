@@ -1,5 +1,6 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
+import { allParticipants } from '../calculations/participants'
 import { timerEnd, timerStart } from '../fns/timer'
 import delegateStats, {
   DelegateStats,
@@ -63,7 +64,7 @@ async function cacheGetOrCompute({
     }
   }
 
-  const { delegations, order } = await loadGraph({
+  const { delegations } = await loadGraph({
     chain,
     blockNumber,
     space,
@@ -74,7 +75,7 @@ async function cacheGetOrCompute({
     blockNumber,
     space,
     strategies,
-    addresses: order,
+    addresses: allParticipants(delegations),
   })
 
   const result = top(

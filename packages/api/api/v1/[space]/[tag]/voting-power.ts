@@ -1,6 +1,7 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
-import calculateVotingPower from 'src/calculations/votingPower'
+import { inputsFor } from '../../../../src/calculations/participants'
+import calculateVotingPower from '../../../../src/calculations/votingPower'
 
 import loadGraph from '../../../../src/loaders/loadGraph'
 import loadScores from '../../../../src/loaders/loadScores'
@@ -27,14 +28,13 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { delegations, order } = await loadGraph({ chain, blockNumber, space })
-
+  const { delegations } = await loadGraph({ chain, blockNumber, space })
   const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: order,
+    addresses: inputsFor(delegations, addresses),
   })
 
   const result = Object.fromEntries(
