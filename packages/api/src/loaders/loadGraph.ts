@@ -25,14 +25,14 @@ export default async function loadGraph({
   space: string
 }) {
   const start = timerStart()
-  const { delegations, order } = await cacheGetOrCompute({
+  const { delegations } = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
   })
 
   console.log(`[Graph] ${space}, done in ${timerEnd(start)}ms`)
-  return { delegations, order }
+  return { delegations }
 }
 
 async function cacheGetOrCompute({
@@ -66,9 +66,9 @@ async function cacheGetOrCompute({
   const order = kahn(weights)
   const delegations = createDelegationGraph({ weights, order })
 
-  await cachePut(key, { delegations, order })
+  await cachePut(key, delegations)
 
-  return { delegations, order }
+  return { delegations }
 }
 
 function cacheKey({
@@ -94,7 +94,7 @@ function cacheKey({
 
 async function cacheGet(
   key: string
-): Promise<{ delegations: DelegationDAG; order: string[] } | null> {
+): Promise<{ delegations: DelegationDAG } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
     console.log(`[Graph] Cache Hit ${key.slice(0, 18)}`)
@@ -103,11 +103,8 @@ async function cacheGet(
   return null
 }
 
-async function cachePut(
-  key: string,
-  { delegations, order }: { delegations: DelegationDAG; order: string[] }
-) {
-  const value = JSON.stringify({ delegations, order })
+async function cachePut(key: string, delegations: DelegationDAG) {
+  const value = JSON.stringify({ delegations })
   await prisma.cache.upsert({
     where: { key },
     create: { key, value },
