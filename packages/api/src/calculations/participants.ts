@@ -1,12 +1,5 @@
 import { DelegationDAG } from 'src/types'
 
-export default function allNodes(delegations: DelegationDAG) {
-  return {
-    delegators: allDelegators(delegations),
-    delegates: allDelegates(delegations),
-  }
-}
-
 export function allDelegators(delegations: DelegationDAG): string[] {
   return Object.entries(delegations)
     .filter(([, bag]) => bag.outgoing.length > 0)

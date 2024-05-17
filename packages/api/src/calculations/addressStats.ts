@@ -1,4 +1,4 @@
-import { allDelegators } from './allParticipants'
+import { allDelegators } from './participants'
 import calculateVotingPower from './votingPower'
 
 import { DelegationDAG, Scores } from '../types'

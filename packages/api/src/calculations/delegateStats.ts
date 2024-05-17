@@ -1,4 +1,4 @@
-import { allDelegates } from './allParticipants'
+import { allDelegates } from './participants'
 import addressStats from './addressStats'
 
 import { DelegationDAG, Scores } from '../types'

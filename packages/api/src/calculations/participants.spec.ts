@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
-import allParticipants from './allParticipants'
+import { allDelegates, allDelegators } from './participants'
 
 describe('allDelegators', () => {
   const A = 'A' as Address
@@ -20,7 +20,7 @@ describe('allDelegators', () => {
       },
     }
 
-    const { delegators } = allParticipants(delegations)
+    const delegators = allDelegators(delegations)
 
     expect(delegators).toEqual([A, B])
   })
@@ -45,7 +45,7 @@ describe('allDelegators', () => {
       },
     }
 
-    const { delegators } = allParticipants(delegations)
+    const delegators = allDelegators(delegations)
     expect(delegators).toEqual([A])
   })
 })
@@ -69,7 +69,7 @@ describe('allDelegates', () => {
       },
     }
 
-    const { delegates } = allParticipants(delegations)
+    const delegates = allDelegates(delegations)
 
     expect(delegates).toEqual([C])
   })
@@ -94,7 +94,7 @@ describe('allDelegates', () => {
       },
     }
 
-    const { delegates } = allParticipants(delegations)
+    const delegates = allDelegates(delegations)
     expect(delegates).toEqual([C, E])
   })
 })
