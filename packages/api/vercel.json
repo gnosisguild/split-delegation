@@ -26,6 +26,10 @@
     {
       "path": "/api/v1/sync",
       "schedule": "0/10 * * * *"
+    },
+    {
+      "path": "/api/v1/nightly",
+      "schedule": "0 0 * * *"
     }
   ]
 }
