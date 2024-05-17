@@ -25,6 +25,10 @@ export default async function loadGraph({
   const hasVoters = voters && voters.length > 0
 
   const start = timerStart()
+  /*
+   * If voters are passed in, we don't cache the outcome. We pass in the voters
+   * and filter out the delegation edges for any account that has voted.
+   */
   const delegations = await (hasVoters
     ? compute({ chain, blockNumber, space, voters })
     : cacheGetOrCompute({

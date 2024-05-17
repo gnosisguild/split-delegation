@@ -3,13 +3,14 @@ import { DelegationDAG } from 'src/types'
 export function allParticipants(delegations: DelegationDAG): string[] {
   return Array.from(
     new Set([...allDelegators(delegations), ...allDelegates(delegations)])
-  )
+  ).sort()
 }
 
 export function allDelegators(delegations: DelegationDAG): string[] {
   return Object.entries(delegations)
     .filter(([, bag]) => bag.outgoing.length > 0)
     .map(([address]) => address)
+    .sort()
 }
 
 export function allDelegates(delegations: DelegationDAG): string[] {
@@ -19,7 +20,7 @@ export function allDelegates(delegations: DelegationDAG): string[] {
         .map((bag) => bag.outgoing.map(({ address }) => address))
         .flat()
     )
-  )
+  ).sort()
 }
 
 export function inputsFor(
@@ -36,5 +37,5 @@ export function inputsFor(
         )
         .flat(),
     ])
-  )
+  ).sort()
 }

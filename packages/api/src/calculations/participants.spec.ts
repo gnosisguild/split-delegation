@@ -131,10 +131,30 @@ describe('participants', () => {
         },
       }
 
-      expect(inputsFor(delegations, [C])).toEqual([A])
-      expect(inputsFor(delegations, [D])).toEqual([A, B, C])
-      expect(inputsFor(delegations, [C, D])).toEqual([A, B, C])
-      expect(inputsFor(delegations, [E])).toEqual([])
+      expect(inputsFor(delegations, [C])).toEqual([A, C])
+      expect(inputsFor(delegations, [D])).toEqual([A, B, C, D])
+      expect(inputsFor(delegations, [C, D])).toEqual([A, B, C, D])
+      expect(inputsFor(delegations, [E])).toEqual([E])
+    })
+
+    test('it collects inputs for a address not in the graph', () => {
+      const delegations = {
+        [C]: {
+          incoming: [{ address: A, direct: true, ratio: 0, weight: 0 }],
+          outgoing: [{ address: E, direct: true, ratio: 0, weight: 0 }],
+        },
+        [D]: {
+          incoming: [
+            { address: A, direct: true, ratio: 0, weight: 0 },
+            { address: B, direct: true, ratio: 0, weight: 0 },
+            { address: C, direct: false, ratio: 0, weight: 0 },
+          ],
+          outgoing: [],
+        },
+      }
+
+      expect(inputsFor(delegations, [D, E])).toEqual([A, B, C, D, E])
+      expect(inputsFor(delegations, [E])).toEqual([E])
     })
   })
 })
