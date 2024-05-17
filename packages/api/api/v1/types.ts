@@ -11,6 +11,10 @@ export type DelegatorRequestBody = {
 }
 
 export type VotingPowerRequestBody = {
-  options: { strategies: any[]; network: string }
+  options: {
+    strategies: any[]
+    network: string
+    delegationOverride?: boolean
+  }
   addresses: string[]
 }

@@ -9,7 +9,6 @@ describe('createRegistry', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
-  const D = 'D' as Address
 
   const REGISTRY_V1 = '0x01' as Address
   const REGISTRY_V2 = '0x02' as Address

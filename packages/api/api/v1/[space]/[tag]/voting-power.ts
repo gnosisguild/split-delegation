@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
   const tag = searchParams.get('tag') as BlockTag
 
   const {
-    options: { strategies, network },
+    options: { strategies, network, delegationOverride = true },
     addresses: _addresses,
   } = (await req.json()) as VotingPowerRequestBody
 
@@ -28,7 +28,13 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { delegations } = await loadGraph({ chain, blockNumber, space })
+  const { delegations } = await loadGraph({
+    chain,
+    blockNumber,
+    space,
+    voters: delegationOverride ? addresses : undefined,
+  })
+
   const { scores } = await loadScores({
     chain,
     blockNumber,

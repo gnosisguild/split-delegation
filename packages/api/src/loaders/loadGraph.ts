@@ -1,15 +1,11 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createClient from './createClient'
-import loadEvents from './loadEvents'
-
 import createDelegationGraph from '../fns/delegations/createDelegationGraph'
-import createRegistry from '../fns/delegations/createRegistry'
-import createWeights from '../fns/delegations/createWeights'
+import filterVertices from '../fns/graph/filterVertices'
 import kahn from '../fns/graph/sort'
-import rowToAction from '../fns/logs/rowToAction'
-import toAcyclical from '../fns/graph/toAcyclical'
+
+import loadWeights from './loadWeights'
 
 import { DelegationDAG } from '../types'
 
@@ -19,18 +15,23 @@ export default async function loadGraph({
   chain,
   blockNumber,
   space,
+  voters,
 }: {
   chain: Chain
   blockNumber: number
   space: string
+  voters?: string[]
 }) {
-  const start = timerStart()
-  const { delegations } = await cacheGetOrCompute({
-    chain,
-    blockNumber,
-    space,
-  })
+  const hasVoters = voters && voters.length > 0
 
+  const start = timerStart()
+  const delegations = await (hasVoters
+    ? compute({ chain, blockNumber, space, voters })
+    : cacheGetOrCompute({
+        chain,
+        blockNumber,
+        space,
+      }))
   console.log(`[Graph] ${space}, done in ${timerEnd(start)}ms`)
   return { delegations }
 }
@@ -51,24 +52,38 @@ async function cacheGetOrCompute({
   })
 
   const hit = await cacheGet(key)
-  if (hit) return hit
+  if (hit) return hit.delegations
 
-  const block = await createClient(chain).getBlock({
-    blockNumber: BigInt(blockNumber),
-  })
-  const rows = await loadEvents({
-    space,
-    blockTimestamp: Number(block.timestamp),
-  })
-
-  const registry = createRegistry(rowToAction(rows))
-  const weights = toAcyclical(createWeights(registry, Number(block.timestamp)))
-  const order = kahn(weights)
-  const delegations = createDelegationGraph({ weights, order })
+  const delegations = await compute({ chain, blockNumber, space })
 
   await cachePut(key, delegations)
 
-  return { delegations }
+  return delegations
+}
+
+async function compute({
+  chain,
+  blockNumber,
+  space,
+  voters,
+}: {
+  chain: Chain
+  blockNumber: number
+  space: string
+  voters?: string[]
+}) {
+  let { weights, order } = await loadWeights({
+    chain,
+    blockNumber,
+    space,
+  })
+
+  if (voters && voters.length > 0) {
+    weights = filterVertices(weights, voters)
+    order = kahn(weights)
+  }
+
+  return createDelegationGraph({ weights, order })
 }
 
 function cacheKey({
