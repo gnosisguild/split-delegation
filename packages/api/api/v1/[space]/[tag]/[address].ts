@@ -35,6 +35,7 @@ export const POST = async (req: Request) => {
 
   const {
     votingPower,
+    delegatedPower,
     percentOfVotingPower,
     percentOfDelegators,
     delegates,
@@ -51,6 +52,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     address,
     votingPower,
+    delegatedPower,
     percentOfVotingPower,
     percentOfDelegators,
     delegates,

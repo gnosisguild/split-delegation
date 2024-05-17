@@ -27,13 +27,14 @@ export function inputsFor(
   addresses: string[]
 ): string[] {
   return Array.from(
-    new Set(
-      addresses
+    new Set([
+      ...addresses,
+      ...addresses
         .map(
           (address) =>
             delegations[address]?.incoming.map(({ address }) => address) || []
         )
-        .flat()
-    )
+        .flat(),
+    ])
   )
 }
