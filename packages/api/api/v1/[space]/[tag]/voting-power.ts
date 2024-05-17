@@ -1,10 +1,14 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
-import loadVotingPower from '../../../../src/loaders/loadVotingPower'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
 import { VotingPowerRequestBody } from '../../types'
+import loadWeights from 'src/loaders/loadWeights'
+import kahn from 'src/fns/graph/sort'
+import loadScores from 'src/loaders/loadScores'
+import calculateVotingPower from 'src/calculations/votingPower'
+import createDelegationGraph from 'src/fns/delegations/createDelegationGraph'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
@@ -23,16 +27,29 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { votingPower } = await loadVotingPower({
+  const { weights } = await loadWeights({ chain, blockNumber, space })
+
+  const order = kahn(weights)
+
+  const delegations = createDelegationGraph({ weights, order })
+
+  const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: { voters: addresses },
+    addresses: order,
   })
 
   const result = Object.fromEntries(
-    addresses.map((address) => [address, votingPower[address]])
+    addresses.map((address) => [
+      address,
+      calculateVotingPower({
+        delegations,
+        scores,
+        address,
+      }),
+    ])
   )
 
   return new Response(JSON.stringify(result), {
