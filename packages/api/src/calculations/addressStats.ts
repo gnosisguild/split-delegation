@@ -1,3 +1,4 @@
+import { allDelegators } from './allParticipants'
 import calculateVotingPower from './votingPower'
 
 import { DelegationDAG, Scores } from '../types'
@@ -5,13 +6,11 @@ import { DelegationDAG, Scores } from '../types'
 export default function addressStats({
   delegations,
   scores,
-  totalDelegators,
   totalSupply,
   address,
 }: {
   delegations: DelegationDAG
   scores: Scores
-  totalDelegators: number
   totalSupply: number
   address: string
 }) {
@@ -44,7 +43,10 @@ export default function addressStats({
     address,
     votingPower: votingPower,
     percentOfVotingPower: basisPoints(votingPower, totalSupply),
-    percentOfDelegators: basisPoints(delegators.length, totalDelegators),
+    percentOfDelegators: basisPoints(
+      delegators.length,
+      allDelegators(delegations).length
+    ),
     delegators,
     delegates,
   }

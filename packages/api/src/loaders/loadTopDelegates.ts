@@ -1,14 +1,13 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import delegateStats, {
   DelegateStats,
   top,
 } from '../calculations/delegateStats'
-import kahn from '../fns/graph/sort'
+
+import loadGraph from './loadGraph'
 import loadScores from './loadScores'
-import loadWeights from './loadWeights'
 
 import prisma from '../../prisma/singleton'
 
@@ -26,7 +25,7 @@ export default async function loadTopDelegates({
   totalSupply: number
 }): Promise<DelegateStats[]> {
   const start = timerStart()
-  const result = await cacheGetOrCalculate({
+  const result = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
@@ -38,7 +37,7 @@ export default async function loadTopDelegates({
   return result
 }
 
-async function cacheGetOrCalculate({
+async function cacheGetOrCompute({
   chain,
   blockNumber,
   space,
@@ -64,13 +63,11 @@ async function cacheGetOrCalculate({
     }
   }
 
-  const { weights } = await loadWeights({
+  const { delegations, order } = await loadGraph({
     chain,
     blockNumber,
     space,
   })
-
-  const order = kahn(weights)
 
   const { scores } = await loadScores({
     chain,
@@ -82,8 +79,7 @@ async function cacheGetOrCalculate({
 
   const result = top(
     delegateStats({
-      weights,
-      delegations: createDelegationGraph({ weights }),
+      delegations,
       scores,
       totalSupply,
     })

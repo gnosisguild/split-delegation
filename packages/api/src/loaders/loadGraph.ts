@@ -4,16 +4,18 @@ import { timerEnd, timerStart } from '../fns/timer'
 import createClient from './createClient'
 import loadEvents from './loadEvents'
 
+import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import createRegistry from '../fns/delegations/createRegistry'
 import createWeights from '../fns/delegations/createWeights'
+import kahn from '../fns/graph/sort'
 import rowToAction from '../fns/logs/rowToAction'
 import toAcyclical from '../fns/graph/toAcyclical'
 
-import { Graph } from '../types'
+import { DelegationDAG } from '../types'
 
 import prisma from '../../prisma/singleton'
 
-export default async function loadWeights({
+export default async function loadGraph({
   chain,
   blockNumber,
   space,
@@ -23,17 +25,17 @@ export default async function loadWeights({
   space: string
 }) {
   const start = timerStart()
-  const { weights } = await _load({
+  const { delegations, order } = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
   })
 
-  console.log(`[Load Weights] ${space}, done in ${timerEnd(start)}ms`)
-  return { weights }
+  console.log(`[Graph] ${space}, done in ${timerEnd(start)}ms`)
+  return { delegations, order }
 }
 
-async function _load({
+async function cacheGetOrCompute({
   chain,
   blockNumber,
   space,
@@ -58,12 +60,15 @@ async function _load({
     space,
     blockTimestamp: Number(block.timestamp),
   })
+
   const registry = createRegistry(rowToAction(rows))
   const weights = toAcyclical(createWeights(registry, Number(block.timestamp)))
+  const order = kahn(weights)
+  const delegations = createDelegationGraph({ weights, order })
 
-  await cachePut(key, weights)
+  await cachePut(key, { delegations, order })
 
-  return { weights }
+  return { delegations, order }
 }
 
 function cacheKey({
@@ -78,7 +83,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'loadWeights',
+        name: 'loadGraph',
         chainId: chain.id,
         blockNumber,
         space,
@@ -87,21 +92,26 @@ function cacheKey({
   )
 }
 
-async function cacheGet(key: string): Promise<{ weights: Graph } | null> {
+async function cacheGet(
+  key: string
+): Promise<{ delegations: DelegationDAG; order: string[] } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
-    console.log(`[Load Weights] Cache Hit ${key.slice(0, 18)}`)
+    console.log(`[Graph] Cache Hit ${key.slice(0, 18)}`)
     return JSON.parse(hit.value)
   }
   return null
 }
 
-async function cachePut(key: string, weights: Graph) {
-  const value = JSON.stringify({ weights })
+async function cachePut(
+  key: string,
+  { delegations, order }: { delegations: DelegationDAG; order: string[] }
+) {
+  const value = JSON.stringify({ delegations, order })
   await prisma.cache.upsert({
     where: { key },
     create: { key, value },
     update: { key, value },
   })
-  console.log(`[Load Weights] Cache Put ${key.slice(0, 18)}`)
+  console.log(`[Graph] Cache Put ${key.slice(0, 18)}`)
 }

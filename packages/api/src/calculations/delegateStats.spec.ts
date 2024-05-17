@@ -34,7 +34,6 @@ describe('delegateStats', () => {
     const totalSupply = 1000 + 30 + 50 + 20 + 30
 
     const result = delegateStats({
-      weights,
       delegations,
       scores,
       totalSupply,

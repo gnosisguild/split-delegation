@@ -1,14 +1,14 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
+import calculateVotingPower from 'src/calculations/votingPower'
+
+import loadGraph from '../../../../src/loaders/loadGraph'
+import loadScores from '../../../../src/loaders/loadScores'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
+
 import { VotingPowerRequestBody } from '../../types'
-import loadWeights from 'src/loaders/loadWeights'
-import kahn from 'src/fns/graph/sort'
-import loadScores from 'src/loaders/loadScores'
-import calculateVotingPower from 'src/calculations/votingPower'
-import createDelegationGraph from 'src/fns/delegations/createDelegationGraph'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
@@ -27,11 +27,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { weights } = await loadWeights({ chain, blockNumber, space })
-
-  const order = kahn(weights)
-
-  const delegations = createDelegationGraph({ weights, order })
+  const { delegations, order } = await loadGraph({ chain, blockNumber, space })
 
   const { scores } = await loadScores({
     chain,
