@@ -12,7 +12,7 @@ import loadWeights from './loadWeights'
 
 import prisma from '../../prisma/singleton'
 
-export default async function ({
+export default async function loadTopDelegates({
   chain,
   blockNumber,
   space,

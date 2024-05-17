@@ -8,7 +8,7 @@ import kahn from '../fns/graph/sort'
 import loadScores from './loadScores'
 import loadWeights from './loadWeights'
 
-export default async function createVotingPower({
+export default async function loadVotingPower({
   chain,
   blockNumber,
   space,

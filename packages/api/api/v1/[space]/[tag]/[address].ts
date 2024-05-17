@@ -1,7 +1,7 @@
 import { BlockTag, getAddress } from 'viem'
 
+import addressStats from '../../../../src/calculations/addressStats'
 import allNodes from '../../../../src/fns/graph/allNodes'
-import calculateAddressView from '../../../../src/calculations/addressView'
 import createDelegationGraph from '../../../../src/fns/delegations/createDelegationGraph'
 
 import loadScores from '../../../../src/loaders/loadScores'
@@ -42,7 +42,7 @@ export const POST = async (req: Request) => {
     percentOfDelegators,
     delegates,
     delegators,
-  } = calculateAddressView({
+  } = addressStats({
     address,
     delegations,
     scores,

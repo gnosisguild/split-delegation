@@ -2,7 +2,7 @@ import calculateVotingPower from './votingPower'
 
 import { DelegationGraph, Scores } from '../types'
 
-export default function calculateAddressView({
+export default function addressStats({
   delegations,
   scores,
   totalDelegators,

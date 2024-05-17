@@ -1,5 +1,5 @@
 import { DelegationGraph, Scores, Weights } from '../types'
-import calculateAddressView from './addressView'
+import addressStats from './addressStats'
 
 export type DelegateStats = {
   address: string
@@ -31,7 +31,7 @@ export default function delegateStats({
 
   return delegates
     .map((delegate) =>
-      calculateAddressView({
+      addressStats({
         delegations,
         scores,
         totalDelegators: delegators.length,
