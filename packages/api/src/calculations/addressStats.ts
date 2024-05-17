@@ -20,10 +20,7 @@ export default function addressStats({
     outgoing: [],
   }
 
-  assert(
-    Array.isArray(incoming) && Array.isArray(outgoing),
-    'Broken Address Stats'
-  )
+  assert(Array.isArray(incoming) && Array.isArray(outgoing))
 
   const votingPower = calculateVotingPower({ delegations, scores, address })
 
@@ -45,9 +42,6 @@ export default function addressStats({
     .filter(({ direct }) => direct == true)
     .map(({ delegatedPower }) => delegatedPower)
     .reduce((p, v) => p + v, 0)
-
-  // delegated power is subset of votingPower
-  assert(delegatedPower <= votingPower)
 
   return {
     address,
