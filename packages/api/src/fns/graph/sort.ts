@@ -1,5 +1,4 @@
 import assert from 'assert'
-import allNodes from './allNodes'
 import { Graph } from '../../types'
 
 /**
@@ -10,8 +9,8 @@ import { Graph } from '../../types'
  * @returns {string[]} - An array containing the sorted nodes of the DAG.
  */
 
-export default function kahn<T>(graph: Graph, more?: string[]): string[] {
-  const addresses: string[] = allNodes(graph, more)
+export default function kahn<T>(graph: Graph): string[] {
+  const addresses: string[] = allNodes(graph)
 
   const inDegree = new Map<string, number>()
   for (const address of addresses) {
@@ -47,4 +46,16 @@ export default function kahn<T>(graph: Graph, more?: string[]): string[] {
   assert(addresses.length == sorted.length, 'Expected no cycles')
 
   return sorted
+}
+
+function allNodes(graph: Graph) {
+  const set = new Set<string>()
+  for (const from of Object.keys(graph)) {
+    set.add(from)
+
+    for (const to of Object.keys(graph[from])) {
+      set.add(to)
+    }
+  }
+  return Array.from(set).sort()
 }
