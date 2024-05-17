@@ -1,6 +1,7 @@
 import async from 'async'
 import rangeToChunks from '../fns/rangeToChunks'
-import { RpcFetch } from './types'
+
+type RpcFetch<T> = (fromBlock: number, toBlock: number) => Promise<T[]>
 
 const PARALLELISM = 5
 const MAX_RPC_BLOCK_RANGE = 3000

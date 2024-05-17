@@ -11,8 +11,7 @@ import {
   isExpirationUpdated,
   isSetDelegate,
 } from './decodeLog'
-
-import { DelegationAction } from '../../types'
+import { DelegationAction } from '../delegations/types'
 
 export default function rowToAction(
   rows: {

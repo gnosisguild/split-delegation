@@ -10,7 +10,7 @@ import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
 
-import { DelegatorRequestBody } from '../../../../src/types'
+import { DelegatorRequestBody } from '../../types'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
