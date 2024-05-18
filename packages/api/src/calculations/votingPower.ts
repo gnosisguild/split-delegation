@@ -1,26 +1,31 @@
-import { DelegationDAG, Scores } from '../types'
+import delegateTree from './delegateTree'
+import incomingPower from './incomingPower'
+
+import { Graph, Scores } from '../types'
 
 export default function calculateVotingPower({
-  delegations,
+  weights,
+  rweights,
   scores,
   address,
 }: {
-  delegations: DelegationDAG
+  weights: Graph
+  rweights: Graph
   scores: Scores
   address: string
 }) {
-  const { incoming, outgoing } = delegations[address] || {
-    incoming: [],
-    outgoing: [],
-  }
-  const inPower = incoming
-    .map(({ address: delegate, ratio }) => scores[delegate]! * ratio)
-    .reduce((p, n) => p + n, 0)
-  const ownPower = scores[address]!
-  const outPower = outgoing
-    .filter(({ direct }) => direct)
-    .map(({ ratio }) => (inPower + ownPower) * ratio)
-    .reduce((p, n) => p + n, 0)
+  const _incomingPower = incomingPower({ weights, rweights, scores, address })
+  const ownPower = scores[address]
+  const outgoingPower = delegateTree({
+    weights,
+    rweights,
+    scores,
+    address,
+  }).reduce((result, { delegatedPower }) => result + delegatedPower, 0)
 
-  return inPower + ownPower - outPower
+  return {
+    incomingPower: _incomingPower,
+    outgoingPower,
+    votingPower: _incomingPower + ownPower - outgoingPower,
+  }
 }

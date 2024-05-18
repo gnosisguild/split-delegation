@@ -1,8 +1,8 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import createDelegationGraph from '../fns/delegations/createDelegationGraph'
 import calculateVotingPower from './votingPower'
+import inverse from '../fns/graph/inverse'
 
 describe('votingPower', () => {
   const A = 'A' as Address
@@ -20,6 +20,7 @@ describe('votingPower', () => {
         [D]: 100,
       },
     }
+    const rweights = inverse(weights)
     const scores = {
       [A]: 1000,
       [B]: 100,
@@ -27,13 +28,15 @@ describe('votingPower', () => {
       [D]: 30,
     }
 
-    const delegations = createDelegationGraph({ weights })
-
     expect({
-      [A]: calculateVotingPower({ delegations, scores, address: A }),
-      [B]: calculateVotingPower({ delegations, scores, address: B }),
-      [C]: calculateVotingPower({ delegations, scores, address: C }),
-      [D]: calculateVotingPower({ delegations, scores, address: D }),
+      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
+        .votingPower,
+      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
+        .votingPower,
+      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
+        .votingPower,
+      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
+        .votingPower,
     }).toEqual({
       [A]: 0,
       [B]: 0,
@@ -62,13 +65,17 @@ describe('votingPower', () => {
       [D]: 500,
     }
 
-    const delegations = createDelegationGraph({ weights })
+    const rweights = inverse(weights)
 
     expect({
-      [A]: calculateVotingPower({ delegations, scores, address: A }),
-      [B]: calculateVotingPower({ delegations, scores, address: B }),
-      [C]: calculateVotingPower({ delegations, scores, address: C }),
-      [D]: calculateVotingPower({ delegations, scores, address: D }),
+      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
+        .votingPower,
+      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
+        .votingPower,
+      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
+        .votingPower,
+      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
+        .votingPower,
     }).toEqual({
       [A]: 0,
       [B]: 0,
@@ -90,13 +97,17 @@ describe('votingPower', () => {
       [C]: 0,
       [D]: 30,
     }
-    const delegations = createDelegationGraph({ weights })
+    const rweights = inverse(weights)
 
     expect({
-      [A]: calculateVotingPower({ delegations, scores, address: A }),
-      [B]: calculateVotingPower({ delegations, scores, address: B }),
-      [C]: calculateVotingPower({ delegations, scores, address: C }),
-      [D]: calculateVotingPower({ delegations, scores, address: D }),
+      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
+        .votingPower,
+      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
+        .votingPower,
+      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
+        .votingPower,
+      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
+        .votingPower,
     }).toEqual({
       [A]: 0,
       [B]: 200,
@@ -114,13 +125,17 @@ describe('votingPower', () => {
       [D]: 400,
     }
 
-    const delegations = createDelegationGraph({ weights })
+    const rweights = inverse(weights)
 
     expect({
-      [A]: calculateVotingPower({ delegations, scores, address: A }),
-      [B]: calculateVotingPower({ delegations, scores, address: B }),
-      [C]: calculateVotingPower({ delegations, scores, address: C }),
-      [D]: calculateVotingPower({ delegations, scores, address: D }),
+      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
+        .votingPower,
+      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
+        .votingPower,
+      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
+        .votingPower,
+      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
+        .votingPower,
     }).toEqual({
       [A]: 100,
       [B]: 200,
