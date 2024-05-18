@@ -1,3 +1,4 @@
+import basisPoints from '../fns/basisPoints'
 import calculateVotingPower from './votingPower'
 import reachable from '../fns/graph/reachable'
 
@@ -51,9 +52,4 @@ export default function addressStats({
     delegators,
     delegates,
   }
-}
-
-function basisPoints(score: number, total: number) {
-  if (total == 0) return 0
-  return Math.round((score * 10000) / total)
 }
