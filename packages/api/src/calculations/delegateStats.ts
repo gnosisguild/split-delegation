@@ -21,15 +21,17 @@ export default function delegateStats({
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {
-  const delegates = Object.keys(rweights)
+  const allDelegators = Object.keys(weights)
+  const allDelegates = Object.keys(rweights)
 
-  return delegates
+  return allDelegates
     .map((delegate) =>
       addressStats({
         weights,
         rweights,
         scores,
         totalSupply,
+        allDelegatorCount: allDelegators.length,
         address: delegate,
       })
     )

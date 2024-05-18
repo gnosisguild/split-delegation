@@ -21,12 +21,14 @@ export default function addressStats({
   rweights,
   scores,
   totalSupply,
+  allDelegatorCount,
   address,
 }: {
   weights: Graph
   rweights: Graph
   scores: Scores
   totalSupply: number
+  allDelegatorCount: number
   address: string
 }) {
   const { votingPower, incomingPower, outgoingPower } = calculateVotingPower({
@@ -45,10 +47,7 @@ export default function addressStats({
     incomingPower,
     outgoingPower,
     percentOfVotingPower: basisPoints(votingPower, totalSupply),
-    percentOfDelegators: basisPoints(
-      delegators.length,
-      Object.keys(weights).length
-    ),
+    percentOfDelegators: basisPoints(delegators.length, allDelegatorCount),
     delegators,
     delegates,
   }

@@ -48,6 +48,7 @@ export const POST = async (req: Request) => {
     rweights,
     scores,
     totalSupply,
+    allDelegatorCount: Object.keys(weights).length,
     address,
   })
 
