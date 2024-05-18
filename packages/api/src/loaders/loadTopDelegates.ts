@@ -1,16 +1,17 @@
 import { Chain, keccak256, toBytes } from 'viem'
 
-import { allParticipants } from '../calculations/participants'
 import { timerEnd, timerStart } from '../fns/timer'
+import allNodes from '../fns/graph/allNodes'
 import delegateStats, {
   DelegateStats,
   top,
 } from '../calculations/delegateStats'
 
-import loadGraph from './loadGraph'
 import loadScores from './loadScores'
+import loadWeights from './loadWeights'
 
 import prisma from '../../prisma/singleton'
+import inverse from 'src/fns/graph/inverse'
 
 export default async function loadTopDelegates({
   chain,
@@ -64,23 +65,26 @@ async function cacheGetOrCompute({
     }
   }
 
-  const { delegations } = await loadGraph({
+  const { weights } = await loadWeights({
     chain,
     blockNumber,
     space,
   })
+
+  const rweights = inverse(weights)
 
   const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: allParticipants(delegations),
+    addresses: allNodes(weights),
   })
 
   const result = top(
     delegateStats({
-      delegations,
+      weights,
+      rweights,
       scores,
       totalSupply,
     })

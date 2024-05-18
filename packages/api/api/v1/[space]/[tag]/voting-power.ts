@@ -1,10 +1,12 @@
 import { Address, BlockTag, getAddress } from 'viem'
 
-import { inputsFor } from '../../../../src/calculations/participants'
 import calculateVotingPower from '../../../../src/calculations/votingPower'
+import filterVertices from '../../../../src/fns/graph/filterVertices'
+import inputsFor from '../../../../src/calculations/inputsFor'
+import inverse from '../../../../src/fns/graph/inverse'
 
-import loadGraph from '../../../../src/loaders/loadGraph'
 import loadScores from '../../../../src/loaders/loadScores'
+import loadWeights from '../../../../src/loaders/loadWeights'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
@@ -21,38 +23,48 @@ export const POST = async (req: Request) => {
     addresses: _addresses,
   } = (await req.json()) as VotingPowerRequestBody
 
-  const addresses = _addresses
+  const voters = _addresses
     .map((address) => getAddress(address))
     .sort() as Address[]
 
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  const { delegations } = await loadGraph({
+  let { weights } = await loadWeights({
     chain,
     blockNumber,
     space,
-    voters: delegationOverride ? addresses : undefined,
   })
+
+  /*
+   * If delegation override is enabled, we filter out every edge from accounts
+   * that have voted
+   */
+  if (delegationOverride && voters.length > 0) {
+    weights = filterVertices(weights, voters)
+  }
+
+  const rweights = inverse(weights)
 
   const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(delegations, addresses),
+    addresses: inputsFor(rweights, voters),
   })
 
   const result = Object.fromEntries(
-    addresses.map((address) => [
-      address,
+    voters.map((voter) => [
+      voter,
       calculateVotingPower({
-        delegations,
+        weights,
+        rweights,
         scores,
-        address,
-      }),
+        address: voter,
+      }).votingPower,
     ])
-  )
+  ) as Record<string, number>
 
   return new Response(JSON.stringify(result), {
     headers: { 'Content-Type': 'application/json' },

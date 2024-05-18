@@ -1,10 +1,11 @@
 import { BlockTag, getAddress } from 'viem'
 
-import { inputsFor } from '../../../../src/calculations/participants'
 import addressStats from '../../../../src/calculations/addressStats'
+import inputsFor from '../../../../src/calculations/inputsFor'
+import inverse from '../../../../src/fns/graph/inverse'
 
-import loadGraph from '../../../../src/loaders/loadGraph'
 import loadScores from '../../../../src/loaders/loadScores'
+import loadWeights from '../../../../src/loaders/loadWeights'
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
@@ -24,27 +25,30 @@ export const POST = async (req: Request) => {
 
   await syncTip(chain, blockNumber)
 
-  const { delegations } = await loadGraph({ chain, blockNumber, space })
+  const { weights } = await loadWeights({ chain, blockNumber, space })
+  const rweights = inverse(weights)
   const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(delegations, [address]),
+    addresses: inputsFor(rweights, [address]),
   })
 
   const {
     votingPower,
-    delegatedPower,
+    incomingPower,
+    outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
     delegates,
     delegators,
   } = addressStats({
-    address,
-    delegations,
+    weights,
+    rweights,
     scores,
     totalSupply,
+    address,
   })
 
   const response = {
@@ -52,7 +56,8 @@ export const POST = async (req: Request) => {
     blockNumber,
     address,
     votingPower,
-    delegatedPower,
+    incomingPower,
+    outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
     delegates,
