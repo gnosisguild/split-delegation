@@ -1,5 +1,5 @@
-import reachable from 'src/fns/graph/reachable'
-import { Graph } from 'src/types'
+import reachable from './reachable'
+import { Graph } from '../../types'
 
 export default function inputsFor(
   rweights: Graph,

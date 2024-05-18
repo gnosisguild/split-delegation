@@ -1,8 +1,10 @@
 import assert from 'assert'
 
+import basisPoints from '../fns/basisPoints'
 import distribute from '../fns/distribute'
 import incomingPower from './incomingPower'
-import { Graph, Scores } from 'src/types'
+
+import { Graph, Scores } from '../types'
 
 export type DelegateTreeNode = {
   delegate: string
@@ -38,9 +40,4 @@ export default function delegateTree({
       children: delegateTree({ weights, rweights, scores, address: delegate }),
     }
   })
-}
-
-function basisPoints(score: number, total: number) {
-  if (total == 0) return 0
-  return Math.round((score * 10000) / total)
 }
