@@ -1,7 +1,6 @@
-import { allDelegates } from './participants'
 import addressStats from './addressStats'
 
-import { DelegationDAG, Scores } from '../types'
+import { Graph, Scores } from '../types'
 
 export type DelegateStats = {
   address: string
@@ -12,20 +11,23 @@ export type DelegateStats = {
 }
 
 export default function delegateStats({
-  delegations,
+  weights,
+  rweights,
   scores,
   totalSupply,
 }: {
-  delegations: DelegationDAG
+  weights: Graph
+  rweights: Graph
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {
-  const delegates = allDelegates(delegations)
+  const delegates = Object.keys(rweights)
 
   return delegates
     .map((delegate) =>
       addressStats({
-        delegations,
+        weights,
+        rweights,
         scores,
         totalSupply,
         address: delegate,

@@ -1,56 +1,53 @@
-import assert from 'assert'
-import { allDelegators } from './participants'
 import calculateVotingPower from './votingPower'
+import reachable from '../fns/graph/reachable'
 
-import { DelegationDAG, Scores } from '../types'
+import { DelegatorTreeNode } from './delegatorTree'
+import { DelegateTreeNode } from './delegateTree'
+import { Graph, Scores } from '../types'
+
+export type AddressStats = {
+  address: string
+  votingPower: number
+  incomingPower: number
+  outgoingPower: number
+  delegators: string[]
+  delegates: string[]
+  delegatorTree: DelegatorTreeNode[]
+  delegateTree: DelegateTreeNode[]
+}
 
 export default function addressStats({
-  delegations,
+  weights,
+  rweights,
   scores,
   totalSupply,
   address,
 }: {
-  delegations: DelegationDAG
+  weights: Graph
+  rweights: Graph
   scores: Scores
   totalSupply: number
   address: string
 }) {
-  const { incoming, outgoing } = delegations[address] || {
-    incoming: [],
-    outgoing: [],
-  }
+  const { votingPower, incomingPower, outgoingPower } = calculateVotingPower({
+    weights,
+    rweights,
+    scores,
+    address,
+  })
 
-  assert(Array.isArray(incoming) && Array.isArray(outgoing))
-
-  const votingPower = calculateVotingPower({ delegations, scores, address })
-
-  const delegators = incoming.map(({ address: delegator, direct, ratio }) => ({
-    address: delegator,
-    direct,
-    delegatedPower: ratio * scores[delegator]!,
-    percentPowerIn: basisPoints(ratio * scores[delegator]!, votingPower),
-  }))
-
-  const delegates = outgoing.map(({ address: delegate, direct, ratio }) => ({
-    address: delegate,
-    direct,
-    delegatedPower: ratio * votingPower,
-    percentPowerOut: basisPoints(ratio * votingPower, votingPower),
-  }))
-
-  const delegatedPower = delegates
-    .filter(({ direct }) => direct == true)
-    .map(({ delegatedPower }) => delegatedPower)
-    .reduce((p, v) => p + v, 0)
+  const delegators = reachable(rweights, address)
+  const delegates = reachable(weights, address)
 
   return {
     address,
     votingPower: votingPower,
-    delegatedPower,
+    incomingPower,
+    outgoingPower,
     percentOfVotingPower: basisPoints(votingPower, totalSupply),
     percentOfDelegators: basisPoints(
       delegators.length,
-      allDelegators(delegations).length
+      Object.keys(weights).length
     ),
     delegators,
     delegates,

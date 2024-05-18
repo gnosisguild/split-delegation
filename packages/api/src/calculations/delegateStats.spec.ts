@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
 import delegateStats from './delegateStats'
-import createDelegationGraph from '../fns/delegations/createDelegationGraph'
+import inverse from '../fns/graph/inverse'
 
 describe('delegateStats', () => {
   const A = 'A' as Address
@@ -21,7 +21,8 @@ describe('delegateStats', () => {
         [E]: 100,
       },
     }
-    const delegations = createDelegationGraph({ weights })
+
+    const rweights = inverse(weights)
 
     const scores = {
       [A]: 1000,
@@ -34,7 +35,8 @@ describe('delegateStats', () => {
     const totalSupply = 1000 + 30 + 50 + 20 + 30
 
     const result = delegateStats({
-      delegations,
+      weights,
+      rweights,
       scores,
       totalSupply,
     })
