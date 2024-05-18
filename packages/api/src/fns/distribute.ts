@@ -1,12 +1,21 @@
-export default function distribute(value: number, weights: number[]): number[] {
-  const total = sum(weights)
+export default function distribute(
+  bag: Record<string, number>,
+  value: number
+): Record<string, number> {
+  const total = sum(Object.values(bag))
 
-  const result = weights
-    .map((weight) => (weight * value) / total)
-    // we exclude the last entry, and just make it the remainder
-    .slice(0, -1)
+  const result = Object.entries(bag).map(([address, weight]) => [
+    address,
+    (weight * value) / total,
+  ]) as [string, number][]
 
-  return [...result, value - sum(result)]
+  const head = result.slice(0, -1)
+  const rest = [
+    result[result.length - 1][0],
+    value - sum(head.map(([, v]) => v)),
+  ] as [string, number]
+
+  return Object.fromEntries([...head, rest])
 }
 
 function sum(values: number[]): number {
