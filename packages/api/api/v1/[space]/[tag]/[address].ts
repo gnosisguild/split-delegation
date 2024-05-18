@@ -1,7 +1,7 @@
 import { BlockTag, getAddress } from 'viem'
 
 import addressStats from '../../../../src/calculations/addressStats'
-import inputsFor from '../../../../src/calculations/inputsFor'
+import inputsFor from '../../../../src/fns/graph/inputsFor'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'

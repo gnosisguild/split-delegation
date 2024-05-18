@@ -2,7 +2,7 @@ import { Address, BlockTag, getAddress } from 'viem'
 
 import calculateVotingPower from '../../../../src/calculations/votingPower'
 import filterVertices from '../../../../src/fns/graph/filterVertices'
-import inputsFor from '../../../../src/calculations/inputsFor'
+import inputsFor from '../../../../src/fns/graph/inputsFor'
 import inverse from '../../../../src/fns/graph/inverse'
 
 import loadScores from '../../../../src/loaders/loadScores'
