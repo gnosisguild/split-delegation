@@ -1,6 +1,12 @@
 import { BlockTag, getAddress } from 'viem'
 
 import addressStats from '../../../../src/calculations/addressStats'
+import delegateTree, {
+  DelegateTreeNode,
+} from '../../../../src/calculations/delegateTree'
+import delegatorTree, {
+  DelegatorTreeNode,
+} from '../../../../src/calculations/delegatorTree'
 import inputsFor from '../../../../src/fns/graph/inputsFor'
 
 import loadScores from '../../../../src/loaders/loadScores'
@@ -10,6 +16,19 @@ import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 import { syncTip } from '../../../../src/commands/sync'
 
 import { DelegatorRequestBody } from '../../types'
+
+export type AddressResult = {
+  address: string
+  votingPower: number
+  incomingPower: number
+  outgoingPower: number
+  delegators: string[]
+  delegatorTree: DelegatorTreeNode[]
+  delegates: string[]
+  delegateTree: DelegateTreeNode[]
+  percentOfVotingPower: number
+  percentOfDelegators: number
+}
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
@@ -50,20 +69,23 @@ export const POST = async (req: Request) => {
     address,
   })
 
-  const response = {
-    chainId: chain.id,
-    blockNumber,
+  const result: AddressResult = {
     address,
     votingPower,
     incomingPower,
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
-    delegates,
     delegators,
+    delegatorTree: delegatorTree({ weights, rweights, scores, address }),
+    delegates,
+    delegateTree: delegateTree({ weights, rweights, scores, address }),
   }
 
-  return new Response(JSON.stringify(response), {
-    headers: { 'Content-Type': 'application/json' },
-  })
+  return new Response(
+    JSON.stringify({ chainId: chain.id, blockNumber, ...result }),
+    {
+      headers: { 'Content-Type': 'application/json' },
+    }
+  )
 }

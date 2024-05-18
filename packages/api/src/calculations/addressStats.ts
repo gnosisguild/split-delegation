@@ -2,20 +2,7 @@ import basisPoints from '../fns/basisPoints'
 import calculateVotingPower from './votingPower'
 import reachable from '../fns/graph/reachable'
 
-import { DelegatorTreeNode } from './delegatorTree'
-import { DelegateTreeNode } from './delegateTree'
 import { Graph, Scores } from '../types'
-
-export type AddressStats = {
-  address: string
-  votingPower: number
-  incomingPower: number
-  outgoingPower: number
-  delegators: string[]
-  delegates: string[]
-  delegatorTree: DelegatorTreeNode[]
-  delegateTree: DelegateTreeNode[]
-}
 
 export default function addressStats({
   weights,
