@@ -26,17 +26,15 @@ export default function addressStats({
     address,
   })
 
-  const delegators = reachable(rweights, address)
-  const delegates = reachable(weights, address)
+  const delegatorCount = reachable(rweights, address).length
 
   return {
     address,
-    votingPower: votingPower,
+    votingPower,
     incomingPower,
     outgoingPower,
     percentOfVotingPower: basisPoints(votingPower, totalSupply),
-    percentOfDelegators: basisPoints(delegators.length, allDelegatorCount),
-    delegators,
-    delegates,
+    delegatorCount,
+    percentOfDelegators: basisPoints(delegatorCount, allDelegatorCount),
   }
 }

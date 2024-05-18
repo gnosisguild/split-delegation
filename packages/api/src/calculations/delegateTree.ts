@@ -1,5 +1,3 @@
-import assert from 'assert'
-
 import basisPoints from '../fns/basisPoints'
 import distribute from '../fns/distribute'
 import incomingPower from './incomingPower'
@@ -25,13 +23,13 @@ export default function delegateTree({
 }): DelegateTreeNode[] {
   const availablePower =
     scores[address]! + incomingPower({ weights, rweights, scores, address })
-  assert(typeof availablePower == 'number')
 
-  return Object.keys(weights[address] || {}).map((delegate) => {
+  const delegates = Object.keys(weights[address] || {})
+
+  return delegates.map((delegate) => {
     const delegatedPower = distribute(weights[address]!, availablePower)[
       delegate
-    ]
-    assert(typeof delegatedPower == 'number')
+    ]!
 
     return {
       delegate,

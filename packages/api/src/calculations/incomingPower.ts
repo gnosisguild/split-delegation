@@ -13,7 +13,9 @@ export default function incomingPower({
   scores: Scores
   address: string
 }) {
-  return Object.keys(rweights[address] || {}).reduce((result, delegator) => {
+  const delegators = Object.keys(rweights[address] || {})
+
+  return delegators.reduce((result, delegator) => {
     const availablePower: number =
       scores[delegator]! +
       incomingPower({ weights, rweights, scores, address: delegator })

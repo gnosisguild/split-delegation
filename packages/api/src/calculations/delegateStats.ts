@@ -38,13 +38,13 @@ export default function delegateStats({
     .map(
       ({
         address,
-        votingPower,
-        delegators,
-        percentOfVotingPower,
+        delegatorCount,
         percentOfDelegators,
+        votingPower,
+        percentOfVotingPower,
       }) => ({
         address,
-        delegatorCount: delegators.length,
+        delegatorCount,
         percentOfDelegators,
         votingPower,
         percentOfVotingPower,

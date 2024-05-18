@@ -14,9 +14,9 @@ export default function calculateVotingPower({
   scores: Scores
   address: string
 }) {
-  const _incomingPower = incomingPower({ weights, rweights, scores, address })
-  const ownPower = scores[address]
-  const outgoingPower = delegateTree({
+  const incoming = incomingPower({ weights, rweights, scores, address })
+  const own = scores[address]
+  const outgoing = delegateTree({
     weights,
     rweights,
     scores,
@@ -24,8 +24,8 @@ export default function calculateVotingPower({
   }).reduce((result, { delegatedPower }) => result + delegatedPower, 0)
 
   return {
-    incomingPower: _incomingPower,
-    outgoingPower,
-    votingPower: _incomingPower + ownPower - outgoingPower,
+    incomingPower: incoming,
+    outgoingPower: outgoing,
+    votingPower: incoming + own - outgoing,
   }
 }

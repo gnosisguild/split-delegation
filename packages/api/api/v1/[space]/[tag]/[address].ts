@@ -8,6 +8,7 @@ import delegatorTree, {
   DelegatorTreeNode,
 } from '../../../../src/calculations/delegatorTree'
 import inputsFor from '../../../../src/fns/graph/inputsFor'
+import reachable from '../../../../src/fns/graph/reachable'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
@@ -58,8 +59,6 @@ export const POST = async (req: Request) => {
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
-    delegates,
-    delegators,
   } = addressStats({
     weights,
     rweights,
@@ -76,9 +75,9 @@ export const POST = async (req: Request) => {
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
-    delegators,
+    delegators: reachable(rweights, address),
     delegatorTree: delegatorTree({ weights, rweights, scores, address }),
-    delegates,
+    delegates: reachable(weights, address),
     delegateTree: delegateTree({ weights, rweights, scores, address }),
   }
 
