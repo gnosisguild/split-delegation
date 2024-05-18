@@ -11,7 +11,6 @@ import loadScores from './loadScores'
 import loadWeights from './loadWeights'
 
 import prisma from '../../prisma/singleton'
-import inverse from 'src/fns/graph/inverse'
 
 export default async function loadTopDelegates({
   chain,
@@ -65,13 +64,11 @@ async function cacheGetOrCompute({
     }
   }
 
-  const { weights } = await loadWeights({
+  const { weights, rweights } = await loadWeights({
     chain,
     blockNumber,
     space,
   })
-
-  const rweights = inverse(weights)
 
   const { scores } = await loadScores({
     chain,

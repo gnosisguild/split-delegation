@@ -30,7 +30,7 @@ export const POST = async (req: Request) => {
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
   await syncTip(chain, blockNumber)
 
-  let { weights } = await loadWeights({
+  let { weights, rweights } = await loadWeights({
     chain,
     blockNumber,
     space,
@@ -42,9 +42,8 @@ export const POST = async (req: Request) => {
    */
   if (delegationOverride && voters.length > 0) {
     weights = filterVertices(weights, voters)
+    rweights = inverse(weights)
   }
-
-  const rweights = inverse(weights)
 
   const { scores } = await loadScores({
     chain,

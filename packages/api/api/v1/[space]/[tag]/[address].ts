@@ -2,7 +2,6 @@ import { BlockTag, getAddress } from 'viem'
 
 import addressStats from '../../../../src/calculations/addressStats'
 import inputsFor from '../../../../src/calculations/inputsFor'
-import inverse from '../../../../src/fns/graph/inverse'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
@@ -25,8 +24,7 @@ export const POST = async (req: Request) => {
 
   await syncTip(chain, blockNumber)
 
-  const { weights } = await loadWeights({ chain, blockNumber, space })
-  const rweights = inverse(weights)
+  const { weights, rweights } = await loadWeights({ chain, blockNumber, space })
   const { scores } = await loadScores({
     chain,
     blockNumber,

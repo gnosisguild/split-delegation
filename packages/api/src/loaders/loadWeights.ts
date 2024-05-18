@@ -6,7 +6,7 @@ import loadEvents from './loadEvents'
 
 import createRegistry from '../fns/delegations/createRegistry'
 import createWeights from '../fns/delegations/createWeights'
-import kahn from '../fns/graph/sort'
+import inverse from '../fns/graph/inverse'
 import rowToAction from '../fns/logs/rowToAction'
 import toAcyclical from '../fns/graph/toAcyclical'
 
@@ -24,14 +24,14 @@ export default async function loadWeights({
   space: string
 }) {
   const start = timerStart()
-  const { weights, order } = await cacheGetOrCompute({
+  const { weights } = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
   })
 
   console.log(`[Weights] ${space}, done in ${timerEnd(start)}ms`)
-  return { weights, order }
+  return { weights, rweights: inverse(weights) }
 }
 
 async function cacheGetOrCompute({
@@ -62,11 +62,10 @@ async function cacheGetOrCompute({
 
   const registry = createRegistry(rowToAction(rows))
   const weights = toAcyclical(createWeights(registry, Number(block.timestamp)))
-  const order = kahn(weights)
 
-  await cachePut(key, { weights, order })
+  await cachePut(key, { weights })
 
-  return { weights, order }
+  return { weights }
 }
 
 function cacheKey({
@@ -90,9 +89,7 @@ function cacheKey({
   )
 }
 
-async function cacheGet(
-  key: string
-): Promise<{ weights: Graph; order: string[] } | null> {
+async function cacheGet(key: string): Promise<{ weights: Graph } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
     console.log(`[Weights] Cache Hit ${key.slice(0, 18)}`)
@@ -101,11 +98,8 @@ async function cacheGet(
   return null
 }
 
-async function cachePut(
-  key: string,
-  { weights, order }: { weights: Graph; order: string[] }
-) {
-  const value = JSON.stringify({ weights, order })
+async function cachePut(key: string, { weights }: { weights: Graph }) {
+  const value = JSON.stringify({ weights })
   await prisma.cache.upsert({
     where: { key },
     create: { key, value },
