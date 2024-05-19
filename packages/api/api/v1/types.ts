@@ -1,10 +1,10 @@
-export type DelegateRequestBody = {
+export type AddressRequestBody = {
   totalSupply: number
   strategies: any[]
   network: any
 }
 
-export type DelegatorRequestBody = {
+export type TopDelegatesRequestBody = {
   totalSupply: number
   strategies: any[]
   network: any

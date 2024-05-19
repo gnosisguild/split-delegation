@@ -19,12 +19,8 @@ export const POST = async (req: Request) => {
 
   const {
     options: { strategies, network, delegationOverride = true },
-    addresses: _addresses,
+    addresses,
   } = (await req.json()) as VotingPowerRequestBody
-
-  const voters = _addresses
-    .map((address) => getAddress(address))
-    .sort() as Address[]
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
@@ -33,6 +29,8 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
   })
+
+  const voters = addresses.map((address) => getAddress(address)).sort()
 
   /*
    * If delegation override is enabled, we filter edges (delegations)

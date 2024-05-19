@@ -9,14 +9,14 @@ import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
 
 import { syncTip } from '../../../../src/commands/sync'
 
-import { DelegateRequestBody } from '../../types'
+import { TopDelegatesRequestBody } from '../../types'
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
   const { totalSupply, strategies, network } =
-    (await req.json()) as DelegateRequestBody
+    (await req.json()) as TopDelegatesRequestBody
 
   const limit = Number(searchParams.get('limit')) || 100
   const offset = Number(searchParams.get('offset')) || 0

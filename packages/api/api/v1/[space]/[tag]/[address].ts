@@ -15,7 +15,7 @@ import loadWeights from '../../../../src/loaders/loadWeights'
 
 import { syncTip } from '../../../../src/commands/sync'
 
-import { DelegatorRequestBody } from '../../types'
+import { AddressRequestBody } from '../../types'
 
 export type AddressResult = {
   address: string
@@ -37,7 +37,7 @@ export const POST = async (req: Request) => {
   const address = getAddress(searchParams.get('address') as string)
 
   const { strategies, network, totalSupply } =
-    (await req.json()) as DelegatorRequestBody
+    (await req.json()) as AddressRequestBody
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
