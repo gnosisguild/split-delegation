@@ -33,29 +33,29 @@ describe('delegatorTree', () => {
     expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
       {
         delegator: A,
+        weight: 2000,
         delegatedPower: 200,
-        percentDelegatedPower: 2000,
         parents: [],
       },
     ])
     expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
       {
         delegator: A,
+        weight: 8000,
         delegatedPower: 800,
-        percentDelegatedPower: 8000,
         parents: [],
       },
     ])
     expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
       {
         delegator: B,
+        weight: 10000,
         delegatedPower: 300,
-        percentDelegatedPower: 10000,
         parents: [
           {
             delegator: A,
+            weight: 2000,
             delegatedPower: 200,
-            percentDelegatedPower: 2000,
             parents: [],
           },
         ],
@@ -89,42 +89,42 @@ describe('delegatorTree', () => {
     expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
       {
         delegator: A,
+        weight: 5000,
         delegatedPower: 500,
-        percentDelegatedPower: 5000,
         parents: [],
       },
     ])
     expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
       {
         delegator: A,
+        weight: 5000,
         delegatedPower: 500,
-        percentDelegatedPower: 5000,
         parents: [],
       },
     ])
     expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
       {
         delegator: B,
+        weight: 10000,
         delegatedPower: 2500,
-        percentDelegatedPower: 10000,
         parents: [
           {
             delegator: A,
+            weight: 5000,
             delegatedPower: 500,
-            percentDelegatedPower: 5000,
             parents: [],
           },
         ],
       },
       {
         delegator: C,
+        weight: 10000,
         delegatedPower: 3500,
-        percentDelegatedPower: 10000,
         parents: [
           {
             delegator: A,
+            weight: 5000,
             delegatedPower: 500,
-            percentDelegatedPower: 5000,
             parents: [],
           },
         ],
@@ -151,16 +151,16 @@ describe('delegatorTree', () => {
     expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
       {
         delegator: A,
+        weight: 2000,
         delegatedPower: 200,
-        percentDelegatedPower: 2000,
         parents: [],
       },
     ])
     expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
       {
         delegator: A,
+        weight: 8000,
         delegatedPower: 800,
-        percentDelegatedPower: 8000,
         parents: [],
       },
     ])

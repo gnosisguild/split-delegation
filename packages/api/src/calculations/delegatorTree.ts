@@ -5,7 +5,7 @@ import { Graph, Scores } from '../types'
 
 export type DelegatorTreeNode = {
   delegator: string
-  percentDelegatedPower: number
+  weight: number
   delegatedPower: number
   parents: DelegatorTreeNode[]
 }
@@ -39,8 +39,8 @@ export default function delegatorTree({
 
     return {
       delegator,
+      weight: basisPoints(delegatedPower, availablePower),
       delegatedPower,
-      percentDelegatedPower: basisPoints(delegatedPower, availablePower),
       parents,
     }
   })
