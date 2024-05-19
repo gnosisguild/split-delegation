@@ -131,6 +131,49 @@ describe('delegateTree', () => {
     expect(delegateTree({ weights, rweights, scores, address: D })).toEqual([])
   })
 
+  test('a self referencing edge is not included as delegate', () => {
+    const weights = {
+      [A]: {
+        [A]: 10,
+        [B]: 30,
+        [C]: 60,
+      },
+      [B]: {
+        [D]: 100,
+      },
+    }
+    const scores = {
+      [A]: 100,
+      [B]: 0,
+      [C]: 0,
+      [D]: 20,
+    }
+
+    const rweights = inverse(weights)
+
+    expect(delegateTree({ weights, rweights, scores, address: A })).toEqual([
+      {
+        delegate: B,
+        weight: 3000,
+        delegatedPower: 30,
+        children: [
+          {
+            delegate: D,
+            weight: 10000,
+            delegatedPower: 30,
+            children: [],
+          },
+        ],
+      },
+      {
+        delegate: C,
+        weight: 6000,
+        delegatedPower: 60,
+        children: [],
+      },
+    ])
+  })
+
   test('it works when some requested nodes not present in delegation graph', () => {
     const weights = {
       [A]: {

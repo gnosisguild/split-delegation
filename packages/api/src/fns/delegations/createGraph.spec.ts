@@ -30,6 +30,21 @@ describe('createGraph', () => {
     })
   })
 
+  test('it sets a self-referecing edge', () => {
+    const edges = [
+      { delegator: A, delegate: B, weight: 50 },
+      { delegator: A, delegate: A, weight: 50 },
+      { delegator: B, delegate: C, weight: 100 },
+    ]
+
+    const result = createGraph(edges)
+
+    expect(result).toEqual({
+      A: { A: 50, B: 50 },
+      B: { C: 100 },
+    })
+  })
+
   test('it does not include an edge that would originate a cycle', () => {
     const edges = [
       { delegator: A, delegate: B, weight: 1 },

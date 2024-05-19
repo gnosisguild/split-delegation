@@ -116,6 +116,59 @@ describe('votingPower', () => {
     })
   })
 
+  test('it works with a self-referencing edge', () => {
+    const weights = {
+      [A]: {
+        [B]: 50,
+        [C]: 50,
+      },
+      [B]: {
+        [B]: 20,
+        [D]: 80,
+      },
+    }
+    const scores = {
+      [A]: 500,
+      [B]: 300,
+      [C]: 0,
+      [D]: 50,
+    }
+
+    const rweights = inverse(weights)
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: A })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 0,
+      outgoingPower: 500,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: B })
+    ).toEqual({
+      votingPower: 110,
+      incomingPower: 250,
+      outgoingPower: 440,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: C })
+    ).toEqual({
+      votingPower: 250,
+      incomingPower: 250,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: D })
+    ).toEqual({
+      votingPower: 490,
+      incomingPower: 440,
+      outgoingPower: 0,
+    })
+  })
+
   test('it works when some requested nodes not present in delegation graph', () => {
     const weights = {
       [A]: {
