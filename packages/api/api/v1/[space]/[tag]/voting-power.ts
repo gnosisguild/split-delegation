@@ -37,8 +37,8 @@ export const POST = async (req: Request) => {
   })
 
   /*
-   * If delegation override is enabled, we filter out every edge from accounts
-   * that have voted
+   * If delegation override is enabled, we filter edges (delegations)
+   * from accounts that have voted
    */
   if (delegationOverride && voters.length > 0) {
     weights = filterVertices(weights, voters)
