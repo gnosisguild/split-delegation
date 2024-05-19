@@ -17,6 +17,7 @@
     "heal": "prisma generate && ts-node src/commands heal",
     "integrity": "prisma generate && ts-node src/commands integrity",
     "pin": "prisma generate && ts-node src/commands pin",
+    "prune": "prisma generate && ts-node src/commands prune",
     "sync": "prisma generate && ts-node src/commands sync",
     "postinstall": "prisma generate"
   },

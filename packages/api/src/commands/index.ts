@@ -5,6 +5,7 @@ import count from './count'
 import heal from './heal'
 import integrity from './integrity'
 import pin from './pin'
+import prune from './prune'
 import sync from './sync'
 
 import 'dotenv/config'
@@ -55,6 +56,15 @@ const pinCommand = command({
   },
 })
 
+const pruneCommand = command({
+  name: 'prune',
+  description: '',
+  args: {},
+  handler: async () => {
+    await prune()
+  },
+})
+
 const syncCommand = command({
   name: 'sync',
   description: 'Ingests blocks and inserts db rows',
@@ -73,6 +83,7 @@ run(
       heal: healCommand,
       integrity: integrityCommand,
       pin: pinCommand,
+      prune: pruneCommand,
       sync: syncCommand,
     },
   }),

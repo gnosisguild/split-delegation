@@ -3,9 +3,11 @@ import type { VercelRequest } from '@vercel/node'
 
 // import audit from '../../src/commands/audit'
 import integrity from '../../src/commands/integrity'
+import prune from '../../src/commands/prune'
 
 const actions = async () => {
   // await audit()
+  await prune()
   await integrity()
 }
 
