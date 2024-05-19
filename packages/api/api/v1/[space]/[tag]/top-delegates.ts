@@ -6,7 +6,6 @@ import {
 } from '../../../../src/calculations/delegateStats'
 
 import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
-import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -27,8 +26,7 @@ export const POST = async (req: Request) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  const { chain, blockNumber } = await resolveBlockTag(tag, network)
-  await syncTip(chain, blockNumber)
+  const { chain, blockNumber } = await syncTip(tag, network)
 
   const topDelegates = await loadTopDelegates({
     chain,

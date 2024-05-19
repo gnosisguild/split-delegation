@@ -52,13 +52,15 @@ export default async function sync() {
   }
 }
 
-export async function syncTip(chain: Chain, blockNumber: number) {
+export async function syncTip(tag: number | BlockTag | 'pin', networkish: any) {
+  const { chain, blockNumber } = await resolveBlockTag(tag, networkish)
+
   assert(chain.id == 1 || chain.id == 100)
 
   const { inSync, fromBlock, toBlock } = await shouldSync(chain, blockNumber)
 
   if (inSync) {
-    return
+    return { chain, blockNumber }
   }
 
   await Promise.all([
@@ -77,6 +79,8 @@ export async function syncTip(chain: Chain, blockNumber: number) {
       client: createClient(gnosis),
     }),
   ])
+
+  return { chain, blockNumber }
 }
 
 async function _sync({

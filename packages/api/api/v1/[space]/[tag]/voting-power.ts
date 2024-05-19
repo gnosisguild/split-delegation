@@ -7,7 +7,6 @@ import inverse from '../../../../src/fns/graph/inverse'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
-import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -27,8 +26,7 @@ export const POST = async (req: Request) => {
     .map((address) => getAddress(address))
     .sort() as Address[]
 
-  const { chain, blockNumber } = await resolveBlockTag(tag, network)
-  await syncTip(chain, blockNumber)
+  const { chain, blockNumber } = await syncTip(tag, network)
 
   let { weights, rweights } = await loadWeights({
     chain,

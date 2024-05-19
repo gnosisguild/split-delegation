@@ -12,7 +12,6 @@ import reachable from '../../../../src/fns/graph/reachable'
 
 import loadScores from '../../../../src/loaders/loadScores'
 import loadWeights from '../../../../src/loaders/loadWeights'
-import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -40,11 +39,10 @@ export const POST = async (req: Request) => {
   const { strategies, network, totalSupply } =
     (await req.json()) as DelegatorRequestBody
 
-  const { chain, blockNumber } = await resolveBlockTag(tag, network)
-
-  await syncTip(chain, blockNumber)
+  const { chain, blockNumber } = await syncTip(tag, network)
 
   const { weights, rweights } = await loadWeights({ chain, blockNumber, space })
+
   const { scores } = await loadScores({
     chain,
     blockNumber,
