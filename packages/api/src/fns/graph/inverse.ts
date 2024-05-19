@@ -1,14 +1,14 @@
 import { Graph } from '../../types'
 
-export default function inverse<T>(graph: Graph) {
-  let result: Graph = {}
+export default function inverse(graph: Graph): Graph {
+  const result: Graph = {}
 
-  for (const a of Object.keys(graph)) {
-    for (const b of Object.keys(graph[a])) {
+  for (const [a, bag] of Object.entries(graph)) {
+    for (const [b, value] of Object.entries(bag)) {
       if (!result[b]) {
         result[b] = {}
       }
-      result[b][a] = graph[a][b]
+      result[b][a] = value
     }
   }
   return result
