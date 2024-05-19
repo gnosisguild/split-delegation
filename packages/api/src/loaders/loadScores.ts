@@ -4,8 +4,9 @@ import { Chain, keccak256, toBytes } from 'viem'
 import { timerEnd, timerStart } from '../fns/timer'
 import loadRawScores from './loadRawScores'
 
+import { cacheGet, cachePut } from './cache'
+
 import { Scores } from '../types'
-import prisma from '../../prisma/singleton'
 
 export default async function loadScores({
   chain,
@@ -53,7 +54,10 @@ async function _load({
     space,
   })
 
-  const { scores } = await cacheGet(key)
+  const { scores }: { scores: Scores } = (await cacheGet(key, 'Scores')) || {
+    scores: {},
+  }
+
   const missing: string[] = []
   for (const address of addresses) {
     if (typeof scores[address] != 'number') {
@@ -61,10 +65,10 @@ async function _load({
     }
   }
 
-  let allScores
+  let nextScores: Scores = {}
   if (missing.length > 0) {
     console.log(`[Load Scores] missing ${missing.length} entries`)
-    allScores = {
+    nextScores = {
       ...scores,
       ...(await loadRawScores({
         chain,
@@ -74,12 +78,24 @@ async function _load({
         addresses: missing,
       })),
     }
-    await cachePut(key, { scores: allScores })
+    await cachePut(
+      key,
+      (value?: string) => {
+        const scoresInCache = value ? JSON.parse(value).scores : {}
+        return {
+          scores: {
+            ...scoresInCache,
+            ...nextScores,
+          },
+        }
+      },
+      'Scores'
+    )
   } else {
-    allScores = scores
+    nextScores = scores
   }
 
-  return { scores: allScores }
+  return { scores: nextScores }
 }
 
 function cacheKey({
@@ -101,23 +117,4 @@ function cacheKey({
       })
     )
   )
-}
-
-async function cacheGet(key: string): Promise<{ scores: Scores }> {
-  const hit = await prisma.cache.findFirst({ where: { key } })
-  if (hit) {
-    console.log(`[Load Scores] Cache Hit ${key.slice(0, 18)}`)
-    return JSON.parse(hit.value)
-  }
-  return { scores: {} }
-}
-
-async function cachePut(key: string, { scores }: { scores: Scores }) {
-  const value = JSON.stringify({ scores })
-  await prisma.cache.upsert({
-    where: { key },
-    create: { key, value },
-    update: { key, value },
-  })
-  console.log(`[Load Scores] Cache Put ${key.slice(0, 18)}`)
 }

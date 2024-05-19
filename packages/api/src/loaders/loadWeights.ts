@@ -11,9 +11,7 @@ import rowToAction from '../fns/logs/rowToAction'
 import createClient from './createClient'
 import loadEvents from './loadEvents'
 
-import { Graph } from '../types'
-
-import prisma from '../../prisma/singleton'
+import { cacheGet, cachePut } from './cache'
 
 export default async function loadWeights({
   chain,
@@ -51,7 +49,7 @@ async function cacheGetOrCompute({
     space,
   })
 
-  const hit = await cacheGet(key)
+  const hit = await cacheGet(key, 'Weights')
   if (hit) return hit
 
   const block = await createClient(chain).getBlock({
@@ -70,7 +68,7 @@ async function cacheGetOrCompute({
   const edges = createEdges(registry, Number(block.timestamp))
   const graph = createGraph(edges)
 
-  await cachePut(key, { weights: graph })
+  await cachePut(key, { weights: graph }, 'Weights')
 
   return { weights: graph }
 }
@@ -94,23 +92,4 @@ function cacheKey({
       })
     )
   )
-}
-
-async function cacheGet(key: string): Promise<{ weights: Graph } | null> {
-  const hit = await prisma.cache.findFirst({ where: { key } })
-  if (hit) {
-    console.log(`[Weights] Cache Hit ${key.slice(0, 18)}`)
-    return JSON.parse(hit.value)
-  }
-  return null
-}
-
-async function cachePut(key: string, { weights }: { weights: Graph }) {
-  const value = JSON.stringify({ weights })
-  await prisma.cache.upsert({
-    where: { key },
-    create: { key, value },
-    update: { key, value },
-  })
-  console.log(`[Weights] Cache Put ${key.slice(0, 18)}`)
 }

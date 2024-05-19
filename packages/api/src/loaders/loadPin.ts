@@ -1,13 +1,15 @@
 import { Block, Chain, keccak256, toBytes } from 'viem'
 import loadCandidate from './loadCandidate'
-
-import prisma from '../../prisma/singleton'
+import { cacheGet, cachePut } from './cache'
 
 export default async function loadPin(
   chain: Chain
 ): Promise<{ blockNumber: number }> {
   const key = cacheKey({ chain })
-  const { blockNumber, blockTimestamp } = await cacheGet(key)
+  const { blockNumber, blockTimestamp } = (await cacheGet(key)) || {
+    blockNumber: 0,
+    blockTimestamp: 0,
+  }
   if (blockAge(blockTimestamp) < 60 * 1000 * 30 /* 30 minutes */) {
     console.log(`[Load Pin] Using block ${blockNumber} @ ${chain.name}`)
     return { blockNumber }
@@ -44,33 +46,6 @@ function cacheKey({ chain }: { chain: Chain }) {
       })
     )
   )
-}
-
-async function cacheGet(
-  key: string
-): Promise<{ chainId: number; blockNumber: number; blockTimestamp: number }> {
-  const hit = await prisma.cache.findFirst({ where: { key } })
-  if (hit) {
-    return JSON.parse(hit.value)
-  } else {
-    return { chainId: 0, blockNumber: 0, blockTimestamp: 0 }
-  }
-}
-
-async function cachePut(
-  key: string,
-  {
-    chainId,
-    blockNumber,
-    blockTimestamp,
-  }: { chainId: number; blockNumber: number; blockTimestamp: number }
-) {
-  const value = JSON.stringify({ chainId, blockNumber, blockTimestamp })
-  await prisma.cache.upsert({
-    where: { key },
-    create: { key, value },
-    update: { key, value },
-  })
 }
 
 function blockAge(blockTimestamp: number) {
