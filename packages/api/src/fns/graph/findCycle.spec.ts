@@ -32,7 +32,11 @@ describe('findCycle', () => {
         B: 0,
       },
     }
-    expect(findCycle(graph)).toEqual(['B', 'C', 'D'])
+    expect(findCycle(graph)).toEqual([
+      ['B', 'C'],
+      ['C', 'D'],
+      ['D', 'B'],
+    ])
   })
   test('no back edge, yes forward edge', () => {
     const graph: Graph = {
@@ -61,9 +65,13 @@ describe('findCycle', () => {
       D: { E: 0 },
       E: { B: 0 },
     }
-    expect(findCycle(graph)).toEqual(['D', 'E', 'B', 'C'])
+    expect(findCycle(graph)).toEqual([
+      ['D', 'E'],
+      ['E', 'B'],
+      ['B', 'C'],
+      ['C', 'D'],
+    ])
   })
-
   test('another: yes back edge, yes forward edge', () => {
     const graph: Graph = {
       A: { B: 0 },
@@ -72,6 +80,30 @@ describe('findCycle', () => {
       D: { E: 0 },
       E: {},
     }
-    expect(findCycle(graph)).toEqual(['A', 'B', 'C'])
+    expect(findCycle(graph)).toEqual([
+      ['A', 'B'],
+      ['B', 'C'],
+      ['C', 'A'],
+    ])
+  })
+  test('self-referencing edge does not trigger a cycle', () => {
+    const graph: Graph = {
+      A: {
+        B: 0,
+        C: 0,
+        D: 0,
+      },
+      B: {
+        B: 0,
+        C: 0,
+      },
+      C: {
+        D: 0,
+      },
+      D: {
+        E: 0,
+      },
+    }
+    expect(findCycle(graph)).toEqual(null)
   })
 })

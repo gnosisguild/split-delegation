@@ -1,14 +1,15 @@
+import assert from 'assert'
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createClient from './createClient'
-import loadEvents from './loadEvents'
-
+import createEdges from '../fns/delegations/createEdges'
+import createGraph from '../fns/delegations/createGraph'
 import createRegistry from '../fns/delegations/createRegistry'
-import createWeights from '../fns/delegations/createWeights'
 import inverse from '../fns/graph/inverse'
 import rowToAction from '../fns/logs/rowToAction'
-import toAcyclical from '../fns/graph/toAcyclical'
+
+import createClient from './createClient'
+import loadEvents from './loadEvents'
 
 import { Graph } from '../types'
 
@@ -61,12 +62,17 @@ async function cacheGetOrCompute({
     blockTimestamp: Number(block.timestamp),
   })
 
+  for (let i = 1; i < rows.length; i++) {
+    assert(rows[i - 1].blockTimestamp <= rows[i].blockTimestamp)
+  }
+
   const registry = createRegistry(rowToAction(rows))
-  const weights = toAcyclical(createWeights(registry, Number(block.timestamp)))
+  const edges = createEdges(registry, Number(block.timestamp))
+  const graph = createGraph(edges)
 
-  await cachePut(key, { weights })
+  await cachePut(key, { weights: graph })
 
-  return { weights }
+  return { weights: graph }
 }
 
 function cacheKey({

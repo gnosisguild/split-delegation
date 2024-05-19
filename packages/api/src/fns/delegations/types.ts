@@ -24,3 +24,9 @@ export type Registry = Record<
     optOut: boolean
   }
 >
+
+export type DelegationEdge = {
+  delegator: string
+  delegate: string
+  weight: number
+}

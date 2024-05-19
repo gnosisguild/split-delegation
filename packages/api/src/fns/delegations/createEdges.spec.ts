@@ -1,9 +1,9 @@
 import { describe, test } from '@jest/globals'
 import { Address } from 'viem'
 
-import createWeights from './createWeights'
+import createEdges from './createEdges'
 
-describe('createWeights', () => {
+describe('createEdges', () => {
   const A = 'A' as Address
   const B = 'B' as Address
   const C = 'C' as Address
@@ -16,13 +16,28 @@ describe('createWeights', () => {
         optOut: false,
       },
     }
-    const result = createWeights(registry, 0)
+    const result = createEdges(registry, 0)
 
-    expect(result).toEqual({
+    expect(result).toEqual([{ delegator: A, delegate: B, weight: 100 }])
+  })
+
+  test('it sets a delegation with a self-referencing edge', () => {
+    const registry = {
       [A]: {
-        [B]: 100,
+        delegation: [
+          { delegate: A, weight: 20 },
+          { delegate: B, weight: 80 },
+        ],
+        expiration: 0,
+        optOut: false,
       },
-    })
+    }
+    const result = createEdges(registry, 0)
+
+    expect(result).toEqual([
+      { delegator: A, delegate: A, weight: 20 },
+      { delegator: A, delegate: B, weight: 80 },
+    ])
   })
 
   test('it opts out of being a delegate', () => {
@@ -41,13 +56,9 @@ describe('createWeights', () => {
         optOut: true,
       },
     }
-    const result = createWeights(registry, 0)
+    const result = createEdges(registry, 0)
 
-    expect(result).toEqual({
-      [A]: {
-        [B]: 50,
-      },
-    })
+    expect(result).toEqual([{ delegator: A, delegate: B, weight: 50 }])
   })
 
   test('it sets expiration for a delegation', () => {
@@ -66,13 +77,9 @@ describe('createWeights', () => {
         optOut: false,
       },
     }
-    const result = createWeights(registry, 2024)
+    const result = createEdges(registry, 2024)
 
-    expect(result).toEqual({
-      [B]: {
-        [C]: 100,
-      },
-    })
+    expect(result).toEqual([{ delegator: B, delegate: C, weight: 100 }])
   })
 
   test('it still opts out, even when expiration set for delegation', () => {
@@ -91,13 +98,9 @@ describe('createWeights', () => {
         optOut: true,
       },
     }
-    const result = createWeights(registry, 2024)
+    const result = createEdges(registry, 2024)
 
-    expect(result).toEqual({
-      [A]: {
-        [C]: 50,
-      },
-    })
+    expect(result).toEqual([{ delegator: A, delegate: C, weight: 50 }])
   })
 
   test('it does not output empty delegator node', () => {
@@ -113,12 +116,8 @@ describe('createWeights', () => {
         optOut: true,
       },
     }
-    const result = createWeights(registry, 2024)
+    const result = createEdges(registry, 2024)
 
-    expect(result).toEqual({
-      [B]: {
-        [C]: 100,
-      },
-    })
+    expect(result).toEqual([{ delegator: B, delegate: C, weight: 100 }])
   })
 })

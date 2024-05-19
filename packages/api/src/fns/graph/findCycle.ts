@@ -9,46 +9,47 @@ import { Graph } from '../../types'
  *
  * @returns {boolean} Returns cycle if one detected, otherwise null.
  */
-export default function findCycle(graph: Graph): string[] | null {
+
+export default function findCycle(graph: Graph): [string, string][] | null {
   const visited = new Set<string>()
   const path: string[] = []
 
-  for (const node of Object.keys(graph)) {
-    const cycle = dfs(graph, node, visited, path)
-    if (cycle) return cycle
-  }
+  function visit(node: string): string[] | null {
+    if (path.includes(node)) {
+      return path.slice(path.indexOf(node))
+    }
 
-  return null
-}
+    if (visited.has(node)) {
+      return null
+    }
 
-function dfs(
-  graph: Graph,
-  node: string,
-  visited: Set<string>,
-  path: string[]
-): string[] | null {
-  if (visited.has(node)) {
+    visited.add(node)
+    path.push(node)
+
+    for (const neighbor of neighbors(graph, node)) {
+      const cycle = visit(neighbor)
+      if (cycle) return cycle
+    }
+
+    path.pop()
     return null
   }
 
-  visited.add(node)
-  path.push(node)
-
-  for (const neighbor of neighbors(graph, node)) {
-    const cycle = dfs(graph, neighbor, visited, path)
-    if (cycle) {
-      return cycle
-    }
-
-    if (path.includes(neighbor)) {
-      return path.slice(path.indexOf(neighbor))
-    }
+  for (const node of Object.keys(graph)) {
+    const cycle = visit(node)
+    if (cycle) return toCycleEdges(cycle)
   }
 
-  path.pop()
   return null
 }
 
 function neighbors(graph: Graph, node: string): string[] {
-  return Object.keys(graph[node] || {})
+  return Object.keys(graph[node] || {}).filter((neighbor) => neighbor != node)
+}
+
+function toCycleEdges(cycle: string[]): [string, string][] {
+  return cycle.map((node, index) => [
+    node, //from
+    cycle[index == cycle.length - 1 ? 0 : index + 1], // to
+  ])
 }
