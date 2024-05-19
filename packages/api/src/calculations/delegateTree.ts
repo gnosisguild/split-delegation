@@ -1,6 +1,6 @@
 import basisPoints from '../fns/basisPoints'
+import delegatorTree from './delegatorTree'
 import distribute from '../fns/distribute'
-import incomingPower from './incomingPower'
 
 import { Graph, Scores } from '../types'
 
@@ -21,12 +21,17 @@ export default function delegateTree({
   scores: Scores
   address: string
 }): DelegateTreeNode[] {
+  const parents = delegatorTree({
+    weights,
+    rweights,
+    scores,
+    address,
+  })
   const availablePower =
-    scores[address]! + incomingPower({ weights, rweights, scores, address })
+    scores[address]! +
+    parents.reduce((r, { delegatedPower }) => r + delegatedPower, 0)
 
-  const delegates = Object.keys(weights[address] || {})
-
-  return delegates.map((delegate) => {
+  return Object.keys(weights[address] || {}).map((delegate) => {
     const delegatedPower = distribute(weights[address]!, availablePower)[
       delegate
     ]!

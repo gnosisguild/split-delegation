@@ -1,5 +1,5 @@
 import delegateTree from './delegateTree'
-import incomingPower from './incomingPower'
+import delegatorTree from './delegatorTree'
 
 import { Graph, Scores } from '../types'
 
@@ -14,18 +14,22 @@ export default function calculateVotingPower({
   scores: Scores
   address: string
 }) {
-  const incoming = incomingPower({ weights, rweights, scores, address })
-  const own = scores[address]
-  const outgoing = delegateTree({
+  const incoming = delegatorTree({
     weights,
     rweights,
     scores,
     address,
-  }).reduce((result, { delegatedPower }) => result + delegatedPower, 0)
+  }).reduce((power, { delegatedPower }) => power + delegatedPower, 0)
+
+  const outgoing = delegateTree({ weights, rweights, scores, address }).reduce(
+    (power, { delegatedPower }) => power + delegatedPower,
+    0
+  )
+  const direct = scores[address]
 
   return {
+    votingPower: incoming + direct - outgoing,
     incomingPower: incoming,
     outgoingPower: outgoing,
-    votingPower: incoming + own - outgoing,
   }
 }

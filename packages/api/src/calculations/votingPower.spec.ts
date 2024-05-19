@@ -28,20 +28,36 @@ describe('votingPower', () => {
       [D]: 30,
     }
 
-    expect({
-      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
-        .votingPower,
-      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
-        .votingPower,
-      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
-        .votingPower,
-      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
-        .votingPower,
-    }).toEqual({
-      [A]: 0,
-      [B]: 0,
-      [C]: 800 + 20,
-      [D]: 300 + 30,
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: A })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 0,
+      outgoingPower: 1000,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: B })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 200,
+      outgoingPower: 300,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: C })
+    ).toEqual({
+      votingPower: 820,
+      incomingPower: 800,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: D })
+    ).toEqual({
+      votingPower: 330,
+      incomingPower: 300,
+      outgoingPower: 0,
     })
   })
 
@@ -67,20 +83,36 @@ describe('votingPower', () => {
 
     const rweights = inverse(weights)
 
-    expect({
-      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
-        .votingPower,
-      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
-        .votingPower,
-      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
-        .votingPower,
-      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
-        .votingPower,
-    }).toEqual({
-      [A]: 0,
-      [B]: 0,
-      [C]: 0,
-      [D]: 3500,
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: A })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 0,
+      outgoingPower: 1000,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: B })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 500,
+      outgoingPower: 1500,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: C })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 500,
+      outgoingPower: 1500,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: D })
+    ).toEqual({
+      votingPower: 3500,
+      incomingPower: 3000,
+      outgoingPower: 0,
     })
   })
 
@@ -99,20 +131,36 @@ describe('votingPower', () => {
     }
     const rweights = inverse(weights)
 
-    expect({
-      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
-        .votingPower,
-      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
-        .votingPower,
-      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
-        .votingPower,
-      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
-        .votingPower,
-    }).toEqual({
-      [A]: 0,
-      [B]: 200,
-      [C]: 800,
-      [D]: 30,
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: A })
+    ).toEqual({
+      votingPower: 0,
+      incomingPower: 0,
+      outgoingPower: 1000,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: B })
+    ).toEqual({
+      votingPower: 200,
+      incomingPower: 200,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: C })
+    ).toEqual({
+      votingPower: 800,
+      incomingPower: 800,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: D })
+    ).toEqual({
+      votingPower: 30,
+      incomingPower: 0,
+      outgoingPower: 0,
     })
   })
 
@@ -127,20 +175,36 @@ describe('votingPower', () => {
 
     const rweights = inverse(weights)
 
-    expect({
-      [A]: calculateVotingPower({ weights, rweights, scores, address: A })
-        .votingPower,
-      [B]: calculateVotingPower({ weights, rweights, scores, address: B })
-        .votingPower,
-      [C]: calculateVotingPower({ weights, rweights, scores, address: C })
-        .votingPower,
-      [D]: calculateVotingPower({ weights, rweights, scores, address: D })
-        .votingPower,
-    }).toEqual({
-      [A]: 100,
-      [B]: 200,
-      [C]: 300,
-      [D]: 400,
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: A })
+    ).toEqual({
+      votingPower: 100,
+      incomingPower: 0,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: B })
+    ).toEqual({
+      votingPower: 200,
+      incomingPower: 0,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: C })
+    ).toEqual({
+      votingPower: 300,
+      incomingPower: 0,
+      outgoingPower: 0,
+    })
+
+    expect(
+      calculateVotingPower({ weights, rweights, scores, address: D })
+    ).toEqual({
+      votingPower: 400,
+      incomingPower: 0,
+      outgoingPower: 0,
     })
   })
 })
