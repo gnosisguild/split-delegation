@@ -103,7 +103,7 @@ async function loadWithRetry({
       throw e
     }
 
-    console.log(`[Load Scores] ${space} ${addresses.length}, retry`)
+    console.log(`[Scores] ${space} ${addresses.length}, retry`)
 
     const args = {
       chain,

@@ -29,7 +29,7 @@ export default async function loadScores({
     strategies,
     addresses,
   })
-  console.log(`[Load Scores] ${space}, done in ${timerEnd(start)}ms`)
+  console.log(`[Scores] ${space}, done in ${timerEnd(start)}ms`)
 
   assert(addresses.length <= Object.keys(scores).length)
   return { scores }
@@ -67,7 +67,7 @@ async function _load({
 
   let nextScores: Scores = {}
   if (missing.length > 0) {
-    console.log(`[Load Scores] missing ${missing.length} entries`)
+    console.log(`[Scores] missing ${missing.length} entries`)
     nextScores = {
       ...scores,
       ...(await loadRawScores({

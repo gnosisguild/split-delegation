@@ -11,11 +11,11 @@ export default async function loadPin(
     blockTimestamp: 0,
   }
   if (blockAge(blockTimestamp) < 60 * 1000 * 30 /* 30 minutes */) {
-    console.log(`[Load Pin] Using block ${blockNumber} @ ${chain.name}`)
+    console.log(`[Pin] Using block ${blockNumber} @ ${chain.name}`)
     return { blockNumber }
   }
 
-  console.log(`[Load Pin] Outdated ${blockNumber} @ ${chain.name}`)
+  console.log(`[Pin] Outdated ${blockNumber} @ ${chain.name}`)
 
   const block = await loadCandidate(chain)
   await cachePut(key, {
@@ -23,7 +23,7 @@ export default async function loadPin(
     blockNumber: Number(block.number),
     blockTimestamp: Number(block.timestamp),
   })
-  console.log(`[Load Pin] New block ${blockNumber} @ ${chain.name}`)
+  console.log(`[Pin] New block ${blockNumber} @ ${chain.name}`)
 
   return { blockNumber: Number(block.number) }
 }
