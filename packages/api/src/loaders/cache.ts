@@ -56,8 +56,6 @@ export async function cachePrune(cutoff: Date) {
     },
   })
 
-  await prisma.$queryRaw`VACUUM FULL;`
-
   console.log(
     `[Prune] Deleted ${deletedItems} Cache Entries out of ${allItems}`
   )
