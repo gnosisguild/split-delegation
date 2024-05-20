@@ -1,4 +1,4 @@
-import { cachePrune } from 'src/loaders/cache'
+import { cachePrune } from '../loaders/cache'
 
 export default async function () {
   await cachePrune(oneDayAgo())
