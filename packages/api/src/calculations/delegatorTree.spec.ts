@@ -9,6 +9,45 @@ describe('delegatorTree', () => {
   const B = 'B' as Address
   const C = 'C' as Address
   const D = 'D' as Address
+  const E = 'E' as Address
+
+  test('it goes up delegators and ignores unrelated forks', () => {
+    const weights = {
+      [A]: {
+        [B]: 50,
+        [C]: 50,
+      },
+      [B]: {
+        [D]: 900,
+        [E]: 100,
+      },
+    }
+    const scores = {
+      [A]: 0,
+      [B]: 0,
+      [C]: 0,
+      [D]: 0,
+      [E]: 0,
+    }
+
+    const rweights = inverse(weights)
+
+    expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
+      {
+        delegator: B,
+        weight: 9000,
+        delegatedPower: 0,
+        parents: [
+          {
+            delegator: A,
+            weight: 5000,
+            delegatedPower: 0,
+            parents: [],
+          },
+        ],
+      },
+    ])
+  })
 
   test('it works when all requested nodes present in delegation graph', () => {
     const weights = {
@@ -21,10 +60,10 @@ describe('delegatorTree', () => {
       },
     }
     const scores = {
-      [A]: 1000,
-      [B]: 100,
-      [C]: 20,
-      [D]: 30,
+      [A]: 0,
+      [B]: 0,
+      [C]: 0,
+      [D]: 0,
     }
 
     const rweights = inverse(weights)
@@ -34,7 +73,7 @@ describe('delegatorTree', () => {
       {
         delegator: A,
         weight: 2000,
-        delegatedPower: 200,
+        delegatedPower: 0,
         parents: [],
       },
     ])
@@ -42,7 +81,7 @@ describe('delegatorTree', () => {
       {
         delegator: A,
         weight: 8000,
-        delegatedPower: 800,
+        delegatedPower: 0,
         parents: [],
       },
     ])
@@ -50,12 +89,12 @@ describe('delegatorTree', () => {
       {
         delegator: B,
         weight: 10000,
-        delegatedPower: 300,
+        delegatedPower: 0,
         parents: [
           {
             delegator: A,
             weight: 2000,
-            delegatedPower: 200,
+            delegatedPower: 0,
             parents: [],
           },
         ],
