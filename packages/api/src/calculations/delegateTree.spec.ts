@@ -131,6 +131,75 @@ describe('delegateTree', () => {
     expect(delegateTree({ weights, rweights, scores, address: D })).toEqual([])
   })
 
+  test('it correctly calculates weights even when all scores are zero', () => {
+    const weights = {
+      [A]: {
+        [B]: 50,
+        [C]: 50,
+      },
+      [B]: {
+        [D]: 100,
+      },
+      [C]: {
+        [D]: 100,
+      },
+    }
+    const scores = {
+      [A]: 0,
+      [B]: 0,
+      [C]: 0,
+      [D]: 0,
+    }
+
+    const rweights = inverse(weights)
+
+    expect(delegateTree({ weights, rweights, scores, address: A })).toEqual([
+      {
+        delegate: B,
+        weight: 5000,
+        delegatedPower: 0,
+        children: [
+          {
+            delegate: D,
+            weight: 10000,
+            delegatedPower: 0,
+            children: [],
+          },
+        ],
+      },
+      {
+        delegate: C,
+        weight: 5000,
+        delegatedPower: 0,
+        children: [
+          {
+            delegate: D,
+            weight: 10000,
+            delegatedPower: 0,
+            children: [],
+          },
+        ],
+      },
+    ])
+    expect(delegateTree({ weights, rweights, scores, address: B })).toEqual([
+      {
+        delegate: D,
+        weight: 10000,
+        delegatedPower: 0,
+        children: [],
+      },
+    ])
+    expect(delegateTree({ weights, rweights, scores, address: C })).toEqual([
+      {
+        delegate: D,
+        weight: 10000,
+        delegatedPower: 0,
+        children: [],
+      },
+    ])
+    expect(delegateTree({ weights, rweights, scores, address: D })).toEqual([])
+  })
+
   test('a self referencing edge is not included as delegate', () => {
     const weights = {
       [A]: {

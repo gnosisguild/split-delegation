@@ -1,4 +1,4 @@
-import { Address, BlockTag, getAddress } from 'viem'
+import { BlockTag, getAddress } from 'viem'
 
 import calculateVotingPower from '../../../../src/calculations/votingPower'
 import filterVertices from '../../../../src/fns/graph/filterVertices'
