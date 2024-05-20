@@ -35,24 +35,19 @@ export default function delegateTree({
     scores[address]! +
     parents.reduce((r, { delegatedPower }) => r + delegatedPower, 0)
 
-  return (
-    Object.keys(weights[address])
-      // exclude self referencing edges, these are not delegates
-      .filter((delegate) => address != delegate)
-      .map((delegate) => ({
-        delegate,
-        weight: weight(weights, address, delegate),
-        delegatedPower: distribute(weights[address]!, availablePower)[
-          delegate
-        ]!,
-        children: delegateTree({
-          weights,
-          rweights,
-          scores,
-          address: delegate,
-        }),
-      }))
-  )
+  return Object.keys(weights[address])
+    .filter((delegate) => address != delegate) // exclude self referencing edges, these are not delegates
+    .map((delegate) => ({
+      delegate,
+      weight: weight(weights, address, delegate),
+      delegatedPower: distribute(weights[address]!, availablePower)[delegate]!,
+      children: delegateTree({
+        weights,
+        rweights,
+        scores,
+        address: delegate,
+      }),
+    }))
 }
 
 function weight(weights: Graph, from: string, to: string) {
