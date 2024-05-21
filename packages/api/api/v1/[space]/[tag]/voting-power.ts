@@ -2,7 +2,7 @@ import { BlockTag, getAddress } from 'viem'
 
 import calculateVotingPower from '../../../../src/calculations/votingPower'
 import filterVertices from '../../../../src/fns/graph/filterVertices'
-import inputsFor from '../../../../src/fns/graph/inputsFor'
+import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import inverse from '../../../../src/fns/graph/inverse'
 
 import loadScores from '../../../../src/loaders/loadScores'
@@ -46,7 +46,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(rweights, voters),
+    addresses: inputsFor({ rweights, addresses: voters }),
   })
 
   const result = Object.fromEntries(

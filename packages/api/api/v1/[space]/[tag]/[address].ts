@@ -7,7 +7,7 @@ import delegateTree, {
 import delegatorTree, {
   DelegatorTreeNode,
 } from '../../../../src/calculations/delegatorTree'
-import inputsFor from '../../../../src/fns/graph/inputsFor'
+import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import reachable from '../../../../src/fns/graph/reachable'
 
 import loadScores from '../../../../src/loaders/loadScores'
@@ -48,7 +48,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(rweights, [address]),
+    addresses: inputsFor({ rweights, address }),
   })
 
   const {
