@@ -7,7 +7,7 @@ import sync from '../../src/commands/sync'
 
 const actions = async () => {
   await sync()
-  await heal()
+  await heal({ lookback: 1000 })
   await pin()
 }
 

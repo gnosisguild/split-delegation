@@ -1,7 +1,6 @@
 import { command, run, subcommands } from 'cmd-ts'
 
 import audit from './audit'
-import count from './count'
 import heal from './heal'
 import integrity from './integrity'
 import pin from './pin'
@@ -19,22 +18,13 @@ const auditCommand = command({
   },
 })
 
-const countCommand = command({
-  name: 'count',
-  description: 'Counts events per space',
-  args: {},
-  handler: async () => {
-    await count()
-  },
-})
-
 const healCommand = command({
   name: 'heal',
   description:
     'Produces a diff between RPC and DB. Fixes integrity by applying a patch',
   args: {},
   handler: async () => {
-    await heal()
+    await heal({ lookback: 10000 })
   },
 })
 
@@ -79,7 +69,6 @@ run(
     name: 'entrypoint',
     cmds: {
       audit: auditCommand,
-      count: countCommand,
       heal: healCommand,
       integrity: integrityCommand,
       pin: pinCommand,

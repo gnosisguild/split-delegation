@@ -27,28 +27,31 @@ const contracts = [
  * Called while syncing the DB
  */
 export default async function sync() {
+  const start = timerStart()
+  console.info(`${prefix('Sync')} Starting...`)
+
+  let count = 0
   for (const chain of chains) {
-    const start = timerStart()
     const client = createClient(chain)
 
     const { fromBlock, toBlock } = await blockRange(chain, 'latest')
 
     if (fromBlock < toBlock) {
-      console.info(
-        `${prefix('Sync')} Starting ${chain.name} from ${fromBlock} to ${toBlock}...`
-      )
-      const count = await _sync({
+      count += await _sync({
         contracts,
         fromBlock: Number(fromBlock),
         toBlock: Number(toBlock),
         client,
       })
-      console.info(
-        `${prefix('Sync')} Done, wrote ${count} rows, in ${timerEnd(start)}ms`
-      )
-    } else {
-      console.info(`${prefix('Sync')} Already In Sync, in ${timerEnd(start)}ms`)
     }
+  }
+
+  if (count > 0) {
+    console.info(
+      `${prefix('Sync')} Done, wrote ${count} rows, in ${timerEnd(start)}ms`
+    )
+  } else {
+    console.info(`${prefix('Sync')} Already In Sync, in ${timerEnd(start)}ms`)
   }
 }
 

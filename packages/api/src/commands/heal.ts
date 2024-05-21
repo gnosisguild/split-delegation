@@ -1,6 +1,5 @@
-import { PublicClient, getAddress } from 'viem'
+import { Chain, PublicClient, getAddress } from 'viem'
 import { gnosis, mainnet } from 'viem/chains'
-import { DelegationEvent } from '@prisma/client'
 
 import { compare } from '../fns/diff'
 import { rangeToStints } from '../fns/rangeToStints'
@@ -11,10 +10,7 @@ import prefix from '../fns/prefix'
 import createClient from '../loaders/createClient'
 import loadEntities from '../loaders/loadEntities'
 import loadLogs from '../loaders/loadLogs'
-
-import prisma from '../../prisma/singleton'
-
-const chains = [mainnet, gnosis]
+import patch from '../loaders/patch'
 
 const contracts = [
   // v1
@@ -23,30 +19,37 @@ const contracts = [
   getAddress('0xde1e8a7e184babd9f0e3af18f40634e9ed6f0905'),
 ]
 
-export default async function heal() {
+export default async function heal({
+  lookback = 1000,
+  chains = [mainnet, gnosis],
+}: {
+  lookback?: number
+  chains?: Chain[]
+}) {
+  const start = timerStart()
+  console.info(`${prefix('Heal')} Starting...`)
+
+  let allFound = 0
+  let allFixed = 0
   for (const chain of chains) {
-    const start = timerStart()
     const client = createClient(chain)
 
     const toBlock = Number(
       (await client.getBlock({ blockTag: 'finalized' })).number
     )
-    const fromBlock = toBlock - 1000
-    console.info(
-      `${prefix('Heal')} Starting ${chain.name} from ${fromBlock} to ${toBlock}...`
-    )
 
     const { found, fixed } = await _heal({
-      fromBlock,
+      fromBlock: toBlock - lookback,
       toBlock,
       client,
     })
-
-    const summary = found > 0 ? `${found} fixed ${fixed}` : `${found}`
-    console.info(
-      `${prefix('Heal')} Done, found ${summary} problems, ${timerEnd(start)}ms`
-    )
+    allFound += found
+    allFixed += fixed
   }
+  const summary = allFound > 0 ? `${allFound} fixed ${allFixed}` : `${allFound}`
+  console.info(
+    `${prefix('Heal')} Done, found ${summary} problems, ${timerEnd(start)}ms`
+  )
 }
 
 async function _heal({
@@ -78,33 +81,6 @@ async function _heal({
     if (verbose) {
       console.info(`${prefix('Heal')} ${found} problems ${perc}`)
     }
-  }
-
-  return { found, fixed }
-}
-
-async function patch(diff: {
-  create: DelegationEvent[]
-  delete: DelegationEvent[]
-}) {
-  let found = 0
-  let fixed = 0
-
-  for (const entry of diff.delete) {
-    found++
-    await prisma.delegationEvent.delete({ where: { id: entry.id } })
-    console.info(`${prefix('Heal')} delete Row ${entry.id}`)
-    fixed++
-  }
-  for (const entry of diff.create) {
-    found++
-    await prisma.delegationEvent.upsert({
-      where: { id: entry.id },
-      create: entry,
-      update: entry,
-    })
-    console.info(`${prefix('Heal')} create Row ${entry.id}`)
-    fixed++
   }
 
   return { found, fixed }
