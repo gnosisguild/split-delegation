@@ -1,23 +1,31 @@
 import assert from 'assert'
-import basisPoints from './basisPoints'
+import basisPoints from '../fns/basisPoints'
 
 import { Graph } from '../types'
 
-export default function distribute(
-  weights: Graph,
-  delegator: string,
-  delegate: string,
-  power: number
-): Record<string, number> {
+export default function distribution({
+  weights,
+  delegator,
+  delegate,
+  availablePower,
+}: {
+  weights: Graph
+  delegator: string
+  delegate: string
+  availablePower: number
+}) {
   assert(typeof weights[delegator][delegate] == 'number')
 
+  const [, distributedPower] = proportionally(
+    weights[delegator],
+    availablePower
+  ).find(([address]) => address == delegate)!
+
+  const weight = weights[delegator][delegate]
   const total = sum(Object.values(weights[delegator]))
-  const [, distributedPower] = proportionally(weights[delegator], power).find(
-    ([address]) => address == delegate
-  )!
 
   return {
-    weightInBasisPoints: basisPoints(weights[delegator][delegate], total),
+    weightInBasisPoints: basisPoints(weight, total),
     distributedPower,
   }
 }
