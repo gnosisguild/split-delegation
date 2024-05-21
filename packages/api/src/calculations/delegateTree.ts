@@ -1,4 +1,3 @@
-import basisPoints from '../fns/basisPoints'
 import delegatorTree from './delegatorTree'
 import distribute from '../fns/distribute'
 
@@ -37,22 +36,23 @@ export default function delegateTree({
 
   return Object.keys(weights[address])
     .filter((delegate) => address != delegate) // exclude self referencing edges, these are not delegates
-    .map((delegate) => ({
-      delegate,
-      weight: weight(weights, address, delegate),
-      delegatedPower: distribute(weights[address]!, availablePower)[delegate]!,
-      children: delegateTree({
+    .map((delegate) => {
+      const { weightInBasisPoints, distributedPower } = distribute(
         weights,
-        rweights,
-        scores,
-        address: delegate,
-      }),
-    }))
-}
-
-function weight(weights: Graph, from: string, to: string) {
-  return basisPoints(
-    weights[from][to]!,
-    Object.values(weights[from]).reduce((p, v) => p + v, 0)
-  )
+        address,
+        delegate,
+        availablePower
+      )
+      return {
+        delegate,
+        weight: weightInBasisPoints,
+        delegatedPower: distributedPower,
+        children: delegateTree({
+          weights,
+          rweights,
+          scores,
+          address: delegate,
+        }),
+      }
+    })
 }

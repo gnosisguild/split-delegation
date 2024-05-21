@@ -11,7 +11,7 @@ describe('delegateStats', () => {
   const D = 'D' as Address
   const E = 'E' as Address
 
-  test('it works', () => {
+  test('it computes stats', () => {
     const weights = {
       [A]: {
         [B]: 50,
