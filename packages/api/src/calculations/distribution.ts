@@ -41,13 +41,11 @@ function distributeValueProportionally(
     (weight * value) / total,
   ]) as [string, number][]
 
-  const head = result.slice(0, -1)
-  const last = [
-    result[result.length - 1][0],
-    value - sum(head.map(([, v]) => v)),
-  ] as [string, number]
+  const remaining = value - result.reduce((a, [, b]) => a + b, 0)
 
-  return [...head, last]
+  // add the remainder to last entry
+  result[result.length - 1][1] += remaining
+  return result
 }
 
 function sum(values: number[]): number {
