@@ -2,18 +2,10 @@ import reachable from '../graph/reachable'
 import { Delegations } from '../../types'
 
 export default function inputsFor(
-  input:
-    | {
-        delegations: Delegations
-        addresses: string[]
-      }
-    | {
-        delegations: Delegations
-        address: string
-      }
+  delegations: Delegations,
+  addresses: string[] | string
 ): string[] {
-  const { delegations } = input
-  const addresses = 'addresses' in input ? input.addresses : [input.address]
+  addresses = Array.isArray(addresses) ? addresses : [addresses]
 
   return Array.from(
     new Set([

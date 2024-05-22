@@ -48,7 +48,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor({ delegations, address }),
+    addresses: inputsFor(delegations, address),
   })
 
   const {

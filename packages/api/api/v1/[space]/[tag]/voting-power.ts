@@ -47,7 +47,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor({ delegations, addresses: voters }),
+    addresses: inputsFor(delegations, voters),
   })
 
   const result = Object.fromEntries(
