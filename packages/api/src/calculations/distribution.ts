@@ -16,7 +16,7 @@ export default function distribution({
 }) {
   assert(typeof weights[delegator][delegate] == 'number')
 
-  const [, distributedPower] = proportionally(
+  const [, distributedPower] = distributeValueProportionally(
     weights[delegator],
     availablePower
   ).find(([address]) => address == delegate)!
@@ -30,7 +30,10 @@ export default function distribution({
   }
 }
 
-function proportionally(bag: Record<string, number>, value: number) {
+function distributeValueProportionally(
+  bag: Record<string, number>,
+  value: number
+) {
   const total = sum(Object.values(bag))
 
   const result = Object.entries(bag).map(([address, weight]) => [
