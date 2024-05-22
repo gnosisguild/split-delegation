@@ -1,22 +1,19 @@
 import calculateDelegatorTree from './delegatorTree'
 import calculateDelegateTree from './delegateTree'
 
-import { Graph, Scores } from '../types'
+import { Delegations, Scores } from '../types'
 
 export default function calculateVotingPower({
-  weights,
-  rweights,
+  delegations,
   scores,
   address,
 }: {
-  weights: Graph
-  rweights: Graph
+  delegations: Delegations
   scores: Scores
   address: string
 }) {
   const delegatorTree = calculateDelegatorTree({
-    weights,
-    rweights,
+    delegations,
     scores,
     address,
   })
@@ -27,8 +24,7 @@ export default function calculateVotingPower({
   )
 
   const delegateTree = calculateDelegateTree({
-    weights,
-    rweights,
+    delegations,
     scores,
     address,
   })

@@ -4,6 +4,11 @@ export type Graph = {
   }
 }
 
+export type Delegations = {
+  forward: Graph
+  reverse: Graph
+}
+
 export type Scores = {
   [key: string]: number
 }

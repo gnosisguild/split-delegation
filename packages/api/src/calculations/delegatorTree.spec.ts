@@ -30,9 +30,12 @@ describe('delegatorTree', () => {
       [E]: 0,
     }
 
-    const rweights = inverse(weights)
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
 
-    expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: D })).toEqual([
       {
         delegator: B,
         weight: 9000,
@@ -66,10 +69,13 @@ describe('delegatorTree', () => {
       [D]: 0,
     }
 
-    const rweights = inverse(weights)
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
 
-    expect(delegatorTree({ weights, rweights, scores, address: A })).toEqual([])
-    expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: A })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: B })).toEqual([
       {
         delegator: A,
         weight: 2000,
@@ -77,7 +83,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: C })).toEqual([
       {
         delegator: A,
         weight: 8000,
@@ -85,7 +91,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: D })).toEqual([
       {
         delegator: B,
         weight: 10000,
@@ -122,10 +128,13 @@ describe('delegatorTree', () => {
       [D]: 500,
     }
 
-    const rweights = inverse(weights)
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
 
-    expect(delegatorTree({ weights, rweights, scores, address: A })).toEqual([])
-    expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: A })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: B })).toEqual([
       {
         delegator: A,
         weight: 5000,
@@ -133,7 +142,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: C })).toEqual([
       {
         delegator: A,
         weight: 5000,
@@ -141,7 +150,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: D })).toEqual([
       {
         delegator: B,
         weight: 10000,
@@ -189,10 +198,13 @@ describe('delegatorTree', () => {
       [D]: 0,
     }
 
-    const rweights = inverse(weights)
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
 
-    expect(delegatorTree({ weights, rweights, scores, address: A })).toEqual([])
-    expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: A })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: B })).toEqual([
       {
         delegator: A,
         weight: 2000,
@@ -200,7 +212,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: C })).toEqual([
       {
         delegator: A,
         weight: 7000,
@@ -208,7 +220,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: D })).toEqual([
       {
         delegator: B,
         weight: 10000,
@@ -238,10 +250,13 @@ describe('delegatorTree', () => {
       [C]: 0,
       [D]: 30,
     }
-    const rweights = inverse(weights)
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
 
-    expect(delegatorTree({ weights, rweights, scores, address: A })).toEqual([])
-    expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: A })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: B })).toEqual([
       {
         delegator: A,
         weight: 2000,
@@ -249,7 +264,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([
+    expect(delegatorTree({ delegations, scores, address: C })).toEqual([
       {
         delegator: A,
         weight: 8000,
@@ -257,7 +272,7 @@ describe('delegatorTree', () => {
         parents: [],
       },
     ])
-    expect(delegatorTree({ weights, rweights, scores, address: D })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: D })).toEqual([])
   })
 
   test('it works with an empty delegation graph', () => {
@@ -268,9 +283,12 @@ describe('delegatorTree', () => {
       [C]: 300,
     }
 
-    const rweights = inverse(weights)
-    expect(delegatorTree({ weights, rweights, scores, address: A })).toEqual([])
-    expect(delegatorTree({ weights, rweights, scores, address: B })).toEqual([])
-    expect(delegatorTree({ weights, rweights, scores, address: C })).toEqual([])
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
+    expect(delegatorTree({ delegations, scores, address: A })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: B })).toEqual([])
+    expect(delegatorTree({ delegations, scores, address: C })).toEqual([])
   })
 })

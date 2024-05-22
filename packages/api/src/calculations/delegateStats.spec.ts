@@ -22,8 +22,6 @@ describe('delegateStats', () => {
       },
     }
 
-    const rweights = inverse(weights)
-
     const scores = {
       [A]: 1000,
       [B]: 30,
@@ -32,11 +30,15 @@ describe('delegateStats', () => {
       [E]: 30,
     }
 
+    const delegations = {
+      forward: weights,
+      reverse: inverse(weights),
+    }
+
     const totalSupply = 1000 + 30 + 50 + 20 + 30
 
     const result = delegateStats({
-      weights,
-      rweights,
+      delegations,
       scores,
       totalSupply,
     })

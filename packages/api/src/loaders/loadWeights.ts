@@ -28,10 +28,11 @@ export default async function loadWeights({
     blockNumber,
     space,
   })
-  const rweights = inverse(weights)
+
+  const delegations = { forward: weights, reverse: inverse(weights) }
 
   console.log(`[Weights] ${space}, done in ${timerEnd(start)}ms`)
-  return { weights, rweights }
+  return { delegations }
 }
 
 async function cacheGetOrCompute({

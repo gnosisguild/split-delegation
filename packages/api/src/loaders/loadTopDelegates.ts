@@ -64,7 +64,7 @@ async function cacheGetOrCompute({
     }
   }
 
-  const { weights, rweights } = await loadWeights({
+  const { delegations } = await loadWeights({
     chain,
     blockNumber,
     space,
@@ -75,13 +75,12 @@ async function cacheGetOrCompute({
     blockNumber,
     space,
     strategies,
-    addresses: allNodes(weights),
+    addresses: allNodes(delegations.forward),
   })
 
   const result = top(
     delegateStats({
-      weights,
-      rweights,
+      delegations,
       scores,
       totalSupply,
     })

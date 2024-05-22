@@ -41,14 +41,14 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
-  const { weights, rweights } = await loadWeights({ chain, blockNumber, space })
+  const { delegations } = await loadWeights({ chain, blockNumber, space })
 
   const { scores } = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor({ rweights, address }),
+    addresses: inputsFor({ delegations, address }),
   })
 
   const {
@@ -58,11 +58,10 @@ export const POST = async (req: Request) => {
     percentOfVotingPower,
     percentOfDelegators,
   } = addressStats({
-    weights,
-    rweights,
+    delegations,
     scores,
     totalSupply,
-    allDelegatorCount: Object.keys(weights).length,
+    allDelegatorCount: Object.keys(delegations.forward).length,
     address,
   })
 
@@ -73,10 +72,10 @@ export const POST = async (req: Request) => {
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
-    delegators: reachable(rweights, address),
-    delegatorTree: delegatorTree({ weights, rweights, scores, address }),
-    delegates: reachable(weights, address),
-    delegateTree: delegateTree({ weights, rweights, scores, address }),
+    delegators: reachable(delegations.reverse, address),
+    delegatorTree: delegatorTree({ delegations, scores, address }),
+    delegates: reachable(delegations.forward, address),
+    delegateTree: delegateTree({ delegations, scores, address }),
   }
 
   return new Response(

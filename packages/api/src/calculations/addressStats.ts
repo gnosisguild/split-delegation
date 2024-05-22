@@ -2,31 +2,28 @@ import basisPoints from '../fns/basisPoints'
 import calculateVotingPower from './votingPower'
 import reachable from '../fns/graph/reachable'
 
-import { Graph, Scores } from '../types'
+import { Delegations, Scores } from '../types'
 
 export default function addressStats({
-  weights,
-  rweights,
+  delegations,
   scores,
   totalSupply,
   allDelegatorCount,
   address,
 }: {
-  weights: Graph
-  rweights: Graph
+  delegations: Delegations
   scores: Scores
   totalSupply: number
   allDelegatorCount: number
   address: string
 }) {
   const { votingPower, incomingPower, outgoingPower } = calculateVotingPower({
-    weights,
-    rweights,
+    delegations,
     scores,
     address,
   })
 
-  const delegatorCount = reachable(rweights, address).length
+  const delegatorCount = reachable(delegations.reverse, address).length
 
   return {
     address,
