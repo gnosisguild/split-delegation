@@ -18,8 +18,11 @@ export default function delegateTree({
   scores: Scores
   address: string
 }): DelegateTreeNode[] {
-  if (!delegations.forward[address]) {
-    // Not a delegator?
+  const delegates = Object.keys(delegations.forward[address] || {})
+    // a self referencing edge is not a delegate
+    .filter((delegate) => address != delegate)
+
+  if (delegates.length == 0) {
     return []
   }
 
@@ -32,24 +35,22 @@ export default function delegateTree({
     scores[address]! +
     parents.reduce((r, { delegatedPower }) => r + delegatedPower, 0)
 
-  return Object.keys(delegations.forward[address])
-    .filter((delegate) => address != delegate) // exclude self referencing edges, these are not delegates
-    .map((delegate) => {
-      const { weightInBasisPoints, distributedPower } = distribution({
-        weights: delegations.forward,
-        delegator: address,
-        delegate,
-        availablePower,
-      })
-      return {
-        delegate,
-        weight: weightInBasisPoints,
-        delegatedPower: distributedPower,
-        children: delegateTree({
-          delegations,
-          scores,
-          address: delegate,
-        }),
-      }
+  return delegates.map((delegate) => {
+    const { weightInBasisPoints, distributedPower } = distribution({
+      weights: delegations.forward,
+      delegator: address,
+      delegate,
+      availablePower,
     })
+    return {
+      delegate,
+      weight: weightInBasisPoints,
+      delegatedPower: distributedPower,
+      children: delegateTree({
+        delegations,
+        scores,
+        address: delegate,
+      }),
+    }
+  })
 }
