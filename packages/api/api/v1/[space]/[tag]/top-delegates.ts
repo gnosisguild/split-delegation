@@ -15,8 +15,28 @@ export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
-  const { totalSupply, strategies, network } =
-    (await req.json()) as TopDelegatesRequestBody
+
+  const {
+    strategy: {
+      name,
+      network,
+      params: { strategies, totalSupply },
+    },
+  } = (await req.json()) as TopDelegatesRequestBody
+
+  if (name != 'split-delegation') {
+    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
+  if (typeof totalSupply != 'number') {
+    new Response(JSON.stringify({ error: `Total Supply Missing` }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 
   const limit = Number(searchParams.get('limit')) || 100
   const offset = Number(searchParams.get('offset')) || 0
@@ -33,7 +53,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    totalSupply,
+    totalSupply: totalSupply!,
   })
 
   const response = {

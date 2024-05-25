@@ -1,20 +1,22 @@
 export type AddressRequestBody = {
-  totalSupply: number
-  strategies: any[]
-  network: any
+  strategy: StrategyConfig
 }
 
 export type TopDelegatesRequestBody = {
-  totalSupply: number
-  strategies: any[]
-  network: any
+  strategy: StrategyConfig
 }
 
 export type VotingPowerRequestBody = {
-  options: {
-    strategies: any[]
-    network: string
-    delegationOverride?: boolean
-  }
+  strategy: StrategyConfig
   addresses: string[]
+}
+
+type StrategyConfig = {
+  name: string
+  network: string
+  params: {
+    delegationOverride?: boolean
+    totalSupply?: number
+    strategies: StrategyConfig[]
+  }
 }

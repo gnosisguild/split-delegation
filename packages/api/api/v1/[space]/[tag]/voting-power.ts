@@ -18,9 +18,20 @@ export const POST = async (req: Request) => {
   const tag = searchParams.get('tag') as BlockTag
 
   const {
-    options: { strategies, network, delegationOverride = true },
+    strategy: {
+      name,
+      network,
+      params: { strategies, delegationOverride = false },
+    },
     addresses,
   } = (await req.json()) as VotingPowerRequestBody
+
+  if (name != 'split-delegation') {
+    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 
   const { chain, blockNumber } = await syncTip(tag, network)
 

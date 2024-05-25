@@ -36,8 +36,27 @@ export const POST = async (req: Request) => {
   const tag = searchParams.get('tag') as BlockTag
   const address = getAddress(searchParams.get('address') as string)
 
-  const { strategies, network, totalSupply } =
-    (await req.json()) as AddressRequestBody
+  const {
+    strategy: {
+      name,
+      network,
+      params: { strategies, totalSupply },
+    },
+  } = (await req.json()) as AddressRequestBody
+
+  if (name != 'split-delegation') {
+    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
+  if (typeof totalSupply != 'number') {
+    new Response(JSON.stringify({ error: `Total Supply Missing` }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
@@ -60,7 +79,7 @@ export const POST = async (req: Request) => {
   } = addressStats({
     delegations,
     scores,
-    totalSupply,
+    totalSupply: totalSupply!,
     allDelegatorCount: Object.keys(delegations.forward).length,
     address,
   })
