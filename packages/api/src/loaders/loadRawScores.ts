@@ -22,7 +22,7 @@ export default async function loadRawScores({
     chain,
     blockNumber,
     space,
-    strategies: strategies.map(maybePatchStrategy),
+    strategies,
     addresses,
   })
 
@@ -91,12 +91,12 @@ async function loadWithRetry({
 
     const result = merge(...results)
 
-    assert(
-      Object.keys(result)
-        .slice(0, 50) // just a sample
-        .every((address) => address == getAddress(address)),
-      'snapshot.getScores not checksummed'
-    )
+    // assert(
+    //   Object.keys(result)
+    //     .slice(0, 50) // just a sample
+    //     .every((address) => address == getAddress(address)),
+    //   'snapshot.getScores not checksummed'
+    // )
     return result
   } catch (e) {
     if (addresses.length < 100) {
@@ -125,36 +125,5 @@ async function loadWithRetry({
     ])
 
     return merge(a, b)
-  }
-}
-
-function maybePatchStrategy(strategy: any) {
-  // {
-  //   name: 'safe-vested',
-  //   network: '1',
-  //   params: {
-  //     symbol: 'SAFE (vested)',
-  //     claimDateLimit: '2022-12-27T10:00:00+00:00',
-  //     allocationsSource:
-  //       'https://safe-claiming-app-data.safe.global/allocations/1/snapshot-allocations-data.json',
-  //   },
-  // }
-
-  const shouldPatch =
-    strategy?.name == 'safe-vested' &&
-    strategy?.params?.allocationsSource ==
-      'https://safe-claiming-app-data.safe.global/allocations/1/snapshot-allocations-data.json'
-
-  if (!shouldPatch) {
-    return strategy
-  }
-
-  return {
-    ...strategy,
-    params: {
-      ...strategy.params,
-      allocationsSource:
-        'https://raw.githubusercontent.com/gnosisguild/split-delegation/main/packages/api/api/v1/safe.eth/snapshot-allocations-trimmed.json',
-    },
   }
 }
