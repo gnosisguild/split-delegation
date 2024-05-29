@@ -201,7 +201,7 @@ Each endpoint has two identifying components in its path: `space` and `tag`. `Sp
     {
       "0x37F1eE65C2F8610741cd9Dff1057F926809C4078": 0,
       "0x485E60C486671E932fd9C53d4110cdEab1E7F0eb": 21.71540506,
-      "0xD476B79539781e499396761CE7e21ab28AeA828F": 10.0000,,
+      "0xD476B79539781e499396761CE7e21ab28AeA828F": 10.0000,
     }
     ```
 
