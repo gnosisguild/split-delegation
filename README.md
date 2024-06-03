@@ -158,7 +158,7 @@ Each endpoint has two identifying components in its path: `space` and `tag`. `Sp
           "delegate": "0xD476B79539781e499396761CE7e21ab28AeA828F",
           "weight": 5000,
           "delegatedPower": 10.00000,
-          "parents": []
+          "children": []
         }
       ],
     }
