@@ -46,6 +46,13 @@ To integrate it into your Snapshot space, follow these steps:
 
    - `totalSupply` is used to display useful metrics in the Snapshot UI (e.g. percentage of vote or delegators controlled by one account), and is not used in final vote power calculations.
 
+3. Setup the split-delegation settings for your snapshot space ui
+   - In your space settings, navigate to the 'Delegation' page, and select 'Split-Delegation' from the dropdown.
+   - For the contract address use `0xDE1e8A7E184Babd9F0E3af18f40634e9Ed6F0905` (unless using your own deployment of the delegate registry)
+   - For the delegation UI, use `https://delegate-api.gnosisguild.org` (if using your own instance of the delegate api, use that url)
+
+The delegation dashboard should now be useable on the 'Delegates' page of your snapshot space.
+
 ## Upgrading from existing Delegation Registry
 
 Split-Delegation takes into account delegations made with the v1 contract, and can be used simultaneously with v1, allowing graceful upgrading. This means that delegations made on the v1 contract and on the Split-Delegation contract will be used when calculating total vote power. To use Split-Delegation, remove your existing delegation strategy when following the instructions above.
