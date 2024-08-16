@@ -2,11 +2,9 @@ import { describe, test } from '@jest/globals'
 
 import kahn from './sort'
 
-import { Graph } from '../../types'
-
 describe('sort', () => {
   test('no cycles', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         C: 0,
         B: 0,
@@ -27,7 +25,7 @@ describe('sort', () => {
   })
 
   test('with partition', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
       },
@@ -55,7 +53,7 @@ describe('sort', () => {
   })
 
   test('throws on cycle', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
         C: 0,

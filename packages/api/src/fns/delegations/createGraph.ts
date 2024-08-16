@@ -5,8 +5,8 @@ import findCycle from '../graph/findCycle'
 import { DelegationEdge } from './types'
 import { Graph } from '../../types'
 
-export default function createGraph(edges: DelegationEdge[]): Graph {
-  const result: Graph = {}
+export default function createGraph(edges: DelegationEdge[]): Graph<number> {
+  const result: Graph<number> = {}
   for (const { delegator, delegate, weight } of edges) {
     result[delegator] = result[delegator] || {}
     result[delegator][delegate] = weight

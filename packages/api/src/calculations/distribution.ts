@@ -9,7 +9,7 @@ export default function distribution({
   delegate,
   availablePower,
 }: {
-  weights: Graph
+  weights: Graph<number>
   delegator: string
   delegate: string
   availablePower: number

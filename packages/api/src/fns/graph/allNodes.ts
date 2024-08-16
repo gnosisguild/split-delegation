@@ -1,6 +1,6 @@
 import { Graph } from '../../types'
 
-export default function allNodes(weights: Graph): string[] {
+export default function allNodes<T>(weights: Graph<T>): string[] {
   const set = new Set<string>()
   for (const delegator of Object.keys(weights)) {
     set.add(delegator)

@@ -276,7 +276,6 @@ describe('delegatorTree', () => {
   })
 
   test('it works with an empty delegation graph', () => {
-    const weights = {}
     const scores = {
       [A]: 100,
       [B]: 200,
@@ -284,8 +283,8 @@ describe('delegatorTree', () => {
     }
 
     const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+      forward: {},
+      reverse: {},
     }
     expect(delegatorTree({ delegations, scores, address: A })).toEqual([])
     expect(delegatorTree({ delegations, scores, address: B })).toEqual([])

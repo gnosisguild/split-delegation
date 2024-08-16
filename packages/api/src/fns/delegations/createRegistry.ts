@@ -93,7 +93,7 @@ function selectEffectiveVenue(
   const result: Record<string, Venue> = {}
   for (const account of Object.keys(registry)) {
     const { venueId, venues } = registry[account]
-    const { delegation, expiration, optOut } = venues[venueId]
+    const { delegation, expiration, optOut } = venues[venueId]!
     result[account] = { delegation, expiration, optOut }
   }
   return result

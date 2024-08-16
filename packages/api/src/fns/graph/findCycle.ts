@@ -10,7 +10,9 @@ import { Graph } from '../../types'
  * @returns {boolean} Returns cycle if one detected, otherwise null.
  */
 
-export default function findCycle(graph: Graph): [string, string][] | null {
+export default function findCycle<T>(
+  graph: Graph<T>
+): [string, string][] | null {
   const visited = new Set<string>()
   const path: string[] = []
 
@@ -43,7 +45,7 @@ export default function findCycle(graph: Graph): [string, string][] | null {
   return null
 }
 
-function neighbors(graph: Graph, node: string): string[] {
+function neighbors<T>(graph: Graph<T>, node: string): string[] {
   return Object.keys(graph[node] || {}).filter((neighbor) => neighbor != node)
 }
 

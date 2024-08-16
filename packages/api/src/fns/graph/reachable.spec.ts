@@ -9,7 +9,7 @@ describe('reachable', () => {
   const D = 'D' as Address
 
   test('case 1', () => {
-    const weights = {
+    const graph = {
       [A]: {
         [B]: 20,
         [C]: 80,
@@ -19,14 +19,14 @@ describe('reachable', () => {
       },
     }
 
-    expect(reachable(weights, A)).toEqual([B, C, D])
-    expect(reachable(weights, B)).toEqual([D])
-    expect(reachable(weights, C)).toEqual([])
-    expect(reachable(weights, D)).toEqual([])
+    expect(reachable(graph, A)).toEqual([B, C, D])
+    expect(reachable(graph, B)).toEqual([D])
+    expect(reachable(graph, C)).toEqual([])
+    expect(reachable(graph, D)).toEqual([])
   })
 
   test('case 2', () => {
-    const weights = {
+    const graph = {
       [A]: {
         [B]: 50,
         [C]: 50,
@@ -39,9 +39,9 @@ describe('reachable', () => {
       },
     }
 
-    expect(reachable(weights, A)).toEqual([B, C, D])
-    expect(reachable(weights, B)).toEqual([D])
-    expect(reachable(weights, C)).toEqual([D])
-    expect(reachable(weights, D)).toEqual([])
+    expect(reachable(graph, A)).toEqual([B, C, D])
+    expect(reachable(graph, B)).toEqual([D])
+    expect(reachable(graph, C)).toEqual([D])
+    expect(reachable(graph, D)).toEqual([])
   })
 })

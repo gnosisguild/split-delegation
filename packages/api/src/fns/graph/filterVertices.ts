@@ -1,9 +1,9 @@
 import { Graph } from '../../types'
 
-export default function filterVertices(
-  graph: Graph,
+export default function filterVertices<T>(
+  graph: Graph<T>,
   vertices: string[]
-): Graph {
+): Graph<T> {
   const exclusion = new Set(vertices)
 
   return Object.fromEntries(

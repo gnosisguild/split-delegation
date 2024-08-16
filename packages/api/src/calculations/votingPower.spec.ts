@@ -199,7 +199,6 @@ describe('votingPower', () => {
   })
 
   test('it works with an empty delegation graph', () => {
-    const weights = {}
     const scores = {
       [A]: 100,
       [B]: 200,
@@ -208,8 +207,8 @@ describe('votingPower', () => {
     }
 
     const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+      forward: {},
+      reverse: {},
     }
 
     expect(calculateVotingPower({ delegations, scores, address: A })).toEqual({

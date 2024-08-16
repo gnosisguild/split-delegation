@@ -12,6 +12,7 @@ import createClient from './createClient'
 import loadEvents from './loadEvents'
 
 import { cacheGet, cachePut } from './cache'
+import { Graph } from 'src/types'
 
 export default async function loadWeights({
   chain,
@@ -21,7 +22,9 @@ export default async function loadWeights({
   chain: Chain
   blockNumber: number
   space: string
-}) {
+}): Promise<{
+  delegations: { forward: Graph<number>; reverse: Graph<number> }
+}> {
   const start = timerStart()
   const { weights } = await cacheGetOrCompute({
     chain,
@@ -43,7 +46,7 @@ async function cacheGetOrCompute({
   chain: Chain
   blockNumber: number
   space: string
-}) {
+}): Promise<{ weights: Graph<number> }> {
   const key = cacheKey({
     chain,
     blockNumber,
