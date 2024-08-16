@@ -5,11 +5,13 @@ import findCycle from '../graph/findCycle'
 import { DelegationEdge } from './types'
 import { Graph } from '../../types'
 
-export default function createGraph(edges: DelegationEdge[]): Graph<number> {
-  const result: Graph<number> = {}
-  for (const { delegator, delegate, weight } of edges) {
+export default function createGraph(
+  edges: DelegationEdge[]
+): Graph<{ expiration: number; weight: number }> {
+  const result: Graph<{ expiration: number; weight: number }> = {}
+  for (const { delegator, delegate, weight, expiration } of edges) {
     result[delegator] = result[delegator] || {}
-    result[delegator][delegate] = weight
+    result[delegator][delegate] = { weight, expiration }
   }
 
   const cycle = findCycle(result)

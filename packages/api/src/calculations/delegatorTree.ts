@@ -4,6 +4,7 @@ import { Delegations, Scores } from '../types'
 
 export type DelegatorTreeNode = {
   delegator: string
+  expiration: number
   weight: number
   delegatedPower: number
   parents: DelegatorTreeNode[]
@@ -33,8 +34,8 @@ export default function delegatorTree({
       scores[delegator]! +
       parents.reduce((r, { delegatedPower }) => r + delegatedPower, 0)
 
-    const { weightInBasisPoints, distributedPower } = distribution({
-      weights: delegations.forward,
+    const { expiration, weightInBasisPoints, distributedPower } = distribution({
+      delegation: delegations.forward,
       delegator,
       delegate: address,
       availablePower,
@@ -42,6 +43,7 @@ export default function delegatorTree({
 
     return {
       delegator,
+      expiration,
       weight: weightInBasisPoints,
       delegatedPower: distributedPower,
       parents,

@@ -5,8 +5,8 @@ export type Graph<T> = {
 }
 
 export type Delegations = {
-  forward: Graph<number>
-  reverse: Graph<number>
+  forward: Graph<{ expiration: number; weight: number }>
+  reverse: Graph<{ expiration: number; weight: number }>
 }
 
 export type Scores = {

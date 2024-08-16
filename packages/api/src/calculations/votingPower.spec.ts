@@ -13,11 +13,11 @@ describe('votingPower', () => {
   test('it works when all requested nodes present in delegation graph', () => {
     const weights = {
       [A]: {
-        [B]: 20,
-        [C]: 80,
+        [B]: { weight: 20, expiration: 1 },
+        [C]: { weight: 80, expiration: 1 },
       },
       [B]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 2 },
       },
     }
     const delegations = {
@@ -60,14 +60,14 @@ describe('votingPower', () => {
   test('it works with a forward edge', () => {
     const weights = {
       [A]: {
-        [B]: 50,
-        [C]: 50,
+        [B]: { weight: 50, expiration: 1 },
+        [C]: { weight: 50, expiration: 1 },
       },
       [B]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 2 },
       },
       [C]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 3 },
       },
     }
     const scores = {
@@ -110,12 +110,12 @@ describe('votingPower', () => {
   test('it works with a self-referencing edge', () => {
     const weights = {
       [A]: {
-        [B]: 50,
-        [C]: 50,
+        [B]: { weight: 50, expiration: 1 },
+        [C]: { weight: 50, expiration: 1 },
       },
       [B]: {
-        [B]: 20,
-        [D]: 80,
+        [B]: { weight: 20, expiration: 2 },
+        [D]: { weight: 80, expiration: 2 },
       },
     }
     const scores = {
@@ -158,8 +158,8 @@ describe('votingPower', () => {
   test('it works when some requested nodes not present in delegation graph', () => {
     const weights = {
       [A]: {
-        [B]: 20,
-        [C]: 80,
+        [B]: { weight: 20, expiration: 1 },
+        [C]: { weight: 80, expiration: 1 },
       },
     }
     const scores = {

@@ -9,7 +9,7 @@ export default function createEdges(
     Object.keys(registry).filter((account) => registry[account].optOut == true)
   )
 
-  type Entries = [string, { delegate: Address; weight: number }[]]
+  type Entries = [string, { delegate: Address; weight: number }[], number]
   const isExpired = (expiration: number) => expiration != 0 && expiration < when
 
   return (
@@ -17,20 +17,26 @@ export default function createEdges(
       // filter expired delegations
       .map(
         ([delegator, { delegation, expiration }]) =>
-          [delegator, isExpired(expiration) ? [] : delegation] as Entries
+          [
+            delegator,
+            isExpired(expiration) ? [] : delegation,
+            expiration,
+          ] as Entries
       )
       // filter opted out addresses
       .map(
-        ([delegator, delegation]) =>
+        ([delegator, delegation, expiration]) =>
           [
             delegator,
             delegation.filter(({ delegate }) => !optedOut.has(delegate)),
+            expiration,
           ] as Entries
       )
-      .flatMap(([delegator, delegation]) =>
+      .flatMap(([delegator, delegation, expiration]) =>
         delegation.map(({ delegate, weight }) => ({
           delegator,
           delegate,
+          expiration,
           weight,
         }))
       )

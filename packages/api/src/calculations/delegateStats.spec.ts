@@ -14,11 +14,11 @@ describe('delegateStats', () => {
   test('it computes stats', () => {
     const weights = {
       [A]: {
-        [B]: 50,
-        [C]: 50,
+        [B]: { weight: 50, expiration: 1 },
+        [C]: { weight: 50, expiration: 1 },
       },
       [D]: {
-        [E]: 100,
+        [E]: { weight: 100, expiration: 2 },
       },
     }
 

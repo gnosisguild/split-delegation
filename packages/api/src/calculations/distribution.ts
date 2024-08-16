@@ -4,39 +4,40 @@ import basisPoints from '../fns/basisPoints'
 import { Graph } from '../types'
 
 export default function distribution({
-  weights,
+  delegation,
   delegator,
   delegate,
   availablePower,
 }: {
-  weights: Graph<number>
+  delegation: Graph<{ expiration: number; weight: number }>
   delegator: string
   delegate: string
   availablePower: number
 }) {
-  assert(typeof weights[delegator][delegate] == 'number')
+  assert(typeof delegation[delegator][delegate].weight == 'number')
 
   const [, distributedPower] = distributeValueProportionally(
-    weights[delegator],
+    delegation[delegator],
     availablePower
   ).find(([address]) => address == delegate)!
 
-  const weight = weights[delegator][delegate]
-  const total = sum(Object.values(weights[delegator]))
+  const { weight, expiration } = delegation[delegator][delegate]!
+  const total = sum(Object.values(delegation[delegator]))
 
   return {
+    expiration,
     weightInBasisPoints: basisPoints(weight, total),
     distributedPower,
   }
 }
 
 function distributeValueProportionally(
-  bag: Record<string, number>,
+  bag: Record<string, { expiration: number; weight: number }>,
   value: number
 ) {
   const total = sum(Object.values(bag))
 
-  const result = Object.entries(bag).map(([address, weight]) => [
+  const result = Object.entries(bag).map(([address, { weight }]) => [
     address,
     (weight * value) / total,
   ]) as [string, number][]
@@ -48,6 +49,6 @@ function distributeValueProportionally(
   return result
 }
 
-function sum(values: number[]): number {
-  return values.reduce((p, n) => p + n, 0)
+function sum(entries: { weight: number }[]): number {
+  return entries.reduce((result, { weight }) => result + weight, 0)
 }

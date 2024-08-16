@@ -29,4 +29,5 @@ export type DelegationEdge = {
   delegator: string
   delegate: string
   weight: number
+  expiration: number
 }

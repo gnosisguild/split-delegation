@@ -23,7 +23,10 @@ export default async function loadWeights({
   blockNumber: number
   space: string
 }): Promise<{
-  delegations: { forward: Graph<number>; reverse: Graph<number> }
+  delegations: {
+    forward: Graph<{ expiration: number; weight: number }>
+    reverse: Graph<{ expiration: number; weight: number }>
+  }
 }> {
   const start = timerStart()
   const { weights } = await cacheGetOrCompute({
@@ -46,7 +49,7 @@ async function cacheGetOrCompute({
   chain: Chain
   blockNumber: number
   space: string
-}): Promise<{ weights: Graph<number> }> {
+}): Promise<{ weights: Graph<{ expiration: number; weight: number }> }> {
   const key = cacheKey({
     chain,
     blockNumber,

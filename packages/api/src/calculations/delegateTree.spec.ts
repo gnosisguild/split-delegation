@@ -14,11 +14,11 @@ describe('delegateTree', () => {
   test('it works when all requested nodes present in delegation graph', () => {
     const weights = {
       [A]: {
-        [B]: 20,
-        [C]: 80,
+        [B]: { weight: 20, expiration: 1 },
+        [C]: { weight: 80, expiration: 1 },
       },
       [B]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 2 },
       },
     }
     const scores = {
@@ -36,11 +36,13 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: A })).toEqual([
       {
         delegate: B,
+        expiration: 1,
         weight: 2000,
         delegatedPower: 200,
         children: [
           {
             delegate: D,
+            expiration: 2,
             weight: 10000,
             delegatedPower: 300,
             children: [],
@@ -49,6 +51,7 @@ describe('delegateTree', () => {
       },
       {
         delegate: C,
+        expiration: 1,
         weight: 8000,
         delegatedPower: 800,
         children: [],
@@ -57,6 +60,7 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: B })).toEqual([
       {
         delegate: D,
+        expiration: 2,
         weight: 10000,
         delegatedPower: 300,
         children: [],
@@ -69,14 +73,14 @@ describe('delegateTree', () => {
   test('it works with a forward edge', () => {
     const weights = {
       [A]: {
-        [B]: 50,
-        [C]: 50,
+        [B]: { weight: 50, expiration: 1 },
+        [C]: { weight: 50, expiration: 1 },
       },
       [B]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 2 },
       },
       [C]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 3 },
       },
     }
     const scores = {
@@ -94,11 +98,13 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: A })).toEqual([
       {
         delegate: B,
+        expiration: 1,
         weight: 5000,
         delegatedPower: 500,
         children: [
           {
             delegate: D,
+            expiration: 2,
             weight: 10000,
             delegatedPower: 2500,
             children: [],
@@ -107,11 +113,13 @@ describe('delegateTree', () => {
       },
       {
         delegate: C,
+        expiration: 1,
         weight: 5000,
         delegatedPower: 500,
         children: [
           {
             delegate: D,
+            expiration: 3,
             weight: 10000,
             delegatedPower: 3500,
             children: [],
@@ -122,6 +130,7 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: B })).toEqual([
       {
         delegate: D,
+        expiration: 2,
         weight: 10000,
         delegatedPower: 2500,
         children: [],
@@ -130,6 +139,7 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: C })).toEqual([
       {
         delegate: D,
+        expiration: 3,
         weight: 10000,
         delegatedPower: 3500,
         children: [],
@@ -141,14 +151,14 @@ describe('delegateTree', () => {
   test('it correctly calculates weights even when all scores are zero', () => {
     const weights = {
       [A]: {
-        [B]: 50,
-        [C]: 50,
+        [B]: { weight: 50, expiration: 1 },
+        [C]: { weight: 50, expiration: 1 },
       },
       [B]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 2 },
       },
       [C]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 3 },
       },
     }
     const scores = {
@@ -166,11 +176,13 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: A })).toEqual([
       {
         delegate: B,
+        expiration: 1,
         weight: 5000,
         delegatedPower: 0,
         children: [
           {
             delegate: D,
+            expiration: 2,
             weight: 10000,
             delegatedPower: 0,
             children: [],
@@ -179,11 +191,13 @@ describe('delegateTree', () => {
       },
       {
         delegate: C,
+        expiration: 1,
         weight: 5000,
         delegatedPower: 0,
         children: [
           {
             delegate: D,
+            expiration: 3,
             weight: 10000,
             delegatedPower: 0,
             children: [],
@@ -194,6 +208,7 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: B })).toEqual([
       {
         delegate: D,
+        expiration: 2,
         weight: 10000,
         delegatedPower: 0,
         children: [],
@@ -202,6 +217,7 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: C })).toEqual([
       {
         delegate: D,
+        expiration: 3,
         weight: 10000,
         delegatedPower: 0,
         children: [],
@@ -213,12 +229,12 @@ describe('delegateTree', () => {
   test('a self referencing edge is not included as delegate', () => {
     const weights = {
       [A]: {
-        [A]: 10,
-        [B]: 30,
-        [C]: 60,
+        [A]: { weight: 10, expiration: 1 },
+        [B]: { weight: 30, expiration: 1 },
+        [C]: { weight: 60, expiration: 1 },
       },
       [B]: {
-        [D]: 100,
+        [D]: { weight: 100, expiration: 2 },
       },
     }
     const scores = {
@@ -236,11 +252,13 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: A })).toEqual([
       {
         delegate: B,
+        expiration: 1,
         weight: 3000,
         delegatedPower: 30,
         children: [
           {
             delegate: D,
+            expiration: 2,
             weight: 10000,
             delegatedPower: 30,
             children: [],
@@ -249,6 +267,7 @@ describe('delegateTree', () => {
       },
       {
         delegate: C,
+        expiration: 1,
         weight: 6000,
         delegatedPower: 60,
         children: [],
@@ -259,8 +278,8 @@ describe('delegateTree', () => {
   test('it works when some requested nodes not present in delegation graph', () => {
     const weights = {
       [A]: {
-        [B]: 20,
-        [C]: 80,
+        [B]: { weight: 20, expiration: 1 },
+        [C]: { weight: 80, expiration: 1 },
       },
     }
     const scores = {
@@ -278,12 +297,14 @@ describe('delegateTree', () => {
     expect(delegateTree({ delegations, scores, address: A })).toEqual([
       {
         delegate: B,
+        expiration: 1,
         weight: 2000,
         delegatedPower: 200,
         children: [],
       },
       {
         delegate: C,
+        expiration: 1,
         weight: 8000,
         delegatedPower: 800,
         children: [],

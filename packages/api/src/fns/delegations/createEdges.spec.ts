@@ -18,7 +18,9 @@ describe('createEdges', () => {
     }
     const result = createEdges(registry, 0)
 
-    expect(result).toEqual([{ delegator: A, delegate: B, weight: 100 }])
+    expect(result).toEqual([
+      { delegator: A, delegate: B, weight: 100, expiration: 0 },
+    ])
   })
 
   test('it sets a delegation with a self-referencing edge', () => {
@@ -35,8 +37,8 @@ describe('createEdges', () => {
     const result = createEdges(registry, 0)
 
     expect(result).toEqual([
-      { delegator: A, delegate: A, weight: 20 },
-      { delegator: A, delegate: B, weight: 80 },
+      { delegator: A, delegate: A, weight: 20, expiration: 0 },
+      { delegator: A, delegate: B, weight: 80, expiration: 0 },
     ])
   })
 
@@ -58,7 +60,9 @@ describe('createEdges', () => {
     }
     const result = createEdges(registry, 0)
 
-    expect(result).toEqual([{ delegator: A, delegate: B, weight: 50 }])
+    expect(result).toEqual([
+      { delegator: A, delegate: B, weight: 50, expiration: 0 },
+    ])
   })
 
   test('it sets expiration for a delegation', () => {
@@ -79,7 +83,9 @@ describe('createEdges', () => {
     }
     const result = createEdges(registry, 2024)
 
-    expect(result).toEqual([{ delegator: B, delegate: C, weight: 100 }])
+    expect(result).toEqual([
+      { delegator: B, delegate: C, weight: 100, expiration: 2025 },
+    ])
   })
 
   test('it still opts out, even when expiration set for delegation', () => {
@@ -100,7 +106,9 @@ describe('createEdges', () => {
     }
     const result = createEdges(registry, 2024)
 
-    expect(result).toEqual([{ delegator: A, delegate: C, weight: 50 }])
+    expect(result).toEqual([
+      { delegator: A, delegate: C, weight: 50, expiration: 0 },
+    ])
   })
 
   test('it does not output empty delegator node', () => {
@@ -118,6 +126,8 @@ describe('createEdges', () => {
     }
     const result = createEdges(registry, 2024)
 
-    expect(result).toEqual([{ delegator: B, delegate: C, weight: 100 }])
+    expect(result).toEqual([
+      { delegator: B, delegate: C, weight: 100, expiration: 0 },
+    ])
   })
 })
