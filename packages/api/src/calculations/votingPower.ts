@@ -1,14 +1,14 @@
 import calculateDelegatorTree from './delegatorTree'
 import calculateDelegateTree from './delegateTree'
 
-import { Delegations, Scores } from '../types'
+import { DelegationDAGs, Scores } from '../types'
 
 export default function calculateVotingPower({
   delegations,
   scores,
   address,
 }: {
-  delegations: Delegations
+  delegations: DelegationDAGs
   scores: Scores
   address: string
 }) {

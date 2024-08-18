@@ -1,8 +1,8 @@
 import reachable from '../graph/reachable'
-import { Delegations } from '../../types'
+import { DelegationDAGs } from '../../types'
 
 export default function inputsFor(
-  delegations: Delegations,
+  delegations: DelegationDAGs,
   addresses: string[] | string
 ): string[] {
   addresses = Array.isArray(addresses) ? addresses : [addresses]

@@ -8,7 +8,7 @@ import delegateStats, {
 } from '../calculations/delegateStats'
 
 import loadScores from './loadScores'
-import loadWeights from './loadWeights'
+import loadDelegationDAGs from './loadDelegationDAGs'
 
 import prisma from '../../prisma/singleton'
 
@@ -64,23 +64,23 @@ async function cacheGetOrCompute({
     }
   }
 
-  const { delegations } = await loadWeights({
+  const delegationDAGs = await loadDelegationDAGs({
     chain,
     blockNumber,
     space,
   })
 
-  const { scores } = await loadScores({
+  const scores = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: allNodes(delegations.forward),
+    addresses: allNodes(delegationDAGs.forward),
   })
 
   const result = top(
     delegateStats({
-      delegations,
+      delegations: delegationDAGs,
       scores,
       totalSupply,
     })

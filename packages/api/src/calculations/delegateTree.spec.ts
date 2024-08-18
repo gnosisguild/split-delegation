@@ -3,7 +3,6 @@ import { Address } from 'viem'
 
 import inverse from '../fns/graph/inverse'
 import delegateTree from './delegateTree'
-import { Delegations } from '../types'
 
 describe('delegateTree', () => {
   const A = 'A' as Address
@@ -12,7 +11,7 @@ describe('delegateTree', () => {
   const D = 'D' as Address
 
   test('it works when all requested nodes present in delegation graph', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 20, expiration: 1 },
         [C]: { weight: 80, expiration: 1 },
@@ -28,12 +27,14 @@ describe('delegateTree', () => {
       [D]: 30,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
-    } as Delegations
+    const delegationsDAGs = {
+      forward: delegations,
+      reverse: inverse(delegations),
+    }
 
-    expect(delegateTree({ delegations, scores, address: A })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationsDAGs, scores, address: A })
+    ).toEqual([
       {
         delegate: B,
         expiration: 1,
@@ -57,7 +58,9 @@ describe('delegateTree', () => {
         children: [],
       },
     ])
-    expect(delegateTree({ delegations, scores, address: B })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationsDAGs, scores, address: B })
+    ).toEqual([
       {
         delegate: D,
         expiration: 2,
@@ -66,8 +69,12 @@ describe('delegateTree', () => {
         children: [],
       },
     ])
-    expect(delegateTree({ delegations, scores, address: C })).toEqual([])
-    expect(delegateTree({ delegations, scores, address: D })).toEqual([])
+    expect(
+      delegateTree({ delegations: delegationsDAGs, scores, address: C })
+    ).toEqual([])
+    expect(
+      delegateTree({ delegations: delegationsDAGs, scores, address: D })
+    ).toEqual([])
   })
 
   test('it works with a forward edge', () => {
@@ -93,7 +100,7 @@ describe('delegateTree', () => {
     const delegations = {
       forward: weights,
       reverse: inverse(weights),
-    } as Delegations
+    }
 
     expect(delegateTree({ delegations, scores, address: A })).toEqual([
       {
@@ -149,7 +156,7 @@ describe('delegateTree', () => {
   })
 
   test('it correctly calculates weights even when all scores are zero', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 50, expiration: 1 },
         [C]: { weight: 50, expiration: 1 },
@@ -168,12 +175,14 @@ describe('delegateTree', () => {
       [D]: 0,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
-    } as Delegations
+    const delegationDAGs = {
+      forward: delegations,
+      reverse: inverse(delegations),
+    }
 
-    expect(delegateTree({ delegations, scores, address: A })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: A })
+    ).toEqual([
       {
         delegate: B,
         expiration: 1,
@@ -205,7 +214,9 @@ describe('delegateTree', () => {
         ],
       },
     ])
-    expect(delegateTree({ delegations, scores, address: B })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: B })
+    ).toEqual([
       {
         delegate: D,
         expiration: 2,
@@ -214,7 +225,9 @@ describe('delegateTree', () => {
         children: [],
       },
     ])
-    expect(delegateTree({ delegations, scores, address: C })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: C })
+    ).toEqual([
       {
         delegate: D,
         expiration: 3,
@@ -223,11 +236,13 @@ describe('delegateTree', () => {
         children: [],
       },
     ])
-    expect(delegateTree({ delegations, scores, address: D })).toEqual([])
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: D })
+    ).toEqual([])
   })
 
   test('a self referencing edge is not included as delegate', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [A]: { weight: 10, expiration: 1 },
         [B]: { weight: 30, expiration: 1 },
@@ -244,12 +259,14 @@ describe('delegateTree', () => {
       [D]: 20,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
-    } as Delegations
+    const delegationDAGs = {
+      forward: delegations,
+      reverse: inverse(delegations),
+    }
 
-    expect(delegateTree({ delegations, scores, address: A })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: A })
+    ).toEqual([
       {
         delegate: B,
         expiration: 1,
@@ -276,7 +293,7 @@ describe('delegateTree', () => {
   })
 
   test('it works when some requested nodes not present in delegation graph', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 20, expiration: 1 },
         [C]: { weight: 80, expiration: 1 },
@@ -289,12 +306,14 @@ describe('delegateTree', () => {
       [D]: 30,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
-    } as Delegations
+    const delegationDAGs = {
+      forward: delegations,
+      reverse: inverse(delegations),
+    }
 
-    expect(delegateTree({ delegations, scores, address: A })).toEqual([
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: A })
+    ).toEqual([
       {
         delegate: B,
         expiration: 1,
@@ -310,13 +329,18 @@ describe('delegateTree', () => {
         children: [],
       },
     ])
-    expect(delegateTree({ delegations, scores, address: B })).toEqual([])
-    expect(delegateTree({ delegations, scores, address: C })).toEqual([])
-    expect(delegateTree({ delegations, scores, address: D })).toEqual([])
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: B })
+    ).toEqual([])
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: C })
+    ).toEqual([])
+    expect(
+      delegateTree({ delegations: delegationDAGs, scores, address: D })
+    ).toEqual([])
   })
 
   test('it works with an empty delegation graph', () => {
-    const weights = {}
     const scores = {
       [A]: 100,
       [B]: 200,
@@ -324,9 +348,9 @@ describe('delegateTree', () => {
     }
 
     const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
-    } as Delegations
+      forward: {},
+      reverse: {},
+    }
 
     expect(delegateTree({ delegations, scores, address: A })).toEqual([])
     expect(delegateTree({ delegations, scores, address: B })).toEqual([])

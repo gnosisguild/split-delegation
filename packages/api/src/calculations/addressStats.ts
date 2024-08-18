@@ -2,7 +2,7 @@ import basisPoints from '../fns/basisPoints'
 import calculateVotingPower from './votingPower'
 import reachable from '../fns/graph/reachable'
 
-import { Delegations, Scores } from '../types'
+import { DelegationDAGs, Scores } from '../types'
 
 export default function addressStats({
   delegations,
@@ -11,7 +11,7 @@ export default function addressStats({
   allDelegatorCount,
   address,
 }: {
-  delegations: Delegations
+  delegations: DelegationDAGs
   scores: Scores
   totalSupply: number
   allDelegatorCount: number

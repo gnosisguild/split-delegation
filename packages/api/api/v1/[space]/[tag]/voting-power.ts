@@ -5,8 +5,8 @@ import filterVertices from '../../../../src/fns/graph/filterVertices'
 import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import inverse from '../../../../src/fns/graph/inverse'
 
+import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
-import loadWeights from '../../../../src/loaders/loadWeights'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
-  let { delegations } = await loadWeights({
+  let delegations = await loadDelegationDAGs({
     chain,
     blockNumber,
     space,
@@ -53,7 +53,7 @@ export const POST = async (req: Request) => {
     delegations = { forward, reverse }
   }
 
-  const { scores } = await loadScores({
+  const scores = await loadScores({
     chain,
     blockNumber,
     space,

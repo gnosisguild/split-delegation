@@ -1,8 +1,8 @@
 import { describe, test } from '@jest/globals'
 
-import createGraph from './createGraph'
+import createDelegationGraph from './createDelegationGraph'
 
-describe('createGraph', () => {
+describe('createDelegationGraph', () => {
   const A = 'A'
   const B = 'B'
   const C = 'C'
@@ -11,7 +11,7 @@ describe('createGraph', () => {
   test('it sets one delegator', () => {
     const edges = [{ delegator: A, delegate: B, weight: 100, expiration: 123 }]
 
-    const result = createGraph(edges)
+    const result = createDelegationGraph(edges)
 
     expect(result).toEqual({ A: { B: { weight: 100, expiration: 123 } } })
   })
@@ -22,7 +22,7 @@ describe('createGraph', () => {
       { delegator: B, delegate: C, weight: 9, expiration: 456 },
     ]
 
-    const result = createGraph(edges)
+    const result = createDelegationGraph(edges)
 
     expect(result).toEqual({
       A: { B: { weight: 8, expiration: 456 } },
@@ -37,7 +37,7 @@ describe('createGraph', () => {
       { delegator: B, delegate: C, weight: 100, expiration: 2 },
     ]
 
-    const result = createGraph(edges)
+    const result = createDelegationGraph(edges)
 
     expect(result).toEqual({
       A: { A: { weight: 50, expiration: 1 }, B: { weight: 50, expiration: 0 } },
@@ -53,7 +53,7 @@ describe('createGraph', () => {
       { delegator: C, delegate: D, weight: 4, expiration: 20 },
     ]
 
-    const result = createGraph(edges)
+    const result = createDelegationGraph(edges)
 
     expect(result).toEqual({
       A: { B: { weight: 1, expiration: 20 } },
@@ -69,7 +69,7 @@ describe('createGraph', () => {
       { delegator: C, delegate: A, weight: 1300, expiration: 0 },
     ]
 
-    const result = createGraph(edges)
+    const result = createDelegationGraph(edges)
 
     expect(result).toEqual({
       A: { B: { weight: 1, expiration: 0 } },
@@ -79,7 +79,7 @@ describe('createGraph', () => {
 
   test('oldest cycle edge is removed', () => {
     expect(
-      createGraph([
+      createDelegationGraph([
         { delegator: A, delegate: B, weight: 1, expiration: 0 },
         { delegator: B, delegate: C, weight: 2, expiration: 0 },
         { delegator: C, delegate: A, weight: 3, expiration: 0 },
@@ -90,7 +90,7 @@ describe('createGraph', () => {
     })
 
     expect(
-      createGraph([
+      createDelegationGraph([
         { delegator: C, delegate: A, weight: 3, expiration: 0 },
         { delegator: A, delegate: B, weight: 1, expiration: 0 },
         { delegator: B, delegate: C, weight: 2, expiration: 0 },

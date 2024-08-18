@@ -20,7 +20,7 @@ export default async function loadScores({
   space: string
   strategies: any[]
   addresses: string[]
-}) {
+}): Promise<Scores> {
   const start = timerStart()
   const { scores } = await _load({
     chain,
@@ -32,7 +32,7 @@ export default async function loadScores({
   console.log(`[Scores] ${space}, done in ${timerEnd(start)}ms`)
 
   assert(addresses.length <= Object.keys(scores).length)
-  return { scores }
+  return scores
 }
 
 async function _load({

@@ -1,6 +1,6 @@
 import addressStats from './addressStats'
 
-import { Delegations, Scores } from '../types'
+import { DelegationDAGs, Scores } from '../types'
 
 export type DelegateStats = {
   address: string
@@ -15,7 +15,7 @@ export default function delegateStats({
   scores,
   totalSupply,
 }: {
-  delegations: Delegations
+  delegations: DelegationDAGs
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {

@@ -3,7 +3,7 @@ import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import createDelegations from '../fns/delegations/createDelegations'
-import createGraph from '../fns/delegations/createGraph'
+import createGraph from '../fns/delegations/createDelegationGraph'
 import createRegistry from '../fns/delegations/createRegistry'
 import inverse from '../fns/graph/inverse'
 import rowToAction from '../fns/logs/rowToAction'
@@ -12,9 +12,9 @@ import createClient from './createClient'
 import loadEvents from './loadEvents'
 
 import { cacheGet, cachePut } from './cache'
-import { Graph } from 'src/types'
+import { DelegationDAGs, Graph } from 'src/types'
 
-export default async function loadWeights({
+export default async function loadDelegationDAGs({
   chain,
   blockNumber,
   space,
@@ -22,23 +22,19 @@ export default async function loadWeights({
   chain: Chain
   blockNumber: number
   space: string
-}): Promise<{
-  delegations: {
-    forward: Graph<{ expiration: number; weight: number }>
-    reverse: Graph<{ expiration: number; weight: number }>
-  }
-}> {
+}): Promise<DelegationDAGs> {
   const start = timerStart()
-  const { weights } = await cacheGetOrCompute({
+  const delegations = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
   })
 
-  const delegations = { forward: weights, reverse: inverse(weights) }
+  const forward = delegations
+  const reverse = inverse(delegations)
 
   console.log(`[Weights] ${space}, done in ${timerEnd(start)}ms`)
-  return { delegations }
+  return { forward, reverse }
 }
 
 async function cacheGetOrCompute({
@@ -49,14 +45,14 @@ async function cacheGetOrCompute({
   chain: Chain
   blockNumber: number
   space: string
-}): Promise<{ weights: Graph<{ expiration: number; weight: number }> }> {
+}): Promise<Graph<{ expiration: number; weight: number }>> {
   const key = cacheKey({
     chain,
     blockNumber,
     space,
   })
 
-  const hit = await cacheGet(key, 'Weights')
+  const hit = await cacheGet(key, 'DelegationGraph')
   if (hit) return hit
 
   const block = await createClient(chain).getBlock({
@@ -73,11 +69,11 @@ async function cacheGetOrCompute({
 
   const registry = createRegistry(rowToAction(rows))
   const delegations = createDelegations(registry, Number(block.timestamp))
-  const graph = createGraph(delegations)
+  const delegationGraph = createGraph(delegations)
 
-  await cachePut(key, { weights: graph }, 'Weights')
+  await cachePut(key, delegationGraph, 'DelegationGraph')
 
-  return { weights: graph }
+  return delegationGraph
 }
 
 function cacheKey({

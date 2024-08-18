@@ -10,8 +10,8 @@ import delegatorTree, {
 import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import reachable from '../../../../src/fns/graph/reachable'
 
+import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
-import loadWeights from '../../../../src/loaders/loadWeights'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -60,9 +60,13 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
-  const { delegations } = await loadWeights({ chain, blockNumber, space })
+  const delegations = await loadDelegationDAGs({
+    chain,
+    blockNumber,
+    space,
+  })
 
-  const { scores } = await loadScores({
+  const scores = await loadScores({
     chain,
     blockNumber,
     space,

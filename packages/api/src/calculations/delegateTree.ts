@@ -1,7 +1,7 @@
 import delegatorTree from './delegatorTree'
 import distribution from './distribution'
 
-import { Delegations, Scores } from '../types'
+import { DelegationDAGs, Scores } from '../types'
 
 export type DelegateTreeNode = {
   delegate: string
@@ -15,7 +15,7 @@ export default function delegateTree({
   scores,
   address,
 }: {
-  delegations: Delegations
+  delegations: DelegationDAGs
   scores: Scores
   address: string
 }): DelegateTreeNode[] {
