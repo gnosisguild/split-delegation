@@ -2,7 +2,7 @@ import assert from 'assert'
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createEdges from '../fns/delegations/createEdges'
+import createDelegations from '../fns/delegations/createDelegations'
 import createGraph from '../fns/delegations/createGraph'
 import createRegistry from '../fns/delegations/createRegistry'
 import inverse from '../fns/graph/inverse'
@@ -72,8 +72,8 @@ async function cacheGetOrCompute({
   }
 
   const registry = createRegistry(rowToAction(rows))
-  const edges = createEdges(registry, Number(block.timestamp))
-  const graph = createGraph(edges)
+  const delegations = createDelegations(registry, Number(block.timestamp))
+  const graph = createGraph(delegations)
 
   await cachePut(key, { weights: graph }, 'Weights')
 

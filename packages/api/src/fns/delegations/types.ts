@@ -25,7 +25,7 @@ export type Registry = Record<
   }
 >
 
-export type DelegationEdge = {
+export type Delegation = {
   delegator: string
   delegate: string
   weight: number
