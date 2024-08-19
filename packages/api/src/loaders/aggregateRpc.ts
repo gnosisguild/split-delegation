@@ -1,4 +1,4 @@
-import async from 'async'
+import { mapLimit } from 'async'
 import rangeToChunks from '../fns/rangeToChunks'
 
 type RpcFetch<T> = (fromBlock: number, toBlock: number) => Promise<T[]>
@@ -13,7 +13,7 @@ export default async function aggregateRpc<T>(
   const stints = rangeToChunks(fromBlock, toBlock, MAX_RPC_BLOCK_RANGE)
 
   return (
-    await async.mapLimit(
+    await mapLimit(
       stints,
       PARALLELISM,
       function (
