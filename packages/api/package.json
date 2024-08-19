@@ -22,16 +22,16 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "5.12.1",
+    "@prisma/client": "5.18.0",
     "@snapshot-labs/snapshot.js": "^0.11.18",
     "@vercel/edge": "^1.1.1",
     "@vercel/node": "3.0.28",
     "async": "^3.2.5",
     "cmd-ts": "^0.13.0",
     "dotenv": "^16.4.5",
-    "prisma": "5.12.1",
-    "ts-node": "^10.9.1",
-    "vercel": "^34.1.7",
+    "prisma": "5.18.0",
+    "ts-node": "^10.9.2",
+    "vercel": "^36.0.0",
     "viem": "^2.9.16"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "prettier": "3.2.5",
     "ts-jest": "29.1.2",
     "tsc-alias": "1.8.8",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
