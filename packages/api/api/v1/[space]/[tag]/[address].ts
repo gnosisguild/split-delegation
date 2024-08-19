@@ -19,6 +19,7 @@ import { AddressRequestBody } from '../../types'
 
 export type AddressResult = {
   address: string
+  expiration: number
   votingPower: number
   incomingPower: number
   outgoingPower: number
@@ -75,6 +76,7 @@ export const POST = async (req: Request) => {
   })
 
   const {
+    expiration,
     votingPower,
     incomingPower,
     outgoingPower,
@@ -90,6 +92,7 @@ export const POST = async (req: Request) => {
 
   const result: AddressResult = {
     address,
+    expiration,
     votingPower,
     incomingPower,
     outgoingPower,
