@@ -4,12 +4,12 @@ import prisma from '../../prisma/singleton'
 
 export async function cacheGet(
   key: string,
-  prefix?: string
+  logPrefix?: string
 ): Promise<any | null> {
   const hit = await prisma.cache.findUnique({ where: { key } })
   if (hit) {
-    if (prefix) {
-      console.log(`[${prefix}] Cache Hit ${key.slice(0, 18)}`)
+    if (logPrefix) {
+      console.log(`[${logPrefix}] Cache Hit ${key.slice(0, 18)}`)
     }
     return JSON.parse(hit.value)
   }
@@ -19,7 +19,7 @@ export async function cacheGet(
 export async function cachePut(
   key: string,
   value: any | ((v: any) => string),
-  prefix?: string
+  logPrefix?: string
 ) {
   await prisma.$transaction(
     async (tx) => {
@@ -42,8 +42,8 @@ export async function cachePut(
     { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
   )
 
-  if (prefix) {
-    console.log(`[${prefix}] Cache Put ${key.slice(0, 18)}`)
+  if (logPrefix) {
+    console.log(`[${logPrefix}] Cache Put ${key.slice(0, 18)}`)
   }
 }
 

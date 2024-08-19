@@ -14,6 +14,8 @@ import loadEvents from './loadEvents'
 import { cacheGet, cachePut } from './cache'
 import { DelegationDAGs, Graph } from 'src/types'
 
+const LOG_PREFIX = 'DelegationDAGs'
+
 export default async function loadDelegationDAGs({
   chain,
   blockNumber,
@@ -33,7 +35,7 @@ export default async function loadDelegationDAGs({
   const forward = delegations
   const reverse = inverse(delegations)
 
-  console.log(`[Weights] ${space}, done in ${timerEnd(start)}ms`)
+  console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
   return { forward, reverse }
 }
 
@@ -52,7 +54,7 @@ async function cacheGetOrCompute({
     space,
   })
 
-  const hit = await cacheGet(key, 'DelegationGraph')
+  const hit = await cacheGet(key, LOG_PREFIX)
   if (hit) return hit
 
   const block = await createClient(chain).getBlock({
@@ -71,7 +73,7 @@ async function cacheGetOrCompute({
   const delegations = createDelegations(registry, Number(block.timestamp))
   const delegationGraph = createGraph(delegations)
 
-  await cachePut(key, delegationGraph, 'DelegationGraph')
+  await cachePut(key, delegationGraph, LOG_PREFIX)
 
   return delegationGraph
 }
@@ -88,7 +90,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'loadWeights',
+        name: 'loadDelegationDAGs',
         chainId: chain.id,
         blockNumber,
         space,
