@@ -4,9 +4,11 @@ export type Graph<T> = {
   }
 }
 
+export type DelegationDAG = Graph<{ expiration: number; weight: number }>
+
 export type DelegationDAGs = {
-  forward: Graph<{ expiration: number; weight: number }>
-  reverse: Graph<{ expiration: number; weight: number }>
+  forward: DelegationDAG
+  reverse: DelegationDAG
 }
 
 export type Scores = {

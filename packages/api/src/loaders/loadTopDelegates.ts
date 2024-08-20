@@ -26,7 +26,7 @@ export default async function loadTopDelegates({
   totalSupply: number
 }): Promise<DelegateStats[]> {
   const start = timerStart()
-  const result = await cacheGetOrCompute({
+  const { topDelegates } = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
@@ -35,7 +35,7 @@ export default async function loadTopDelegates({
   })
   console.log(`[TopDelegates] ${space}, done in ${timerEnd(start)}ms`)
 
-  return result
+  return topDelegates
 }
 
 async function cacheGetOrCompute({
@@ -78,13 +78,15 @@ async function cacheGetOrCompute({
     addresses: allNodes(delegationDAGs.forward),
   })
 
-  const result = top(
-    delegateStats({
-      delegations: delegationDAGs,
-      scores,
-      totalSupply,
-    })
-  )
+  const result = {
+    topDelegates: top(
+      delegateStats({
+        delegations: delegationDAGs,
+        scores,
+        totalSupply,
+      })
+    ),
+  }
 
   await cachePut(key, result)
 
@@ -112,7 +114,9 @@ function cacheKey({
   )
 }
 
-async function cacheGet(key: string): Promise<DelegateStats[] | null> {
+async function cacheGet(
+  key: string
+): Promise<{ topDelegates: DelegateStats[] } | null> {
   const hit = await prisma.cache.findFirst({ where: { key } })
   if (hit) {
     console.log(`[TopDelegates] Cache Hit ${key.slice(0, 18)}`)
@@ -123,8 +127,11 @@ async function cacheGet(key: string): Promise<DelegateStats[] | null> {
   }
 }
 
-async function cachePut(key: string, delegateStats: DelegateStats[]) {
-  const value = JSON.stringify(delegateStats)
+async function cachePut(
+  key: string,
+  topDelegates: { topDelegates: DelegateStats[] }
+) {
+  const value = JSON.stringify(topDelegates)
   await prisma.cache.upsert({
     where: { key },
     create: { key, value },

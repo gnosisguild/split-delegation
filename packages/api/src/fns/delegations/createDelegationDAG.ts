@@ -5,7 +5,7 @@ import findCycle from '../graph/findCycle'
 import { Delegation } from './types'
 import { Graph } from '../../types'
 
-export default function createGraph(
+export default function createDelegationDAG(
   delegations: Delegation[]
 ): Graph<{ expiration: number; weight: number }> {
   const result: Graph<{ expiration: number; weight: number }> = {}
@@ -15,7 +15,9 @@ export default function createGraph(
   }
 
   const cycle = findCycle(result)
-  return cycle ? createGraph(filterOldestCycleEdge(delegations, cycle)) : result
+  return cycle
+    ? createDelegationDAG(filterOldestCycleEdge(delegations, cycle))
+    : result
 }
 
 /*

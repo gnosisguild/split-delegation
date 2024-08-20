@@ -3,7 +3,7 @@ import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import createDelegations from '../fns/delegations/createDelegations'
-import createGraph from '../fns/delegations/createDelegationGraph'
+import createDelegationDAG from '../fns/delegations/createDelegationDAG'
 import createRegistry from '../fns/delegations/createRegistry'
 import inverse from '../fns/graph/inverse'
 import rowToAction from '../fns/logs/rowToAction'
@@ -12,7 +12,7 @@ import createClient from './createClient'
 import loadEvents from './loadEvents'
 
 import { cacheGet, cachePut } from './cache'
-import { DelegationDAGs, Graph } from 'src/types'
+import { DelegationDAG, DelegationDAGs } from 'src/types'
 
 const LOG_PREFIX = 'DelegationDAGs'
 
@@ -26,14 +26,14 @@ export default async function loadDelegationDAGs({
   space: string
 }): Promise<DelegationDAGs> {
   const start = timerStart()
-  const delegations = await cacheGetOrCompute({
+  const { delegationDAG } = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
   })
 
-  const forward = delegations
-  const reverse = inverse(delegations)
+  const forward = delegationDAG
+  const reverse = inverse(delegationDAG)
 
   console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
   return { forward, reverse }
@@ -47,7 +47,7 @@ async function cacheGetOrCompute({
   chain: Chain
   blockNumber: number
   space: string
-}): Promise<Graph<{ expiration: number; weight: number }>> {
+}): Promise<{ delegationDAG: DelegationDAG }> {
   const key = cacheKey({
     chain,
     blockNumber,
@@ -71,11 +71,11 @@ async function cacheGetOrCompute({
 
   const registry = createRegistry(rowToAction(rows))
   const delegations = createDelegations(registry, Number(block.timestamp))
-  const delegationGraph = createGraph(delegations)
+  const delegationDAG = createDelegationDAG(delegations)
 
-  await cachePut(key, delegationGraph, LOG_PREFIX)
+  await cachePut(key, { delegationDAG }, LOG_PREFIX)
 
-  return delegationGraph
+  return { delegationDAG }
 }
 
 function cacheKey({
@@ -90,7 +90,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'loadDelegationDAGs',
+        name: 'delegationDAG',
         chainId: chain.id,
         blockNumber,
         space,

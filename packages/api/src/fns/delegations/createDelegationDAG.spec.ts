@@ -1,8 +1,8 @@
 import { describe, test } from '@jest/globals'
 
-import createDelegationGraph from './createDelegationGraph'
+import createDelegationDAG from './createDelegationDAG'
 
-describe('createDelegationGraph', () => {
+describe('createDelegationDAG', () => {
   const A = 'A'
   const B = 'B'
   const C = 'C'
@@ -11,7 +11,7 @@ describe('createDelegationGraph', () => {
   test('it sets one delegator', () => {
     const edges = [{ delegator: A, delegate: B, weight: 100, expiration: 123 }]
 
-    const result = createDelegationGraph(edges)
+    const result = createDelegationDAG(edges)
 
     expect(result).toEqual({ A: { B: { weight: 100, expiration: 123 } } })
   })
@@ -22,7 +22,7 @@ describe('createDelegationGraph', () => {
       { delegator: B, delegate: C, weight: 9, expiration: 456 },
     ]
 
-    const result = createDelegationGraph(edges)
+    const result = createDelegationDAG(edges)
 
     expect(result).toEqual({
       A: { B: { weight: 8, expiration: 456 } },
@@ -37,7 +37,7 @@ describe('createDelegationGraph', () => {
       { delegator: B, delegate: C, weight: 100, expiration: 2 },
     ]
 
-    const result = createDelegationGraph(edges)
+    const result = createDelegationDAG(edges)
 
     expect(result).toEqual({
       A: { A: { weight: 50, expiration: 1 }, B: { weight: 50, expiration: 0 } },
@@ -53,7 +53,7 @@ describe('createDelegationGraph', () => {
       { delegator: C, delegate: D, weight: 4, expiration: 20 },
     ]
 
-    const result = createDelegationGraph(edges)
+    const result = createDelegationDAG(edges)
 
     expect(result).toEqual({
       A: { B: { weight: 1, expiration: 20 } },
@@ -69,7 +69,7 @@ describe('createDelegationGraph', () => {
       { delegator: C, delegate: A, weight: 1300, expiration: 0 },
     ]
 
-    const result = createDelegationGraph(edges)
+    const result = createDelegationDAG(edges)
 
     expect(result).toEqual({
       A: { B: { weight: 1, expiration: 0 } },
@@ -79,7 +79,7 @@ describe('createDelegationGraph', () => {
 
   test('oldest cycle edge is removed', () => {
     expect(
-      createDelegationGraph([
+      createDelegationDAG([
         { delegator: A, delegate: B, weight: 1, expiration: 0 },
         { delegator: B, delegate: C, weight: 2, expiration: 0 },
         { delegator: C, delegate: A, weight: 3, expiration: 0 },
@@ -90,7 +90,7 @@ describe('createDelegationGraph', () => {
     })
 
     expect(
-      createDelegationGraph([
+      createDelegationDAG([
         { delegator: C, delegate: A, weight: 3, expiration: 0 },
         { delegator: A, delegate: B, weight: 1, expiration: 0 },
         { delegator: B, delegate: C, weight: 2, expiration: 0 },
