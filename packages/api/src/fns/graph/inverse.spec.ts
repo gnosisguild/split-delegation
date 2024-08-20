@@ -3,7 +3,7 @@ import { describe, test } from '@jest/globals'
 import inverse from './inverse'
 
 describe('inverse', () => {
-  test('it works inverses a weights object', () => {
+  test('it works inverses a graph', () => {
     const graph = {
       a: { b: 1, c: 2 },
       d: { e: 3, f: 4 },

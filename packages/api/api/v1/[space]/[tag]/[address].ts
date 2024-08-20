@@ -10,8 +10,8 @@ import delegatorTree, {
 import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import reachable from '../../../../src/fns/graph/reachable'
 
+import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
-import loadWeights from '../../../../src/loaders/loadWeights'
 
 import { syncTip } from '../../../../src/commands/sync'
 
@@ -19,6 +19,7 @@ import { AddressRequestBody } from '../../types'
 
 export type AddressResult = {
   address: string
+  expiration: number
   votingPower: number
   incomingPower: number
   outgoingPower: number
@@ -60,41 +61,46 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
-  const { delegations } = await loadWeights({ chain, blockNumber, space })
+  const dags = await loadDelegationDAGs({
+    chain,
+    blockNumber,
+    space,
+  })
 
-  const { scores } = await loadScores({
+  const scores = await loadScores({
     chain,
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(delegations, address),
+    addresses: inputsFor(dags, address),
   })
 
   const {
+    expiration,
     votingPower,
     incomingPower,
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
   } = addressStats({
-    delegations,
+    dags,
     scores,
     totalSupply: totalSupply!,
-    allDelegatorCount: Object.keys(delegations.forward).length,
     address,
   })
 
   const result: AddressResult = {
     address,
+    expiration,
     votingPower,
     incomingPower,
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
-    delegators: reachable(delegations.reverse, address),
-    delegatorTree: delegatorTree({ delegations, scores, address }),
-    delegates: reachable(delegations.forward, address),
-    delegateTree: delegateTree({ delegations, scores, address }),
+    delegators: reachable(dags.reverse, address),
+    delegatorTree: delegatorTree({ dags, scores, address }),
+    delegates: reachable(dags.forward, address),
+    delegateTree: delegateTree({ dags, scores, address }),
   }
 
   return new Response(

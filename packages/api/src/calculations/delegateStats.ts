@@ -1,6 +1,6 @@
 import addressStats from './addressStats'
 
-import { Delegations, Scores } from '../types'
+import { DelegationDAGs, Scores } from '../types'
 
 export type DelegateStats = {
   address: string
@@ -11,24 +11,22 @@ export type DelegateStats = {
 }
 
 export default function delegateStats({
-  delegations,
+  dags,
   scores,
   totalSupply,
 }: {
-  delegations: Delegations
+  dags: DelegationDAGs
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {
-  const allDelegators = Object.keys(delegations.forward)
-  const allDelegates = Object.keys(delegations.reverse)
+  const allDelegates = Object.keys(dags.reverse)
 
   return allDelegates
     .map((delegate) =>
       addressStats({
-        delegations,
+        dags,
         scores,
         totalSupply,
-        allDelegatorCount: allDelegators.length,
         address: delegate,
       })
     )

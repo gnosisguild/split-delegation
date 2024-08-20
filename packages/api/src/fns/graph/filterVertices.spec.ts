@@ -2,11 +2,9 @@ import { describe, test } from '@jest/globals'
 
 import filterVertices from './filterVertices'
 
-import { Graph } from '../../types'
-
 describe('filterVertices', () => {
   test('removes a vertex', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
       },
@@ -19,7 +17,7 @@ describe('filterVertices', () => {
     })
   })
   test('nothing to remove', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
       },

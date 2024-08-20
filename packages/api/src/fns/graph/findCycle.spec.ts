@@ -2,11 +2,9 @@ import { describe, test } from '@jest/globals'
 
 import findCycle from './findCycle'
 
-import { Graph } from '../../types'
-
 describe('findCycle', () => {
   test('no back edge, no forward edge', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
       },
@@ -18,7 +16,7 @@ describe('findCycle', () => {
     expect(findCycle(graph)).toEqual(null)
   })
   test('yes back edge, no forward edge', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
       },
@@ -39,7 +37,7 @@ describe('findCycle', () => {
     ])
   })
   test('no back edge, yes forward edge', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
         C: 0,
@@ -58,7 +56,7 @@ describe('findCycle', () => {
     expect(findCycle(graph)).toEqual(null)
   })
   test('yes back edge, yes forward edge', () => {
-    const graph: Graph = {
+    const graph = {
       A: { D: 0, B: 0 },
       B: { C: 0 },
       C: { D: 0 },
@@ -73,7 +71,7 @@ describe('findCycle', () => {
     ])
   })
   test('another: yes back edge, yes forward edge', () => {
-    const graph: Graph = {
+    const graph = {
       A: { B: 0 },
       B: { C: 0 },
       C: { A: 0, D: 0 },
@@ -87,7 +85,7 @@ describe('findCycle', () => {
     ])
   })
   test('self-referencing edge does not trigger a cycle', () => {
-    const graph: Graph = {
+    const graph = {
       A: {
         B: 0,
         C: 0,

@@ -1,12 +1,14 @@
-export type Graph = {
+export type Graph<T> = {
   [key: string]: {
-    [key: string]: number
+    [key: string]: T
   }
 }
 
-export type Delegations = {
-  forward: Graph
-  reverse: Graph
+export type DelegationDAG = Graph<{ expiration: number; weight: number }>
+
+export type DelegationDAGs = {
+  forward: DelegationDAG
+  reverse: DelegationDAG
 }
 
 export type Scores = {

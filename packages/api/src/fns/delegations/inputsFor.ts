@@ -1,8 +1,8 @@
 import reachable from '../graph/reachable'
-import { Delegations } from '../../types'
+import { DelegationDAGs } from '../../types'
 
 export default function inputsFor(
-  delegations: Delegations,
+  dags: DelegationDAGs,
   addresses: string[] | string
 ): string[] {
   addresses = Array.isArray(addresses) ? addresses : [addresses]
@@ -10,9 +10,7 @@ export default function inputsFor(
   return Array.from(
     new Set([
       ...addresses,
-      ...addresses
-        .map((address) => reachable(delegations.reverse, address))
-        .flat(),
+      ...addresses.map((address) => reachable(dags.reverse, address)).flat(),
     ])
   ).sort()
 }

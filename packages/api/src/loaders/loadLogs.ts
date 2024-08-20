@@ -1,5 +1,5 @@
 import assert from 'assert'
-import async from 'async'
+import { mapLimit } from 'async'
 import { Address, Block, PublicClient } from 'viem'
 
 import aggregateRpc from './aggregateRpc'
@@ -32,7 +32,7 @@ export default async function loadLogs({
   const blocks =
     skipTimestamp == true
       ? null
-      : await async.mapLimit(
+      : await mapLimit(
           Array.from(new Set(logs.map((log) => log.blockNumber))),
           PARALLELISM,
           function (blockNumber, done: (err: any, result: Block) => void) {

@@ -2,31 +2,38 @@ import basisPoints from '../fns/basisPoints'
 import calculateVotingPower from './votingPower'
 import reachable from '../fns/graph/reachable'
 
-import { Delegations, Scores } from '../types'
+import extractExpiration from './expiration'
+
+import { DelegationDAGs, Scores } from '../types'
 
 export default function addressStats({
-  delegations,
+  dags,
   scores,
   totalSupply,
-  allDelegatorCount,
   address,
 }: {
-  delegations: Delegations
+  dags: DelegationDAGs
   scores: Scores
   totalSupply: number
-  allDelegatorCount: number
   address: string
 }) {
   const { votingPower, incomingPower, outgoingPower } = calculateVotingPower({
-    delegations,
+    dags,
     scores,
     address,
   })
 
-  const delegatorCount = reachable(delegations.reverse, address).length
+  // all delegators in the space
+  const allDelegatorCount = Object.keys(dags.forward).length
+  // delegators to address
+  const delegatorCount = reachable(dags.reverse, address).length
 
   return {
     address,
+    expiration: extractExpiration({
+      delegations: dags.forward,
+      delegator: address,
+    }),
     votingPower,
     incomingPower,
     outgoingPower,

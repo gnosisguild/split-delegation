@@ -5,7 +5,10 @@ import type { VercelRequest } from '@vercel/node'
 import integrity from '../../src/commands/integrity'
 import prune from '../../src/commands/prune'
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const actions = async () => {
+  await wait(5000)
   // await audit()
   await prune()
   await integrity()

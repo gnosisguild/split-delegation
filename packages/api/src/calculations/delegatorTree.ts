@@ -1,30 +1,31 @@
 import distribution from './distribution'
 
-import { Delegations, Scores } from '../types'
+import { DelegationDAGs, Scores } from '../types'
 
 export type DelegatorTreeNode = {
   delegator: string
+  expiration: number
   weight: number
   delegatedPower: number
   parents: DelegatorTreeNode[]
 }
 
 export default function delegatorTree({
-  delegations,
+  dags,
   scores,
   address,
 }: {
-  delegations: Delegations
+  dags: DelegationDAGs
   scores: Scores
   address: string
 }): DelegatorTreeNode[] {
-  const delegators = Object.keys(delegations.reverse[address] || {})
+  const delegators = Object.keys(dags.reverse[address] || {})
     // a self referencing edge is not a delegator
     .filter((delegator) => address != delegator)
 
   return delegators.map((delegator) => {
     const parents = delegatorTree({
-      delegations,
+      dags,
       scores,
       address: delegator,
     })
@@ -33,8 +34,8 @@ export default function delegatorTree({
       scores[delegator]! +
       parents.reduce((r, { delegatedPower }) => r + delegatedPower, 0)
 
-    const { weightInBasisPoints, distributedPower } = distribution({
-      weights: delegations.forward,
+    const { expiration, weightInBasisPoints, distributedPower } = distribution({
+      delegation: dags.forward,
       delegator,
       delegate: address,
       availablePower,
@@ -42,6 +43,7 @@ export default function delegatorTree({
 
     return {
       delegator,
+      expiration,
       weight: weightInBasisPoints,
       delegatedPower: distributedPower,
       parents,

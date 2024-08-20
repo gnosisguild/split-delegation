@@ -2,8 +2,8 @@ import assert from 'assert'
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-import createEdges from '../fns/delegations/createEdges'
-import createGraph from '../fns/delegations/createGraph'
+import createDelegations from '../fns/delegations/createDelegations'
+import createDelegationDAG from '../fns/delegations/createDelegationDAG'
 import createRegistry from '../fns/delegations/createRegistry'
 import inverse from '../fns/graph/inverse'
 import rowToAction from '../fns/logs/rowToAction'
@@ -12,8 +12,11 @@ import createClient from './createClient'
 import loadEvents from './loadEvents'
 
 import { cacheGet, cachePut } from './cache'
+import { DelegationDAG, DelegationDAGs } from 'src/types'
 
-export default async function loadWeights({
+const LOG_PREFIX = 'DelegationDAGs'
+
+export default async function loadDelegationDAGs({
   chain,
   blockNumber,
   space,
@@ -21,18 +24,19 @@ export default async function loadWeights({
   chain: Chain
   blockNumber: number
   space: string
-}) {
+}): Promise<DelegationDAGs> {
   const start = timerStart()
-  const { weights } = await cacheGetOrCompute({
+  const { delegationDAG } = await cacheGetOrCompute({
     chain,
     blockNumber,
     space,
   })
 
-  const delegations = { forward: weights, reverse: inverse(weights) }
+  const forward = delegationDAG
+  const reverse = inverse(delegationDAG)
 
-  console.log(`[Weights] ${space}, done in ${timerEnd(start)}ms`)
-  return { delegations }
+  console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
+  return { forward, reverse }
 }
 
 async function cacheGetOrCompute({
@@ -43,14 +47,14 @@ async function cacheGetOrCompute({
   chain: Chain
   blockNumber: number
   space: string
-}) {
+}): Promise<{ delegationDAG: DelegationDAG }> {
   const key = cacheKey({
     chain,
     blockNumber,
     space,
   })
 
-  const hit = await cacheGet(key, 'Weights')
+  const hit = await cacheGet(key, LOG_PREFIX)
   if (hit) return hit
 
   const block = await createClient(chain).getBlock({
@@ -66,12 +70,12 @@ async function cacheGetOrCompute({
   }
 
   const registry = createRegistry(rowToAction(rows))
-  const edges = createEdges(registry, Number(block.timestamp))
-  const graph = createGraph(edges)
+  const delegations = createDelegations(registry, Number(block.timestamp))
+  const delegationDAG = createDelegationDAG(delegations)
 
-  await cachePut(key, { weights: graph }, 'Weights')
+  await cachePut(key, { delegationDAG }, LOG_PREFIX)
 
-  return { weights: graph }
+  return { delegationDAG }
 }
 
 function cacheKey({
@@ -86,7 +90,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'loadWeights',
+        name: 'delegationDAG',
         chainId: chain.id,
         blockNumber,
         space,

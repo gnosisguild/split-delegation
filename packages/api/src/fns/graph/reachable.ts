@@ -1,6 +1,6 @@
 import { Graph } from '../../types'
 
-export default function reachable(graph: Graph, root: string): string[] {
+export default function reachable<T>(graph: Graph<T>, root: string): string[] {
   const visited: Record<string, boolean> = {}
   const queue: string[] = [root]
 

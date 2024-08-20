@@ -9,7 +9,7 @@ import { Graph } from '../../types'
  * @returns {string[]} - An array containing the sorted nodes of the DAG.
  */
 
-export default function kahn<T>(graph: Graph): string[] {
+export default function kahn<T>(graph: Graph<T>): string[] {
   const addresses: string[] = allNodes(graph)
 
   const inDegree = new Map<string, number>()
@@ -48,7 +48,7 @@ export default function kahn<T>(graph: Graph): string[] {
   return sorted
 }
 
-function allNodes(graph: Graph) {
+function allNodes<T>(graph: Graph<T>) {
   const set = new Set<string>()
   for (const from of Object.keys(graph)) {
     set.add(from)
