@@ -61,7 +61,7 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
-  const delegations = await loadDelegationDAGs({
+  const dags = await loadDelegationDAGs({
     chain,
     blockNumber,
     space,
@@ -72,7 +72,7 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(delegations, address),
+    addresses: inputsFor(dags, address),
   })
 
   const {
@@ -83,10 +83,10 @@ export const POST = async (req: Request) => {
     percentOfVotingPower,
     percentOfDelegators,
   } = addressStats({
-    delegations,
+    dags,
     scores,
     totalSupply: totalSupply!,
-    allDelegatorCount: Object.keys(delegations.forward).length,
+    allDelegatorCount: Object.keys(dags.forward).length,
     address,
   })
 
@@ -98,10 +98,10 @@ export const POST = async (req: Request) => {
     outgoingPower,
     percentOfVotingPower,
     percentOfDelegators,
-    delegators: reachable(delegations.reverse, address),
-    delegatorTree: delegatorTree({ delegations, scores, address }),
-    delegates: reachable(delegations.forward, address),
-    delegateTree: delegateTree({ delegations, scores, address }),
+    delegators: reachable(dags.reverse, address),
+    delegatorTree: delegatorTree({ dags, scores, address }),
+    delegates: reachable(dags.forward, address),
+    delegateTree: delegateTree({ dags, scores, address }),
   }
 
   return new Response(

@@ -64,7 +64,7 @@ async function cacheGetOrCompute({
     }
   }
 
-  const delegationDAGs = await loadDelegationDAGs({
+  const dags = await loadDelegationDAGs({
     chain,
     blockNumber,
     space,
@@ -75,13 +75,13 @@ async function cacheGetOrCompute({
     blockNumber,
     space,
     strategies,
-    addresses: allNodes(delegationDAGs.forward),
+    addresses: allNodes(dags.forward),
   })
 
   const result = {
     topDelegates: top(
       delegateStats({
-        delegations: delegationDAGs,
+        dags,
         scores,
         totalSupply,
       })

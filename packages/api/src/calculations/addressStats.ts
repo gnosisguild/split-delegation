@@ -7,30 +7,30 @@ import extractExpiration from './expiration'
 import { DelegationDAGs, Scores } from '../types'
 
 export default function addressStats({
-  delegations,
+  dags,
   scores,
   totalSupply,
   allDelegatorCount,
   address,
 }: {
-  delegations: DelegationDAGs
+  dags: DelegationDAGs
   scores: Scores
   totalSupply: number
   allDelegatorCount: number
   address: string
 }) {
   const { votingPower, incomingPower, outgoingPower } = calculateVotingPower({
-    delegations,
+    dags,
     scores,
     address,
   })
 
-  const delegatorCount = reachable(delegations.reverse, address).length
+  const delegatorCount = reachable(dags.reverse, address).length
 
   return {
     address,
     expiration: extractExpiration({
-      delegations: delegations.forward,
+      delegations: dags.forward,
       delegator: address,
     }),
     votingPower,

@@ -11,7 +11,7 @@ describe('votingPower', () => {
   const D = 'D' as Address
 
   test('it works when all requested nodes present in delegation graph', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 20, expiration: 1 },
         [C]: { weight: 80, expiration: 1 },
@@ -20,9 +20,9 @@ describe('votingPower', () => {
         [D]: { weight: 100, expiration: 2 },
       },
     }
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+    const dags = {
+      forward: delegations,
+      reverse: inverse(delegations),
     }
 
     const scores = {
@@ -32,25 +32,25 @@ describe('votingPower', () => {
       [D]: 30,
     }
 
-    expect(calculateVotingPower({ delegations, scores, address: A })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: A })).toEqual({
       votingPower: 0,
       incomingPower: 0,
       outgoingPower: 1000,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: B })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: B })).toEqual({
       votingPower: 0,
       incomingPower: 200,
       outgoingPower: 300,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: C })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: C })).toEqual({
       votingPower: 820,
       incomingPower: 800,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: D })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: D })).toEqual({
       votingPower: 330,
       incomingPower: 300,
       outgoingPower: 0,
@@ -58,7 +58,7 @@ describe('votingPower', () => {
   })
 
   test('it works with a forward edge', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 50, expiration: 1 },
         [C]: { weight: 50, expiration: 1 },
@@ -77,30 +77,30 @@ describe('votingPower', () => {
       [D]: 500,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+    const dags = {
+      forward: delegations,
+      reverse: inverse(delegations),
     }
 
-    expect(calculateVotingPower({ delegations, scores, address: A })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: A })).toEqual({
       votingPower: 0,
       incomingPower: 0,
       outgoingPower: 1000,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: B })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: B })).toEqual({
       votingPower: 0,
       incomingPower: 500,
       outgoingPower: 1500,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: C })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: C })).toEqual({
       votingPower: 0,
       incomingPower: 500,
       outgoingPower: 1500,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: D })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: D })).toEqual({
       votingPower: 3500,
       incomingPower: 3000,
       outgoingPower: 0,
@@ -108,7 +108,7 @@ describe('votingPower', () => {
   })
 
   test('it works with a self-referencing edge', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 50, expiration: 1 },
         [C]: { weight: 50, expiration: 1 },
@@ -125,30 +125,30 @@ describe('votingPower', () => {
       [D]: 50,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+    const dags = {
+      forward: delegations,
+      reverse: inverse(delegations),
     }
 
-    expect(calculateVotingPower({ delegations, scores, address: A })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: A })).toEqual({
       votingPower: 0,
       incomingPower: 0,
       outgoingPower: 500,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: B })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: B })).toEqual({
       votingPower: 110,
       incomingPower: 250,
       outgoingPower: 440,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: C })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: C })).toEqual({
       votingPower: 250,
       incomingPower: 250,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: D })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: D })).toEqual({
       votingPower: 490,
       incomingPower: 440,
       outgoingPower: 0,
@@ -156,7 +156,7 @@ describe('votingPower', () => {
   })
 
   test('it works when some requested nodes not present in delegation graph', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 20, expiration: 1 },
         [C]: { weight: 80, expiration: 1 },
@@ -168,30 +168,30 @@ describe('votingPower', () => {
       [C]: 0,
       [D]: 30,
     }
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+    const dags = {
+      forward: delegations,
+      reverse: inverse(delegations),
     }
 
-    expect(calculateVotingPower({ delegations, scores, address: A })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: A })).toEqual({
       votingPower: 0,
       incomingPower: 0,
       outgoingPower: 1000,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: B })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: B })).toEqual({
       votingPower: 200,
       incomingPower: 200,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: C })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: C })).toEqual({
       votingPower: 800,
       incomingPower: 800,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: D })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: D })).toEqual({
       votingPower: 30,
       incomingPower: 0,
       outgoingPower: 0,
@@ -206,30 +206,30 @@ describe('votingPower', () => {
       [D]: 400,
     }
 
-    const delegations = {
+    const dags = {
       forward: {},
       reverse: {},
     }
 
-    expect(calculateVotingPower({ delegations, scores, address: A })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: A })).toEqual({
       votingPower: 100,
       incomingPower: 0,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: B })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: B })).toEqual({
       votingPower: 200,
       incomingPower: 0,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: C })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: C })).toEqual({
       votingPower: 300,
       incomingPower: 0,
       outgoingPower: 0,
     })
 
-    expect(calculateVotingPower({ delegations, scores, address: D })).toEqual({
+    expect(calculateVotingPower({ dags, scores, address: D })).toEqual({
       votingPower: 400,
       incomingPower: 0,
       outgoingPower: 0,

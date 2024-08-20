@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { DelegationDAG, DelegationDAGs } from '../types'
+import { DelegationDAG } from '../types'
 
 export default function extractExpiration({
   delegations,

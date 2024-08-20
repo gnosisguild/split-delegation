@@ -11,21 +11,21 @@ export type DelegateStats = {
 }
 
 export default function delegateStats({
-  delegations,
+  dags,
   scores,
   totalSupply,
 }: {
-  delegations: DelegationDAGs
+  dags: DelegationDAGs
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {
-  const allDelegators = Object.keys(delegations.forward)
-  const allDelegates = Object.keys(delegations.reverse)
+  const allDelegators = Object.keys(dags.forward)
+  const allDelegates = Object.keys(dags.reverse)
 
   return allDelegates
     .map((delegate) =>
       addressStats({
-        delegations,
+        dags,
         scores,
         totalSupply,
         allDelegatorCount: allDelegators.length,

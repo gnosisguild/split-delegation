@@ -1,7 +1,7 @@
 import assert from 'assert'
 import basisPoints from '../fns/basisPoints'
 
-import { Graph } from '../types'
+import { DelegationDAG } from '../types'
 
 export default function distribution({
   delegation,
@@ -9,7 +9,7 @@ export default function distribution({
   delegate,
   availablePower,
 }: {
-  delegation: Graph<{ expiration: number; weight: number }>
+  delegation: DelegationDAG
   delegator: string
   delegate: string
   availablePower: number

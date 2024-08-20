@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await syncTip(tag, network)
 
-  let delegations = await loadDelegationDAGs({
+  let dags = await loadDelegationDAGs({
     chain,
     blockNumber,
     space,
@@ -48,9 +48,9 @@ export const POST = async (req: Request) => {
    * from accounts that have voted
    */
   if (delegationOverride && voters.length > 0) {
-    const forward = filterVertices(delegations.forward, voters)
+    const forward = filterVertices(dags.forward, voters)
     const reverse = inverse(forward)
-    delegations = { forward, reverse }
+    dags = { forward, reverse }
   }
 
   const scores = await loadScores({
@@ -58,13 +58,13 @@ export const POST = async (req: Request) => {
     blockNumber,
     space,
     strategies,
-    addresses: inputsFor(delegations, voters),
+    addresses: inputsFor(dags, voters),
   })
 
   const result = Object.fromEntries(
     voters.map((voter) => [
       voter,
-      calculateVotingPower({ delegations, scores, address: voter }).votingPower,
+      calculateVotingPower({ dags, scores, address: voter }).votingPower,
     ])
   ) as Record<string, number>
 

@@ -12,7 +12,7 @@ describe('delegateStats', () => {
   const E = 'E' as Address
 
   test('it computes stats', () => {
-    const weights = {
+    const delegations = {
       [A]: {
         [B]: { weight: 50, expiration: 1 },
         [C]: { weight: 50, expiration: 1 },
@@ -30,15 +30,15 @@ describe('delegateStats', () => {
       [E]: 30,
     }
 
-    const delegations = {
-      forward: weights,
-      reverse: inverse(weights),
+    const dags = {
+      forward: delegations,
+      reverse: inverse(delegations),
     }
 
     const totalSupply = 1000 + 30 + 50 + 20 + 30
 
     const result = delegateStats({
-      delegations,
+      dags,
       scores,
       totalSupply,
     })
