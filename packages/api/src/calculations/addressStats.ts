@@ -10,13 +10,11 @@ export default function addressStats({
   dags,
   scores,
   totalSupply,
-  allDelegatorCount,
   address,
 }: {
   dags: DelegationDAGs
   scores: Scores
   totalSupply: number
-  allDelegatorCount: number
   address: string
 }) {
   const { votingPower, incomingPower, outgoingPower } = calculateVotingPower({
@@ -25,6 +23,9 @@ export default function addressStats({
     address,
   })
 
+  // all delegators in the space
+  const allDelegatorCount = Object.keys(dags.forward).length
+  // delegators to address
   const delegatorCount = reachable(dags.reverse, address).length
 
   return {

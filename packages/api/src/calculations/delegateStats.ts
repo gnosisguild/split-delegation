@@ -19,7 +19,6 @@ export default function delegateStats({
   scores: Scores
   totalSupply: number
 }): DelegateStats[] {
-  const allDelegators = Object.keys(dags.forward)
   const allDelegates = Object.keys(dags.reverse)
 
   return allDelegates
@@ -28,7 +27,6 @@ export default function delegateStats({
         dags,
         scores,
         totalSupply,
-        allDelegatorCount: allDelegators.length,
         address: delegate,
       })
     )

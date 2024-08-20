@@ -86,7 +86,6 @@ export const POST = async (req: Request) => {
     dags,
     scores,
     totalSupply: totalSupply!,
-    allDelegatorCount: Object.keys(dags.forward).length,
     address,
   })
 
