@@ -215,3 +215,12 @@ Each endpoint has two identifying components in its path: `space` and `tag`. `Sp
 ### EVM
 
 The `evm` package contains the Ethereum Virtual Machine (EVM) contracts for the delegate registry. These contracts are written in Solidity and can be deployed to any EVM-compatible blockchain. The package also includes a Hardhat configuration for compiling the contracts and running tests, as well as scripts for deploying the contracts and interacting with them on a blockchain.
+
+
+### How to start
+- cd packages/api
+- run `npm install`, optional `npm config set legacy-peer-deps true`
+- prepare DB
+- create schema and migrate data
+- run `export POSTGRES_PRISMA_URL="postgresql://postgres:postgres@localhost:5432/delegate-registry?schema=public"`
+- run `npx ts-node src/commands/index.ts sync`

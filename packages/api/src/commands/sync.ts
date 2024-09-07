@@ -13,6 +13,18 @@ import resolveBlockTag from '../loaders/resolveBlockTag'
 
 import config from '../../config.json'
 import prisma from '../../prisma/singleton'
+import spaceName from "../fns/spaceName";
+import rowToAction from "../fns/logs/rowToAction";
+import {DelegationEvent} from "@prisma/client";
+
+import {
+    ACTION_CLEAR,
+    ACTION_EXPIRE,
+    ACTION_SET,
+    DelegateEvent,
+    DelegationDetails, Delegations,
+    sendToNats
+} from "../fns/queue/publisher";
 
 const chains = [mainnet, gnosis]
 
@@ -106,6 +118,8 @@ async function _sync({
       await loadLogs({ contracts, fromBlock, toBlock, client })
     )
 
+    publishEvents(entities)
+
     const { count: writeCount } = await prisma.delegationEvent.createMany({
       data: entities,
       skipDuplicates: true,
@@ -130,6 +144,72 @@ async function _sync({
     })
   }
   return total
+}
+
+// publishEvents prepare events to core platform events and send it to the queue
+function publishEvents(entities: DelegationEvent[]) {
+    let actions = rowToAction(entities)
+
+    let events: DelegateEvent[] = [];
+    for (const idx in actions) {
+        const action = actions[idx];
+
+        if ('set' in action) {
+            let dd: Delegations = {
+                expiration: action.set.expiration,
+                details: [],
+            };
+
+            for (const j in action.set.delegation) {
+                dd.details.push({
+                    weight: action.set.delegation[j].weight,
+                    address: action.set.delegation[j].delegate,
+                })
+            }
+
+            events.push({
+                action: ACTION_SET,
+                address_from: entities[idx].account,
+                block_number: entities[idx].blockNumber,
+                block_timestamp: entities[idx].blockTimestamp,
+                chain_id: entities[idx].chainId.toString(),
+                original_space_id: spaceName(entities[idx].spaceId),
+                delegations: dd,
+            })
+        }
+
+        if ('clear' in action) {
+            events.push({
+                action: ACTION_CLEAR,
+                address_from: entities[idx].account,
+                block_number: entities[idx].blockNumber,
+                block_timestamp: entities[idx].blockTimestamp,
+                chain_id: entities[idx].chainId.toString(),
+                original_space_id: spaceName(entities[idx].spaceId),
+                delegations: {
+                    details: [],
+                    expiration: 0,
+                },
+            })
+        }
+
+        if ('expire' in action) {
+            events.push({
+                action: ACTION_EXPIRE,
+                address_from: entities[idx].account,
+                block_number: entities[idx].blockNumber,
+                block_timestamp: entities[idx].blockTimestamp,
+                chain_id: entities[idx].chainId.toString(),
+                original_space_id: spaceName(entities[idx].spaceId),
+                delegations: {
+                    details: [],
+                    expiration: action.expire.expiration,
+                },
+            })
+        }
+    }
+
+    sendToNats(events)
 }
 
 async function blockRange(
