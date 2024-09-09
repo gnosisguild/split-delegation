@@ -36,7 +36,12 @@ export default async function () {
 
   const pins: Record<string, Block> = {}
   const spaces = (
-    await loadSpaces([...spaceNames, 'safe.ggtest.eth', 'cow.ggtest.eth'])
+    await loadSpaces([
+      ...spaceNames,
+      'safe.ggtest.eth',
+      'cow.ggtest.eth',
+      'cowtesting.eth',
+    ])
   ).filter(isUsingSplitDelegation)
 
   for (const { name, network, strategies } of spaces) {
