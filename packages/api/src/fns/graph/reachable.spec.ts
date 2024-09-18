@@ -44,4 +44,26 @@ describe('reachable', () => {
     expect(reachable(graph, C)).toEqual([D])
     expect(reachable(graph, D)).toEqual([])
   })
+
+  test('ignores self-referencing', () => {
+    const graph = {
+      [A]: {
+        [A]: 10,
+        [B]: 45,
+        [C]: 45,
+      },
+      [B]: {
+        [B]: 20,
+        [D]: 80,
+      },
+      [C]: {
+        [D]: 100,
+      },
+    }
+
+    expect(reachable(graph, A)).toEqual([B, C, D])
+    expect(reachable(graph, B)).toEqual([D])
+    expect(reachable(graph, C)).toEqual([D])
+    expect(reachable(graph, D)).toEqual([])
+  })
 })

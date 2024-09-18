@@ -62,6 +62,11 @@ export const POST = async (req: Request) => {
     delegates: topDelegates
       .sort(orderBy == 'count' ? orderByCount : orderByPower)
       .slice(offset, offset + limit),
+    pagination: {
+      offset,
+      limit,
+      total: topDelegates.length,
+    },
   }
 
   return new Response(JSON.stringify(response), {
