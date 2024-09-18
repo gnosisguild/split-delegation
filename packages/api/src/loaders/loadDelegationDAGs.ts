@@ -29,7 +29,7 @@ export default async function loadDelegationDAGs({
   const { delegationDAG } = await cacheGetOrCompute({
     chain,
     blockNumber,
-    space,
+    space: mapMaybeTestSpaceToRealSpace(space),
   })
 
   const forward = delegationDAG
@@ -97,4 +97,21 @@ function cacheKey({
       })
     )
   )
+}
+
+/*
+ * This function maps specific hardcoded test space names to their corresponding real event spaces.
+ * It allows configured test cases to be hydrated with actual events from the real spaces.
+ * By using this mapping, we can create test configurations that leverage real space data from the delegate registry.
+ */
+function mapMaybeTestSpaceToRealSpace(maybeTestSpace: string) {
+  const spaceId = maybeTestSpace.trim().toLowerCase()
+
+  const spaceMapping: Record<string, string> = {
+    'safe.ggtest.eth': 'safe.eth',
+    'cow.ggtest.eth': 'cow.eth',
+    'cowtesting.eth': 'cow.eth',
+  }
+
+  return spaceMapping[spaceId] || maybeTestSpace
 }
