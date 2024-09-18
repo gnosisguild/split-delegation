@@ -28,7 +28,7 @@ function mapMaybeTestSpaceToRealSpace(maybeTestSpace: string) {
   const spaceId = maybeTestSpace.trim().toLowerCase()
 
   const spaceMapping: Record<string, string> = {
-    'safe.ggtest.etg': 'safe.eth',
+    'safe.ggtest.eth': 'safe.eth',
     'cow.ggtest.eth': 'cow.eth',
     'cowtesting.eth': 'cow.eth',
   }
