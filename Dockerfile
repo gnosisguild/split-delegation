@@ -9,5 +9,6 @@ WORKDIR /app
 
 ADD . .
 RUN cd packages/api && yarn install
+RUN npm install ts-node
 
 CMD ["crond", "&&", "tail", "-f", "/var/log/cron.log"]
