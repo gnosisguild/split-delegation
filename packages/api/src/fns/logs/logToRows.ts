@@ -9,11 +9,14 @@ import {
   pad,
   toHex,
 } from 'viem'
+import { BlockData } from '@subsquid/evm-processor'
 import { DelegationEvent } from '@prisma/client'
 
 import { decodeLog } from './decodeLog'
 
-export default function logToRow(
+import { ChainId } from 'src/chains/types'
+
+export default function logToRows(
   entries: { chainId: number; blockTimestamp: number; log: Log }[]
 ): DelegationEvent[] {
   return entries.map(({ chainId, blockTimestamp, log }) => {
@@ -33,6 +36,38 @@ export default function logToRow(
       data: log.data,
     })
   })
+}
+
+export function blockDataToRows(
+  chainId: ChainId,
+  blockData: BlockData[]
+): DelegationEvent[] {
+  return blockData
+    .flatMap(({ header, logs }) =>
+      logs.map((log) => ({
+        chainId: chainId as number,
+        blockNumber: header.height,
+        blockTimestamp: ensureTimestampMs(header.timestamp) / 1000,
+        log,
+      }))
+    )
+    .map(({ chainId, blockNumber, blockTimestamp, log }) => {
+      const { account, spaceId } = decodeLog(log)
+      assert(typeof log.transactionIndex == 'number')
+      assert(typeof log.logIndex == 'number')
+      return withId({
+        chainId,
+        registry: log.address,
+        blockNumber,
+        blockTimestamp,
+        transactionIndex: log.transactionIndex,
+        logIndex: log.logIndex,
+        spaceId,
+        account,
+        topics: log.topics,
+        data: log.data,
+      })
+    })
 }
 
 function withId(event: Omit<DelegationEvent, 'id'>): DelegationEvent {
@@ -82,4 +117,11 @@ export function eventId(event: Omit<DelegationEvent, 'id'>): string {
     )
   )
   return `${chainId}-${blockNumber}-${registry}-${hash.slice(2, 2 + 16)}`
+}
+
+function ensureTimestampMs(value: number): number {
+  if (value < 1000000000000) {
+    throw new Error('Timestamp must be in milliseconds, not seconds')
+  }
+  return value
 }

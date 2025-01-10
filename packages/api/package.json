@@ -13,16 +13,15 @@
     "format": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,graphql}\" --write",
     "migrate:dev": "prisma migrate dev",
     "migrate:prod": "prisma migrate deploy",
-    "audit": "prisma generate && ts-node src/commands audit",
-    "heal": "prisma generate && ts-node src/commands heal",
-    "integrity": "prisma generate && ts-node src/commands integrity",
     "prune": "prisma generate && ts-node src/commands prune",
-    "sync": "prisma generate && ts-node src/commands sync",
+    "studio": "prisma generate && prisma studio",
+    "main": "prisma migrate deploy && ts-node src/main.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "6.2.1",
-    "@snapshot-labs/snapshot.js": "0.12.41",
+    "@snapshot-labs/snapshot.js": "^0.12.41",
+    "@subsquid/evm-processor": "1.27.0",
     "@vercel/edge": "^1.1.1",
     "@vercel/node": "3.0.28",
     "async": "^3.2.5",
@@ -31,9 +30,10 @@
     "prisma": "6.2.1",
     "ts-node": "^10.9.2",
     "vercel": "^36.0.0",
-    "viem": "^ 2.19.8"
+    "viem": "2.22.6"
   },
   "devDependencies": {
+    "@subsquid/cli": "3.0.3",
     "@types/async": "^3.2.24",
     "@types/chai": "^4.3.4",
     "@types/jest": "29.5.12",

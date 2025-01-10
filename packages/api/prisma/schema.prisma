@@ -34,6 +34,7 @@ model Cache {
 }
 
 model Checkpoint {
-    chainId     Int @id
+    chainId     Int    @id
     blockNumber Int
+    hash        String
 }
