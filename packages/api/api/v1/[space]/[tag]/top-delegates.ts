@@ -6,7 +6,6 @@ import {
 } from '../../../../src/calculations/delegateStats'
 
 import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
-
 import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { TopDelegatesRequestBody } from '../../types'
