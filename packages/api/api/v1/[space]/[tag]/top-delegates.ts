@@ -7,7 +7,7 @@ import {
 
 import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
 
-import { syncTip } from '../../../../src/commands/sync'
+import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { TopDelegatesRequestBody } from '../../types'
 
@@ -46,7 +46,8 @@ export const POST = async (req: Request) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  const { chain, blockNumber } = await syncTip(tag, network)
+  // const { chain, blockNumber } = await syncTip(tag, network)
+  const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   const topDelegates = await loadTopDelegates({
     chain,
