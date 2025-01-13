@@ -19,7 +19,7 @@ ENV NODE_ENV="production"
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python-is-python3
+    apt-get install -y build-essential pkg-config python-is-python3 openssl
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
