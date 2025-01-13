@@ -9,7 +9,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "prisma migrate deploy && node --max-old-space-size=1536 -r dotenv/config lib/main.js",
+    "start": "prisma migrate deploy && node --max-old-space-size=512 -r dotenv/config lib/main.js",
     "migrate:dev": "prisma migrate dev",
     "migrate:prod": "prisma migrate deploy",
     "check:format": "prettier --list-different .",
@@ -17,8 +17,7 @@
     "check:lint": "eslint .",
     "fix:lint": "eslint --fix .",
     "test": "jest --runInBand",
-    "build": "rimraf lib && tsc -p tsconfig.build.json",
-    "postinstall": "prisma generate"
+    "build": "rimraf lib && prisma generate && tsc -p tsconfig.build.json"
   },
   "devDependencies": {
     "@subsquid/cli": "3.0.3",

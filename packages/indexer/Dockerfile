@@ -30,6 +30,7 @@ RUN pnpm run build
 
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/prisma /app/prisma
 COPY --from=build /app/lib /app/lib
 
 # Expose the Prometheus metrics ports
