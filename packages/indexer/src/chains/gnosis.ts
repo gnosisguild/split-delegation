@@ -8,7 +8,7 @@ export default {
   finality: 25,
 
   deploymentBlocks: {
-    DelegateRegistryV1: 0,
-    DelegateRegistryV2: 0,
+    DelegateRegistryV1: 20274491,
+    DelegateRegistryV2: 26474496,
   },
 } satisfies ChainConfig
