@@ -8,7 +8,7 @@ import inverse from '../../../../src/fns/graph/inverse'
 import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
 
-import { syncTip } from '../../../../src/commands/sync'
+import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { VotingPowerRequestBody } from '../../types'
 
@@ -33,7 +33,8 @@ export const POST = async (req: Request) => {
     })
   }
 
-  const { chain, blockNumber } = await syncTip(tag, network)
+  //const { chain, blockNumber } = await syncTip(tag, network)
+  const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   let dags = await loadDelegationDAGs({
     chain,

@@ -13,7 +13,7 @@ import reachable from '../../../../src/fns/graph/reachable'
 import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
 
-import { syncTip } from '../../../../src/commands/sync'
+import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
 
 import { AddressRequestBody } from '../../types'
 
@@ -59,7 +59,8 @@ export const POST = async (req: Request) => {
     })
   }
 
-  const { chain, blockNumber } = await syncTip(tag, network)
+  // const { chain, blockNumber } = await syncTip(tag, network)
+  const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   const dags = await loadDelegationDAGs({
     chain,
