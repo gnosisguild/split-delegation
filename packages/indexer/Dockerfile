@@ -31,7 +31,6 @@ RUN pnpm run build
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/lib /app/lib
-COPY --link ./schema.cypherl /app/schema.cypherl
 
 # Expose the Prometheus metrics ports
 # (PROMETHEUS_PORT env var is read by @subsquid/util-internal-prometheus-server)
