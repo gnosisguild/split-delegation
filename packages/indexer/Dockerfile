@@ -1,42 +1,34 @@
 # syntax = docker/dockerfile:1
 
-ARG NODE_VERSION=21
-FROM node:${NODE_VERSION}-slim as base
+FROM node:21-slim
 
 LABEL fly_launch_runtime="Node.js"
 
-COPY ./package.json /app/package.json
-COPY ./pnpm-lock.yaml /app/pnpm-lock.yaml
-WORKDIR /app
+# Install pnpm
+RUN npm install -g pnpm
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
-RUN corepack enable
-
-FROM base AS prod-deps
-ENV NODE_ENV="production"
-
-# Install packages needed to build node modules
+# Install necessary packages for Prisma
 RUN apt-get update -qq && \
     apt-get install -y build-essential pkg-config python-is-python3 openssl
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+WORKDIR /app
 
-FROM base AS build
-COPY --link . /app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build
+# Copy package files
+COPY package.json pnpm-lock.yaml tsconfig.json tsconfig.build.json ./
+COPY prisma ./prisma
+COPY src ./src
 
-FROM base
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/prisma /app/prisma
-COPY --from=build /app/lib /app/lib
+# Install dependencies
+RUN pnpm install
+
+# Build the application
+ENV NODE_ENV="production"
+RUN npm run build
 
 # Expose the Prometheus metrics ports
 # (PROMETHEUS_PORT env var is read by @subsquid/util-internal-prometheus-server)
 # ENV PROMETHEUS_PORT=3000  
 EXPOSE 3000-3099
 
-# Start the processor
-CMD [ "pnpm", "run", "start" ]
+CMD ["pnpm", "run", "start"]
+

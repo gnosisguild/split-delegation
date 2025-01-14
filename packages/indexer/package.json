@@ -17,7 +17,8 @@
     "check:lint": "eslint .",
     "fix:lint": "eslint --fix .",
     "test": "jest --runInBand",
-    "build": "rimraf lib && prisma generate && tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@subsquid/cli": "3.0.3",
