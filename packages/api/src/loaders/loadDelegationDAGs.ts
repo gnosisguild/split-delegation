@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { Chain, keccak256, toBytes } from 'viem'
+import { Chain } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import createDelegations from '../fns/delegations/createDelegations'
@@ -11,7 +11,6 @@ import rowToAction from '../fns/logs/rowToAction'
 import createClient from './createClient'
 import loadEvents from './loadEvents'
 
-import { cacheGet, cachePut } from './cache'
 import { DelegationDAG, DelegationDAGs } from 'src/types'
 
 const LOG_PREFIX = 'DelegationDAGs'
@@ -26,7 +25,7 @@ export default async function loadDelegationDAGs({
   space: string
 }): Promise<DelegationDAGs> {
   const start = timerStart()
-  const { delegationDAG } = await cacheGetOrCompute({
+  const { delegationDAG } = await create({
     chain,
     blockNumber,
     space,
@@ -39,7 +38,7 @@ export default async function loadDelegationDAGs({
   return { forward, reverse }
 }
 
-async function cacheGetOrCompute({
+async function create({
   chain,
   blockNumber,
   space,
@@ -48,15 +47,6 @@ async function cacheGetOrCompute({
   blockNumber: number
   space: string
 }): Promise<{ delegationDAG: DelegationDAG }> {
-  const key = cacheKey({
-    chain,
-    blockNumber,
-    space,
-  })
-
-  const hit = await cacheGet(key, LOG_PREFIX)
-  if (hit) return hit
-
   const block = await createClient(chain).getBlock({
     blockNumber: BigInt(blockNumber),
     includeTransactions: false,
@@ -74,28 +64,5 @@ async function cacheGetOrCompute({
   const delegations = createDelegations(registry, Number(block.timestamp))
   const delegationDAG = createDelegationDAG(delegations)
 
-  await cachePut(key, { delegationDAG }, LOG_PREFIX)
-
   return { delegationDAG }
-}
-
-function cacheKey({
-  chain,
-  blockNumber,
-  space,
-}: {
-  chain: Chain
-  blockNumber: number
-  space: string
-}) {
-  return keccak256(
-    toBytes(
-      JSON.stringify({
-        name: 'delegationDAG',
-        chainId: chain.id,
-        blockNumber,
-        space,
-      })
-    )
-  )
 }
