@@ -235,4 +235,47 @@ describe('votingPower', () => {
       outgoingPower: 0,
     })
   })
+
+  test('from a bug', () => {
+    const scores = {
+      '0x91fd2c8d24767db4ece7069aa27832ffaf8590f3': 33.5635622010869,
+    }
+
+    const dags = {
+      forward: {
+        '0x91fd2c8d24767db4ece7069aa27832ffaf8590f3': {
+          '0x757a20e145435b5bdaf0e274987653aecd47cf37': {
+            weight: 10,
+            expiration: 1764562614,
+          },
+          '0xab54624a67e8c018a06b176baae76a40a385a464': {
+            weight: 90,
+            expiration: 1764562614,
+          },
+        },
+      },
+      reverse: {
+        '0x757a20e145435b5bdaf0e274987653aecd47cf37': {
+          '0x91fd2c8d24767db4ece7069aa27832ffaf8590f3': {
+            weight: 10,
+            expiration: 1764562614,
+          },
+        },
+        '0xab54624a67e8c018a06b176baae76a40a385a464': {
+          '0x91fd2c8d24767db4ece7069aa27832ffaf8590f3': {
+            weight: 90,
+            expiration: 1764562614,
+          },
+        },
+      },
+    }
+
+    const address = '0x91fd2c8d24767db4ece7069aa27832ffaf8590f3'
+
+    expect(calculateVotingPower({ dags, scores, address })).toEqual({
+      votingPower: 0,
+      incomingPower: 0,
+      outgoingPower: 33.5635622010869,
+    })
+  })
 })
