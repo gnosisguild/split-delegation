@@ -2,10 +2,10 @@ import assert from 'assert'
 import {
   Address,
   encodeAbiParameters,
+  getAddress,
   Hash,
   Hex,
   keccak256,
-  Log,
   pad,
   toHex,
 } from 'viem'
@@ -34,13 +34,13 @@ export function blockDataToRows(
       assert(typeof log.logIndex == 'number')
       return withId({
         chainId,
-        registry: log.address,
+        registry: getAddress(log.address).toLowerCase(),
         blockNumber,
         blockTimestamp,
         transactionIndex: log.transactionIndex,
         logIndex: log.logIndex,
         spaceId,
-        account,
+        account: getAddress(account).toLowerCase(),
         topics: log.topics,
         data: log.data,
       })
