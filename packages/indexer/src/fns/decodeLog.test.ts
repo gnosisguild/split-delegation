@@ -1,4 +1,4 @@
-import { Log, getAddress, stringToHex } from 'viem'
+import { Log, stringToHex } from 'viem'
 
 import spaceId from './spaceId'
 
@@ -47,10 +47,10 @@ describe('decodeLog', () => {
 
     expect(spaceId).toEqual(stringToHex('lido-snapshot.eth', { size: 32 }))
     expect(account).toEqual(
-      getAddress('0xc8381ca290c198f5ab739a1841ce8aedb0b330d5')
+      '0xc8381ca290c198f5ab739a1841ce8aedb0b330d5'.toLowerCase()
     )
     expect(delegate).toEqual(
-      getAddress('0xf138823639686a85a43971dd9a2c8f6c15279b2e')
+      '0xf138823639686a85a43971dd9a2c8f6c15279b2e'.toLowerCase()
     )
   })
   test('event ClearDelegate', () => {
@@ -84,10 +84,10 @@ describe('decodeLog', () => {
     const { account, spaceId, delegate } = decodeSetClearDelegate(log)
     expect(spaceId).toEqual(stringToHex('cvx.eth', { size: 32 }))
     expect(account).toEqual(
-      getAddress('0x56bb3a51c2d20c60fed183d930ac6297d0101bfa')
+      '0x56bb3a51c2d20c60fed183d930ac6297d0101bfa'.toLowerCase()
     )
     expect(delegate).toEqual(
-      getAddress('0x947b7742c403f20e5faccdac5e092c943e7d0277')
+      '0x947b7742c403f20e5faccdac5e092c943e7d0277'.toLowerCase()
     )
   })
 
@@ -118,18 +118,18 @@ describe('decodeLog', () => {
       decodeDelegationUpdated(log)
 
     expect(account).toEqual(
-      getAddress('0x67A16655c1c46f8822726e989751817c49f29054')
+      '0x67A16655c1c46f8822726e989751817c49f29054'.toLowerCase()
     )
     expect(spaceId).toEqual(stringToHex('gnosis.eth', { size: 32 }))
     expect(delegation).toEqual([
       {
-        delegate: getAddress('0x6cc5b30Cd0A93C1F85C7868f5F2620AB8c458190'),
+        delegate: '0x6cc5b30Cd0A93C1F85C7868f5F2620AB8c458190'.toLowerCase(),
         weight: 40,
       },
     ])
     expect(expiration).toEqual(1876538446)
   })
-  describe.skip('event DelegationUpdated', () => {})
+
   describe.skip('event DelegationCleared', () => {})
 
   test('event OptOutStatusSet', () => {
@@ -158,7 +158,7 @@ describe('decodeLog', () => {
     const { account, spaceId: _spaceId, optOut } = decodeOptOut(log)
 
     expect(account).toEqual(
-      getAddress('0x53bcfaed43441c7bb6149563ec11f756739c9f6a')
+      '0x53bcfaed43441c7bb6149563ec11f756739c9f6a'.toLowerCase()
     )
     expect(_spaceId).toEqual(stringToHex('test', { size: 32 }))
     expect(_spaceId).toEqual(spaceId('test'))
