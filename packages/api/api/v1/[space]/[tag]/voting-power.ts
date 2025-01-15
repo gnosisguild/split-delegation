@@ -27,7 +27,7 @@ export const POST = async (req: Request) => {
   } = (await req.json()) as VotingPowerRequestBody
 
   if (name != 'split-delegation') {
-    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+    return new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
