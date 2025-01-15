@@ -42,7 +42,9 @@ export const POST = async (req: Request) => {
     space,
   })
 
-  const voters = addresses.map((address) => getAddress(address)).sort()
+  const voters = addresses
+    .map((address) => getAddress(address).toLowerCase())
+    .sort()
 
   /*
    * If delegation override is enabled, we filter edges (delegations)

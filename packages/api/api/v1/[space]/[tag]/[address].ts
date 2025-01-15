@@ -35,7 +35,9 @@ export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
-  const address = getAddress(searchParams.get('address') as string)
+  const address = getAddress(
+    searchParams.get('address') as string
+  ).toLowerCase()
 
   const {
     strategy: {

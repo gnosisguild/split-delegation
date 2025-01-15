@@ -59,6 +59,7 @@ async function cacheGetOrCompute({
 
   const block = await createClient(chain).getBlock({
     blockNumber: BigInt(blockNumber),
+    includeTransactions: false,
   })
   const rows = await loadEvents({
     space,

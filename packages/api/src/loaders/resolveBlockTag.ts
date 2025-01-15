@@ -18,7 +18,10 @@ export default async function resolveBlockTag(
   }
 
   const client = createClient(chain)
-  const { number } = await client.getBlock({ blockTag: blockTag as BlockTag })
+  const { number } = await client.getBlock({
+    blockTag: blockTag as BlockTag,
+    includeTransactions: false,
+  })
   return { chain, blockNumber: Number(number) }
 }
 
