@@ -88,15 +88,7 @@ async function loadWithRetry({
       blockNumber
     )
 
-    const result = merge(...results)
-
-    // assert(
-    //   Object.keys(result)
-    //     .slice(0, 50) // just a sample
-    //     .every((address) => address == getAddress(address)),
-    //   'snapshot.getScores not checksummed'
-    // )
-    return result
+    return ensureLowerCaseAddresses(merge(...results))
   } catch (e) {
     if (addresses.length < 100) {
       throw e
@@ -125,4 +117,13 @@ async function loadWithRetry({
 
     return merge(a, b)
   }
+}
+
+function ensureLowerCaseAddresses(scores: Scores) {
+  return Object.fromEntries(
+    Object.entries(scores).map(([address, score]) => [
+      address.toLowerCase(),
+      score,
+    ])
+  )
 }

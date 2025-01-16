@@ -35,7 +35,7 @@ export default async function loadBlock(
   }
 
   await cachePut(key, entry)
-  console.log(`[LoadBlock] Put ${Number(block.number)} @ ${chain.name}`)
+  console.log(`[LoadBlock] Cache Put ${Number(block.number)} @ ${chain.name}`)
 
   return entry
 }
