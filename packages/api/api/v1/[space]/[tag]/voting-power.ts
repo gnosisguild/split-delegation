@@ -33,7 +33,6 @@ export const POST = async (req: Request) => {
     })
   }
 
-  //const { chain, blockNumber } = await syncTip(tag, network)
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   let dags = await loadDelegationDAGs({

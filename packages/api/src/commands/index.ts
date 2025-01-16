@@ -3,7 +3,6 @@ import { command, run, subcommands } from 'cmd-ts'
 import audit from './audit'
 import heal from './heal'
 import integrity from './integrity'
-import pin from './pin'
 import prune from './prune'
 import sync from './sync'
 
@@ -37,15 +36,6 @@ const integrityCommand = command({
   },
 })
 
-const pinCommand = command({
-  name: 'pin',
-  description: '',
-  args: {},
-  handler: async () => {
-    await pin()
-  },
-})
-
 const pruneCommand = command({
   name: 'prune',
   description: '',
@@ -71,7 +61,6 @@ run(
       audit: auditCommand,
       heal: healCommand,
       integrity: integrityCommand,
-      pin: pinCommand,
       prune: pruneCommand,
       sync: syncCommand,
     },

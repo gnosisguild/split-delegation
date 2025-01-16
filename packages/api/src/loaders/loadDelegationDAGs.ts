@@ -8,10 +8,10 @@ import createRegistry from '../fns/delegations/createRegistry'
 import inverse from '../fns/graph/inverse'
 import rowToAction from '../fns/logs/rowToAction'
 
-import createClient from './createClient'
 import loadEvents from './loadEvents'
+import loadBlock from './loadBlock'
 
-import { DelegationDAG, DelegationDAGs } from 'src/types'
+import { DelegationDAG, DelegationDAGs } from '../types'
 
 const LOG_PREFIX = 'DelegationDAGs'
 
@@ -25,7 +25,7 @@ export default async function loadDelegationDAGs({
   space: string
 }): Promise<DelegationDAGs> {
   const start = timerStart()
-  const { delegationDAG } = await create({
+  const { delegationDAG } = await _load({
     chain,
     blockNumber,
     space,
@@ -38,7 +38,7 @@ export default async function loadDelegationDAGs({
   return { forward, reverse }
 }
 
-async function create({
+async function _load({
   chain,
   blockNumber,
   space,
@@ -47,13 +47,10 @@ async function create({
   blockNumber: number
   space: string
 }): Promise<{ delegationDAG: DelegationDAG }> {
-  const block = await createClient(chain).getBlock({
-    blockNumber: BigInt(blockNumber),
-    includeTransactions: false,
-  })
+  const { blockTimestamp } = await loadBlock(chain, blockNumber)
   const rows = await loadEvents({
     space,
-    blockTimestamp: Number(block.timestamp),
+    blockTimestamp,
   })
 
   for (let i = 1; i < rows.length; i++) {
@@ -61,7 +58,7 @@ async function create({
   }
 
   const registry = createRegistry(rowToAction(rows))
-  const delegations = createDelegations(registry, Number(block.timestamp))
+  const delegations = createDelegations(registry, blockTimestamp)
   const delegationDAG = createDelegationDAG(delegations)
 
   return { delegationDAG }
