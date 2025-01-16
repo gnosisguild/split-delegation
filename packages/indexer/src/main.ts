@@ -54,10 +54,10 @@ async function run() {
     const processor = new EvmBatchProcessor()
       .setGateway(chain.gateway)
       .setPrometheusPort(3000 + i)
-      // .setRpcEndpoint(chain.rpc)
+      .setRpcEndpoint(chain.rpc)
+      .setFinalityConfirmation(chain.finality)
       .addLog(logV1(chain))
       .addLog(logV2(chain))
-    // .setFinalityConfirmation(chain.finality)
 
     processor.run(new DatabaseStore(chain.chainId), async (ctx: Context) => {
       const rows = blockDataToRows(chain.chainId, ctx.blocks)
