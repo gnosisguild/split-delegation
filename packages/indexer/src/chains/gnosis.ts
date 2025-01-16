@@ -5,7 +5,7 @@ export default {
   rpc: 'https://airlock.gnosisguild.org/api/v1/100/rpc',
   chainId: 100,
   shortName: 'gno',
-  finality: 25,
+  finality: 20,
 
   deploymentBlocks: {
     DelegateRegistryV1: 20274491,
