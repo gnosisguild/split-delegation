@@ -28,6 +28,7 @@ CREATE TABLE "Cache" (
 CREATE TABLE "Checkpoint" (
     "chainId" INTEGER NOT NULL,
     "blockNumber" INTEGER NOT NULL,
+    "hash" TEXT NOT NULL,
 
     CONSTRAINT "Checkpoint_pkey" PRIMARY KEY ("chainId")
 );
