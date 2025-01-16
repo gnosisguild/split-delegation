@@ -25,14 +25,14 @@ export const POST = async (req: Request) => {
   } = (await req.json()) as TopDelegatesRequestBody
 
   if (name != 'split-delegation') {
-    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+    return new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
   }
 
   if (typeof totalSupply != 'number') {
-    new Response(JSON.stringify({ error: `Total Supply Missing` }), {
+    return new Response(JSON.stringify({ error: `Total Supply Missing` }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
@@ -46,7 +46,6 @@ export const POST = async (req: Request) => {
     return new Response('invalid orderBy', { status: 400 })
   }
 
-  // const { chain, blockNumber } = await syncTip(tag, network)
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   const topDelegates = await loadTopDelegates({

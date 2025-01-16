@@ -34,21 +34,18 @@ export default function distribution({
 function distributeValueProportionally(
   bag: Record<string, { expiration: number; weight: number }>,
   value: number
-) {
+): [string, number][] {
   const total = sum(Object.values(bag))
 
-  const result = Object.entries(bag).map(([address, { weight }]) => [
-    address,
-    (weight * value) / total,
-  ]) as [string, number][]
-
-  const remaining = value - result.reduce((a, [, b]) => a + b, 0)
-
-  // add the remainder to last entry
-  result[result.length - 1][1] += remaining
-  return result
+  let accumulated = 0
+  return Object.entries(bag).map(([address, { weight }], index, arr) => {
+    const isLast = index === arr.length - 1
+    const exactAmount = (weight * value) / total
+    const actualAmount = isLast ? value - accumulated : exactAmount
+    accumulated += exactAmount
+    return [address, actualAmount] as [string, number]
+  })
 }
-
 function sum(entries: { weight: number }[]): number {
   return entries.reduce((result, { weight }) => result + weight, 0)
 }

@@ -35,7 +35,9 @@ export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
-  const address = getAddress(searchParams.get('address') as string)
+  const address = getAddress(
+    searchParams.get('address') as string
+  ).toLowerCase()
 
   const {
     strategy: {
@@ -46,20 +48,19 @@ export const POST = async (req: Request) => {
   } = (await req.json()) as AddressRequestBody
 
   if (name != 'split-delegation') {
-    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+    return new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
   }
 
   if (typeof totalSupply != 'number') {
-    new Response(JSON.stringify({ error: `Total Supply Missing` }), {
+    return new Response(JSON.stringify({ error: `Total Supply Missing` }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
   }
 
-  // const { chain, blockNumber } = await syncTip(tag, network)
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   const dags = await loadDelegationDAGs({

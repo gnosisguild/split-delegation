@@ -27,13 +27,12 @@ export const POST = async (req: Request) => {
   } = (await req.json()) as VotingPowerRequestBody
 
   if (name != 'split-delegation') {
-    new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
+    return new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
   }
 
-  //const { chain, blockNumber } = await syncTip(tag, network)
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
   let dags = await loadDelegationDAGs({
@@ -42,7 +41,9 @@ export const POST = async (req: Request) => {
     space,
   })
 
-  const voters = addresses.map((address) => getAddress(address)).sort()
+  const voters = addresses
+    .map((address) => getAddress(address).toLowerCase())
+    .sort()
 
   /*
    * If delegation override is enabled, we filter edges (delegations)

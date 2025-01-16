@@ -16,20 +16,19 @@
     "audit": "prisma generate && ts-node src/commands audit",
     "heal": "prisma generate && ts-node src/commands heal",
     "integrity": "prisma generate && ts-node src/commands integrity",
-    "pin": "prisma generate && ts-node src/commands pin",
     "prune": "prisma generate && ts-node src/commands prune",
     "sync": "prisma generate && ts-node src/commands sync",
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "5.18.0",
-    "@snapshot-labs/snapshot.js": "^0.12.4",
+    "@prisma/client": "6.2.1",
+    "@snapshot-labs/snapshot.js": "0.12.41",
     "@vercel/edge": "^1.1.1",
     "@vercel/node": "3.0.28",
     "async": "^3.2.5",
     "cmd-ts": "^0.13.0",
     "dotenv": "^16.4.5",
-    "prisma": "5.18.0",
+    "prisma": "6.2.1",
     "ts-node": "^10.9.2",
     "vercel": "^36.0.0",
     "viem": "^ 2.19.8"
