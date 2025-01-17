@@ -42,7 +42,7 @@ export default async function loadDelegationDAGs({
 
   const { delegationDAG } = entry as { delegationDAG: DelegationDAG }
   const forward = delegationDAG
-  const reverse = inverse(delegationDAG!)
+  const reverse = inverse(delegationDAG)
 
   console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
   return { forward, reverse }
@@ -82,7 +82,7 @@ function cacheKey({
   return keccak256(
     toBytes(
       JSON.stringify({
-        name: 'loadDelegationDAGs',
+        name: 'loadDelegationDAG',
         chainId: chain.id,
         blockNumber,
         space,
