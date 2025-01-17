@@ -43,7 +43,7 @@ export default async function loadTopDelegates({
     })
     await cachePut(
       key,
-      { chain: chain.id, blockNumber, space, entry },
+      { chain: chain.id, blockNumber, space, topDelegates: entry.topDelegates },
       LOG_PREFIX
     )
   }
