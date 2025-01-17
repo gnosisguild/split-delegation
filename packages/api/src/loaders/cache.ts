@@ -1,5 +1,3 @@
-import { Prisma } from '@prisma/client'
-
 import prisma from '../../prisma/singleton'
 
 export async function cacheGet(
@@ -16,31 +14,14 @@ export async function cacheGet(
   return null
 }
 
-export async function cachePut(
-  key: string,
-  value: any | ((v: any) => string),
-  logPrefix?: string
-) {
-  await prisma.$transaction(
-    async (tx) => {
-      let nextValue
-      if (typeof value == 'function') {
-        const entry = await tx.cache.findUnique({
-          where: { key },
-        })
-        nextValue = JSON.stringify(value(entry?.value))
-      } else {
-        nextValue = JSON.stringify(value)
-      }
+export async function cachePut(key: string, value: any, logPrefix?: string) {
+  const nextValue = JSON.stringify(value)
 
-      await tx.cache.upsert({
-        where: { key },
-        create: { key, value: nextValue },
-        update: { key, value: nextValue, updatedAt: new Date(Date.now()) },
-      })
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
-  )
+  await prisma.cache.upsert({
+    where: { key },
+    create: { key, value: nextValue },
+    update: { key, value: nextValue, updatedAt: new Date(Date.now()) },
+  })
 
   if (logPrefix) {
     console.log(`[${logPrefix}] Cache Put ${key.slice(0, 18)}`)

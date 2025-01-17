@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { Chain } from 'viem'
 import snapshot from '@snapshot-labs/snapshot.js'
 
@@ -17,7 +18,7 @@ export default async function loadRawScores({
   strategies: any[]
   addresses: string[]
 }) {
-  const result = await _load({
+  const rawScores = await _load({
     chain,
     blockNumber,
     space,
@@ -27,10 +28,14 @@ export default async function loadRawScores({
 
   // ensure that all address gets at least a 0
   // Snapshot omits zero balances from the result
-  return merge(
-    Object.fromEntries(addresses.map((address) => [address, 0])),
-    result
+  const result = merge(
+    Object.fromEntries(addresses.map((address) => [address.toLowerCase(), 0])),
+    rawScores
   )
+
+  assert(addresses.length == Object.keys(result).length)
+
+  return result
 }
 
 async function _load({

@@ -2,11 +2,13 @@ import assert from 'assert'
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
+
+import { cacheGet } from './cache'
 import loadRawScores from './loadRawScores'
 
-import { cacheGet, cachePut } from './cache'
-
 import { Scores } from '../types'
+
+import prisma from '../../prisma/singleton'
 
 export default async function loadScores({
   chain,
@@ -58,44 +60,34 @@ async function _load({
     scores: {},
   }
 
+  console.log('LOADED ' + Object.keys(scores).length)
+
   const missing: string[] = []
   for (const address of addresses) {
+    assert(address == address.toLowerCase(), 'not lower case?')
     if (typeof scores[address] != 'number') {
       missing.push(address)
     }
   }
 
-  let nextScores: Scores = {}
-  if (missing.length > 0) {
-    console.log(`[Scores] missing ${missing.length} entries`)
-    nextScores = {
-      ...scores,
-      ...(await loadRawScores({
-        chain,
-        blockNumber,
-        space,
-        strategies,
-        addresses: missing,
-      })),
-    }
-    await cachePut(
-      key,
-      (value?: string) => {
-        const scoresInCache = value ? JSON.parse(value).scores : {}
-        return {
-          scores: {
-            ...scoresInCache,
-            ...nextScores,
-          },
-        }
-      },
-      'Scores'
-    )
-  } else {
-    nextScores = scores
+  if (missing.length === 0) {
+    return { scores }
   }
 
-  return { scores: nextScores }
+  if (missing.length < 100) {
+    console.log(missing.sort())
+  }
+
+  console.log(`[Scores] missing ${missing.length} entries`)
+  const nextScores = await loadRawScores({
+    chain,
+    blockNumber,
+    space,
+    strategies,
+    addresses: missing,
+  })
+
+  return cachePut(key, nextScores)
 }
 
 function cacheKey({
@@ -117,4 +109,29 @@ function cacheKey({
       })
     )
   )
+}
+
+async function cachePut(
+  key: string,
+  nextScores: Scores
+): Promise<{ scores: Scores }> {
+  const entry = await prisma.cache.findUnique({
+    where: { key },
+  })
+
+  const prevScores: Scores = entry ? JSON.parse(entry.value) : {}
+
+  const scores = Object.assign(prevScores, nextScores)
+
+  const value = JSON.stringify({ scores })
+
+  await prisma.cache.upsert({
+    where: { key },
+    create: { key, value },
+    update: { key, value, updatedAt: new Date(Date.now()) },
+  })
+
+  console.log(`[Scores] Cache Put ${key.slice(0, 18)}`)
+
+  return { scores }
 }
