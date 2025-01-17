@@ -4,6 +4,8 @@ import { BlockTag, Chain, keccak256, toBytes } from 'viem'
 import { cacheGet, cachePut } from './cache'
 import createClient from './createClient'
 
+const LOG_PREFIX = 'LoadBlock'
+
 export default async function loadBlock(
   chain: Chain,
   blockTag: BlockTag | number
@@ -12,14 +14,17 @@ export default async function loadBlock(
     const entry: { blockNumber: number; blockTimestamp: number } | undefined =
       typeof blockTag === 'string'
         ? undefined
-        : await cacheGet(cacheKey({ chain, blockNumber: Number(blockTag) }))
+        : await cacheGet(
+            cacheKey({ chain, blockNumber: Number(blockTag) }),
+            LOG_PREFIX
+          )
 
     if (entry) {
       return entry
     }
   }
 
-  console.log(`[LoadBlock] Miss ${blockTag} @ ${chain.name}`)
+  console.log(`[${LOG_PREFIX}] Miss ${blockTag} @ ${chain.name}`)
   const block = await createClient(chain).getBlock({
     ...(typeof blockTag === 'string'
       ? { blockTag }
@@ -34,8 +39,7 @@ export default async function loadBlock(
     blockTimestamp: Number(block.timestamp),
   }
 
-  await cachePut(key, entry)
-  console.log(`[LoadBlock] Cache Put ${Number(block.number)} @ ${chain.name}`)
+  await cachePut(key, entry, LOG_PREFIX)
 
   return entry
 }
