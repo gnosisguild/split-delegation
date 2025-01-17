@@ -17,7 +17,7 @@ export default async function loadRawScores({
   space: string
   strategies: any[]
   addresses: string[]
-}) {
+}): Promise<Scores> {
   const rawScores = await _load({
     chain,
     blockNumber,
