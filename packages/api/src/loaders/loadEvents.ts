@@ -24,9 +24,7 @@ export default async function loadEvents({
 
   const rows = await prisma.delegationEvent.findMany({
     where,
-    orderBy: {
-      blockTimestamp: 'asc',
-    },
+    orderBy: { blockTimestamp: 'asc' },
   })
 
   const sortedRows = assertSortOrder(rows.sort(sortDelegationEvents))
