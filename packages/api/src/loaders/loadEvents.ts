@@ -22,10 +22,16 @@ export default async function loadEvents({
         blockTimestamp: { lte: blockTimestamp },
       }
 
-  return prisma.delegationEvent.findMany({
+  const rows = await prisma.delegationEvent.findMany({
     where,
-    orderBy: { blockTimestamp: 'asc' },
+    orderBy: {
+      blockTimestamp: 'asc',
+    },
   })
+
+  const sortedRows = assertSortOrder(rows.sort(sortDelegationEvents))
+
+  return sortedRows
 }
 
 /*
@@ -45,4 +51,53 @@ function mapMaybeTestSpaceToRealSpace(
   }
 
   return spaceMapping[spaceId]
+}
+
+function sortDelegationEvents(a: DelegationEvent, b: DelegationEvent) {
+  // First compare by blockNumber
+  if (a.blockNumber !== b.blockNumber) {
+    return a.blockNumber - b.blockNumber
+  }
+
+  // If blockNumbers are equal, compare by transactionIndex
+  if (a.transactionIndex !== b.transactionIndex) {
+    return a.transactionIndex - b.transactionIndex
+  }
+
+  // If both blockNumber and transactionIndex are equal, compare by logIndex
+  return a.logIndex - b.logIndex
+}
+
+function assertSortOrder(events: DelegationEvent[]): DelegationEvent[] {
+  for (let i = 1; i < events.length; i++) {
+    const prev = events[i - 1]
+    const curr = events[i]
+
+    // Check blockNumber ordering
+    if (prev.blockNumber > curr.blockNumber) {
+      throw new Error(
+        `Invalid blockNumber order at index ${i}: ${prev.blockNumber} > ${curr.blockNumber}`
+      )
+    }
+
+    if (
+      prev.blockNumber === curr.blockNumber &&
+      prev.transactionIndex > curr.transactionIndex
+    ) {
+      throw new Error(
+        `Invalid transactionIndex order at index ${i} (block ${curr.blockNumber}): ${prev.transactionIndex} > ${curr.transactionIndex}`
+      )
+    }
+
+    if (
+      prev.blockNumber === curr.blockNumber &&
+      prev.transactionIndex === curr.transactionIndex &&
+      prev.logIndex > curr.logIndex
+    ) {
+      throw new Error(
+        `Invalid logIndex order at index ${i} (block ${curr.blockNumber}, tx ${curr.transactionIndex}): ${prev.logIndex} > ${curr.logIndex}`
+      )
+    }
+  }
+  return events
 }
