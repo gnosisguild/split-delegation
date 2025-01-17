@@ -60,8 +60,6 @@ async function _load({
     scores: {},
   }
 
-  console.log('LOADED ' + Object.keys(scores).length)
-
   const missing: string[] = []
   for (const address of addresses) {
     assert(address == address.toLowerCase(), 'not lower case?')
@@ -72,10 +70,6 @@ async function _load({
 
   if (missing.length === 0) {
     return { scores }
-  }
-
-  if (missing.length < 100) {
-    console.log(missing.sort())
   }
 
   console.log(`[Scores] missing ${missing.length} entries`)
