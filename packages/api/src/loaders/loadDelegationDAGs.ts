@@ -40,7 +40,7 @@ export default async function loadDelegationDAGs({
     await cachePut(key, entry, LOG_PREFIX)
   }
 
-  const { delegationDAG } = entry as { delegationDAG: DelegationDAG }
+  const { delegationDAG } = entry
   const forward = delegationDAG
   const reverse = inverse(delegationDAG)
 
