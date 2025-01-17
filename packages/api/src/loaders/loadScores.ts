@@ -113,9 +113,13 @@ async function cachePut(
     where: { key },
   })
 
-  const prevScores: Scores = entry ? JSON.parse(entry.value) : {}
+  const prevScores: Scores = entry ? JSON.parse(entry.value).scores : {}
 
-  const scores = Object.assign(prevScores, nextScores)
+  const scores = Object.assign({}, prevScores, nextScores)
+
+  assertScoresFormat(prevScores)
+  assertScoresFormat(nextScores)
+  assertScoresFormat(scores)
 
   const value = JSON.stringify({ scores })
 
@@ -128,4 +132,11 @@ async function cachePut(
   console.log(`[Scores] Cache Put ${key.slice(0, 18)}`)
 
   return { scores }
+}
+
+function assertScoresFormat(scores: Scores) {
+  Object.entries(scores).every(([key, value]) => {
+    assert(typeof key == 'string')
+    assert(typeof value == 'number')
+  })
 }
