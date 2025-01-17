@@ -52,17 +52,14 @@ function mapMaybeTestSpaceToRealSpace(
 }
 
 function sortDelegationEvents(a: DelegationEvent, b: DelegationEvent) {
-  // First compare by blockNumber
-  if (a.blockNumber !== b.blockNumber) {
-    return a.blockNumber - b.blockNumber
+  if (a.blockTimestamp !== b.blockTimestamp) {
+    return a.blockTimestamp - b.blockTimestamp
   }
 
-  // If blockNumbers are equal, compare by transactionIndex
   if (a.transactionIndex !== b.transactionIndex) {
     return a.transactionIndex - b.transactionIndex
   }
 
-  // If both blockNumber and transactionIndex are equal, compare by logIndex
   return a.logIndex - b.logIndex
 }
 
@@ -72,9 +69,9 @@ function assertSortOrder(events: DelegationEvent[]): DelegationEvent[] {
     const curr = events[i]
 
     // Check blockNumber ordering
-    if (prev.blockNumber > curr.blockNumber) {
+    if (prev.blockTimestamp > curr.blockTimestamp) {
       throw new Error(
-        `Invalid blockNumber order at index ${i}: ${prev.blockNumber} > ${curr.blockNumber}`
+        `Invalid blockTimestamp order at index ${i}: ${prev.blockTimestamp} > ${curr.blockTimestamp}`
       )
     }
 
