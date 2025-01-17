@@ -1,4 +1,4 @@
-import { Chain } from 'viem'
+import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
 import allNodes from '../fns/graph/allNodes'
@@ -7,8 +7,11 @@ import delegateStats, {
   top,
 } from '../calculations/delegateStats'
 
+import { cacheGet, cachePut } from './cache'
 import loadScores from './loadScores'
 import loadDelegationDAGs from './loadDelegationDAGs'
+
+const LOG_PREFIX = 'TopDelegates'
 
 export default async function loadTopDelegates({
   chain,
@@ -22,18 +25,32 @@ export default async function loadTopDelegates({
   space: string
   strategies: any[]
   totalSupply: number
-}): Promise<DelegateStats[]> {
+}): Promise<{ topDelegates: DelegateStats[] }> {
   const start = timerStart()
-  const { topDelegates } = await _load({
-    chain,
-    blockNumber,
-    space,
-    strategies,
-    totalSupply,
-  })
-  console.log(`[TopDelegates] ${space}, done in ${timerEnd(start)}ms`)
+  const key = cacheKey({ chain, blockNumber, space, strategies, totalSupply })
 
-  return topDelegates
+  let entry: { topDelegates: DelegateStats[] } | null = await cacheGet(
+    key,
+    LOG_PREFIX
+  )
+  if (!entry) {
+    entry = await _load({
+      chain,
+      blockNumber,
+      space,
+      strategies,
+      totalSupply,
+    })
+    await cachePut(
+      key,
+      { chain: chain.id, blockNumber, space, entry },
+      LOG_PREFIX
+    )
+  }
+
+  console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
+
+  return entry
 }
 
 async function _load({
@@ -63,7 +80,7 @@ async function _load({
     addresses: allNodes(dags.forward),
   })
 
-  const result = {
+  return {
     topDelegates: top(
       delegateStats({
         dags,
@@ -72,6 +89,31 @@ async function _load({
       })
     ),
   }
+}
 
-  return result
+function cacheKey({
+  chain,
+  blockNumber,
+  space,
+  strategies,
+  totalSupply,
+}: {
+  chain: Chain
+  blockNumber: number
+  space: string
+  strategies: any[]
+  totalSupply: number
+}) {
+  return keccak256(
+    toBytes(
+      JSON.stringify({
+        name: 'loadTopDelegates',
+        chainId: chain.id,
+        blockNumber,
+        space,
+        strategies,
+        totalSupply,
+      })
+    )
+  )
 }

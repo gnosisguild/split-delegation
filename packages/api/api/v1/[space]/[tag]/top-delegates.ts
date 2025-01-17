@@ -47,7 +47,7 @@ export const POST = async (req: Request) => {
 
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
-  const topDelegates = await loadTopDelegates({
+  const { topDelegates } = await loadTopDelegates({
     chain,
     blockNumber,
     space,
