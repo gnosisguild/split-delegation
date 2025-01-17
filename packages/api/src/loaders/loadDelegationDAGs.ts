@@ -1,4 +1,3 @@
-import assert from 'assert'
 import { Chain } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
@@ -52,10 +51,6 @@ async function _load({
     space,
     blockTimestamp,
   })
-
-  for (let i = 1; i < rows.length; i++) {
-    assert(rows[i - 1].blockTimestamp <= rows[i].blockTimestamp)
-  }
 
   const registry = createRegistry(rowToAction(rows))
   const delegations = createDelegations(registry, blockTimestamp)
