@@ -1,4 +1,4 @@
-import { BlockTag, getAddress } from 'viem'
+import { Address, BlockTag, isAddress } from 'viem'
 
 import addressStats from '../../../../src/calculations/addressStats'
 import delegateTree, {
@@ -35,9 +35,7 @@ export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const tag = searchParams.get('tag') as BlockTag
-  const address = getAddress(
-    searchParams.get('address') as string
-  ).toLowerCase()
+  let address = searchParams.get('address') as string
 
   const {
     strategy: {
@@ -60,6 +58,17 @@ export const POST = async (req: Request) => {
       headers: { 'Content-Type': 'application/json' },
     })
   }
+
+  if (!isAddress(address)) {
+    return new Response(
+      JSON.stringify({ error: `Not an Address "${address}"` }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
+  }
+  address = String(address).toLowerCase() as Address
 
   const { chain, blockNumber } = await resolveBlockTag(tag, network)
 
