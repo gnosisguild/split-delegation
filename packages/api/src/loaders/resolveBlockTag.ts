@@ -7,14 +7,18 @@ import loadPin from './loadPin'
 export default async function resolveBlockTag(
   blockTagish: any,
   networkish: any
-): Promise<{ chain: Chain; blockNumber: number; blockTimestamp: number }> {
+): Promise<{ chain: Chain; blockNumber: number }> {
   const chain = networkToChain(networkish)
+
+  if (isBlockNumber(blockTagish)) {
+    return { chain, blockNumber: Number(blockTagish) }
+  }
 
   return {
     chain,
     ...(blockTagish == 'pin'
       ? await loadPin(chain)
-      : await loadBlock(chain, toBlockTag(blockTagish))),
+      : await loadBlock(chain, blockTagish as BlockTag)),
   }
 }
 
@@ -32,12 +36,6 @@ function networkToChain(networkish: any): Chain {
   return chain
 }
 
-function toBlockTag(blockTagish: any): BlockTag | number {
-  if (typeof blockTagish !== 'string' && typeof blockTagish !== 'number') {
-    throw new Error(`Invalid BlockTag "${blockTagish}"`)
-  }
-
+function isBlockNumber(blockTagish: any) {
   return /^\d+$/.test(String(blockTagish).trim())
-    ? Number(blockTagish)
-    : (blockTagish as BlockTag)
 }
