@@ -1,4 +1,4 @@
-import { Address, BlockTag, isAddress } from 'viem'
+import { Address, BlockTag, getAddress, isAddress } from 'viem'
 
 import addressStats from '../../../../src/calculations/addressStats'
 import delegateTree, {
@@ -117,7 +117,7 @@ export const POST = async (req: Request) => {
     address,
   })
 
-  const result: AddressResult = {
+  const result: AddressResult = checksum({
     address,
     expiration,
     votingPower,
@@ -129,10 +129,37 @@ export const POST = async (req: Request) => {
     delegatorTree: delegatorTree({ dags, scores, address }),
     delegates: reachable(dags.forward, address),
     delegateTree: delegateTree({ dags, scores, address }),
-  }
+  })
 
   return new Response(
     JSON.stringify({ chainId: chain.id, blockNumber, ...result }),
     { headers }
   )
+}
+
+function checksum(result: AddressResult) {
+  return {
+    ...result,
+    address: getAddress(result.address),
+    delegators: result.delegators.map((delegator) => getAddress(delegator)),
+    delegatorTree: result.delegatorTree.map(checksumDelegatorTree),
+    delegates: result.delegates.map((delegate) => getAddress(delegate)),
+    delegateTree: result.delegateTree.map(checksumDelegateTree),
+  }
+}
+
+function checksumDelegatorTree(node: DelegatorTreeNode): DelegatorTreeNode {
+  return {
+    ...node,
+    delegator: getAddress(node.delegator),
+    parents: node.parents.map(checksumDelegatorTree),
+  }
+}
+
+function checksumDelegateTree(node: DelegateTreeNode): DelegateTreeNode {
+  return {
+    ...node,
+    delegate: getAddress(node.delegate),
+    children: node.children.map(checksumDelegateTree),
+  }
 }
