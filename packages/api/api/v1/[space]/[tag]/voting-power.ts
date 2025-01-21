@@ -85,7 +85,7 @@ export const POST = async (req: Request) => {
 
   const result = Object.fromEntries(
     voters.map((voter) => [
-      voter,
+      getAddress(voter),
       calculateVotingPower({ dags, scores, address: voter }).votingPower,
     ])
   ) as Record<string, number>
