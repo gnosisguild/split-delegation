@@ -12,12 +12,12 @@ export default async function loadBlock(
 ): Promise<{ blockNumber: number; blockTimestamp: number }> {
   {
     const entry: { blockNumber: number; blockTimestamp: number } | undefined =
-      typeof blockTag === 'string'
-        ? undefined
-        : await cacheGet(
+      isBlockNumber(blockTag)
+        ? await cacheGet(
             cacheKey({ chain, blockNumber: Number(blockTag) }),
             LOG_PREFIX
           )
+        : undefined
 
     if (entry) {
       return entry
@@ -26,9 +26,9 @@ export default async function loadBlock(
 
   console.log(`[${LOG_PREFIX}] Miss ${blockTag} @ ${chain.name}`)
   const block = await createClient(chain).getBlock({
-    ...(typeof blockTag === 'string'
-      ? { blockTag }
-      : { blockNumber: BigInt(blockTag as number) }),
+    ...(isBlockNumber(blockTag)
+      ? { blockNumber: BigInt(blockTag) }
+      : { blockTag: blockTag as BlockTag }),
     includeTransactions: false,
   })
 
@@ -61,4 +61,8 @@ function cacheKey({
       })
     )
   )
+}
+
+function isBlockNumber(blockTagish: any) {
+  return /^\d+$/.test(String(blockTagish).trim())
 }
