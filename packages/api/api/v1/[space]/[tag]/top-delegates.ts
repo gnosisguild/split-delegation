@@ -1,4 +1,4 @@
-import { BlockTag } from 'viem'
+import { BlockTag, getAddress } from 'viem'
 
 import {
   orderByCount,
@@ -79,7 +79,8 @@ export const POST = async (req: Request) => {
     blockNumber,
     delegates: topDelegates
       .sort(orderBy == 'count' ? orderByCount : orderByPower)
-      .slice(offset, offset + limit),
+      .slice(offset, offset + limit)
+      .map((ds) => ({ ...ds, address: getAddress(ds.address) })),
     pagination: {
       offset,
       limit,
