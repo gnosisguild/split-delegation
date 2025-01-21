@@ -8,14 +8,18 @@ import inverse from '../../../../src/fns/graph/inverse'
 import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
 
-import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
+import resolveBlockTag, {
+  networkToChain,
+} from '../../../../src/loaders/resolveBlockTag'
 
 import { VotingPowerRequestBody } from '../../types'
+
+const headers = { 'Content-Type': 'application/json' }
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
-  const tag = searchParams.get('tag') as BlockTag
+  const blockTag = searchParams.get('tag') as BlockTag
 
   const {
     strategy: {
@@ -33,7 +37,23 @@ export const POST = async (req: Request) => {
     })
   }
 
-  const { chain, blockNumber } = await resolveBlockTag(tag, network)
+  const chain = networkToChain(network)
+  if (!chain) {
+    return new Response(
+      JSON.stringify({ error: `Network Not Supported "${network}"` }),
+      { status: 404, headers }
+    )
+  }
+
+  const blockNumber = await resolveBlockTag(chain, blockTag)
+  if (!blockNumber) {
+    return new Response(
+      JSON.stringify({
+        error: `Block Not Found "${blockTag}" @ ${chain.name}`,
+      }),
+      { status: 404, headers }
+    )
+  }
 
   let dags = await loadDelegationDAGs({
     chain,
@@ -70,7 +90,5 @@ export const POST = async (req: Request) => {
     ])
   ) as Record<string, number>
 
-  return new Response(JSON.stringify(result), {
-    headers: { 'Content-Type': 'application/json' },
-  })
+  return new Response(JSON.stringify(result), { headers })
 }

@@ -6,14 +6,21 @@ import {
 } from '../../../../src/calculations/delegateStats'
 
 import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
-import resolveBlockTag from '../../../../src/loaders/resolveBlockTag'
+import resolveBlockTag, {
+  networkToChain,
+} from '../../../../src/loaders/resolveBlockTag'
 
 import { TopDelegatesRequestBody } from '../../types'
+
+const headers = { 'Content-Type': 'application/json' }
 
 export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
-  const tag = searchParams.get('tag') as BlockTag
+  const blockTag = searchParams.get('tag') as BlockTag
+  const limit = Number(searchParams.get('limit')) || 100
+  const offset = Number(searchParams.get('offset')) || 0
+  const orderBy = searchParams.get('by')
 
   const {
     strategy: {
@@ -26,26 +33,38 @@ export const POST = async (req: Request) => {
   if (name != 'split-delegation') {
     return new Response(JSON.stringify({ error: `Invalid Strategy ${name}` }), {
       status: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
     })
   }
 
   if (typeof totalSupply != 'number') {
     return new Response(JSON.stringify({ error: `Total Supply Missing` }), {
       status: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
     })
   }
 
-  const limit = Number(searchParams.get('limit')) || 100
-  const offset = Number(searchParams.get('offset')) || 0
-  const orderBy = searchParams.get('by')
-
-  if (orderBy != 'count' && orderBy != 'power') {
-    return new Response('invalid orderBy', { status: 400 })
+  const chain = networkToChain(network)
+  if (!chain) {
+    return new Response(
+      JSON.stringify({ error: `Network Not Supported "${network}"` }),
+      { status: 404, headers }
+    )
   }
 
-  const { chain, blockNumber } = await resolveBlockTag(tag, network)
+  const blockNumber = await resolveBlockTag(chain, blockTag)
+  if (!blockNumber) {
+    return new Response(
+      JSON.stringify({
+        error: `Block Not Found "${blockTag}" @ ${chain.name}`,
+      }),
+      { status: 404, headers }
+    )
+  }
+
+  if (orderBy != 'count' && orderBy != 'power') {
+    return new Response(`invalid orderBy`, { status: 400, headers })
+  }
 
   const { topDelegates } = await loadTopDelegates({
     chain,
@@ -68,7 +87,5 @@ export const POST = async (req: Request) => {
     },
   }
 
-  return new Response(JSON.stringify(response), {
-    headers: { 'Content-Type': 'application/json' },
-  })
+  return new Response(JSON.stringify(response), { headers })
 }
