@@ -117,8 +117,6 @@ async function cachePut(
 
   const scores = Object.assign({}, prevScores, nextScores)
 
-  assertScoresFormat(prevScores)
-  assertScoresFormat(nextScores)
   assertScoresFormat(scores)
 
   const value = JSON.stringify({ scores })
