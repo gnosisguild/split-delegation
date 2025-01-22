@@ -2,7 +2,6 @@ import assert from 'assert'
 import { Chain, keccak256, toBytes } from 'viem'
 
 import { timerEnd, timerStart } from '../fns/timer'
-
 import { cacheGet } from './cache'
 import loadRawScores from './loadRawScores'
 
@@ -31,7 +30,7 @@ export default async function loadScores({
     strategies,
     addresses,
   })
-  console.info(`[Scores] ${space}, done in ${timerEnd(start)}ms`)
+  console.info(`[LoadScores] ${space}, done in ${timerEnd(start)}ms`)
 
   assert(addresses.length <= Object.keys(scores).length)
   return scores
@@ -52,8 +51,9 @@ async function _load({
 }) {
   const key = cacheKey({
     chain,
-    blockNumber,
     space,
+    blockNumber,
+    strategies,
   })
 
   const { scores }: { scores: Scores } = (await cacheGet(key, 'Scores')) || {
@@ -72,7 +72,7 @@ async function _load({
     return { scores }
   }
 
-  console.info(`[Scores] missing ${missing.length} entries`)
+  console.info(`[LoadScores] missing ${missing.length} entries`)
   const nextScores = await loadRawScores({
     chain,
     blockNumber,
@@ -81,25 +81,28 @@ async function _load({
     addresses: missing,
   })
 
-  return cachePut(key, nextScores)
+  return cachePut(key, chain, blockNumber, space, nextScores)
 }
 
 function cacheKey({
   chain,
-  blockNumber,
   space,
+  blockNumber,
+  strategies,
 }: {
   chain: Chain
-  blockNumber: number
   space: string
+  blockNumber: number
+  strategies: any
 }) {
   return keccak256(
     toBytes(
       JSON.stringify({
         name: 'loadScores',
         chainId: chain.id,
-        blockNumber,
         space,
+        blockNumber,
+        strategies,
       })
     )
   )
@@ -107,6 +110,9 @@ function cacheKey({
 
 async function cachePut(
   key: string,
+  chain: Chain,
+  blockNumber: number,
+  space: string,
   nextScores: Scores
 ): Promise<{ scores: Scores }> {
   const entry = await prisma.cache.findUnique({
@@ -119,7 +125,12 @@ async function cachePut(
 
   assertScoresFormat(scores)
 
-  const value = JSON.stringify({ scores })
+  const value = JSON.stringify({
+    chain: chain.id,
+    blockNumber,
+    space,
+    scores,
+  })
 
   await prisma.cache.upsert({
     where: { key },
@@ -127,7 +138,7 @@ async function cachePut(
     update: { key, value, updatedAt: new Date(Date.now()) },
   })
 
-  console.info(`[Scores] Cache Put ${key.slice(0, 18)}`)
+  console.info(`[LoadScores] Cache Put ${key.slice(0, 18)}`)
 
   return { scores }
 }

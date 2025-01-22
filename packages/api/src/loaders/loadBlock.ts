@@ -50,7 +50,7 @@ async function _load(
 
     await cachePut(
       cacheKey({ chain, blockNumber: Number(block.number) }),
-      { chainId: chain.id, ...result },
+      { chain: chain.id, ...result },
       LOG_PREFIX
     )
   }
