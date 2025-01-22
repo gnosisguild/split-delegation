@@ -12,7 +12,7 @@ export default async function loadPin(chain: Chain): Promise<Result> {
   const start = timerStart()
 
   const result = await _load(chain)
-  console.log(`[${LOG_PREFIX}] done in ${timerEnd(start)}ms`)
+  console.info(`[${LOG_PREFIX}] done in ${timerEnd(start)}ms`)
 
   return result
 }
@@ -25,7 +25,7 @@ async function _load(chain: Chain): Promise<Result> {
       (await cacheGet(key)) || (await loadCandidateBlock(chain))
 
     if (blockAgeInMinutes(blockTimestamp) < 15 /* 15 minutes */) {
-      console.log(
+      console.info(
         `[${LOG_PREFIX}] Reusing Block ${blockNumber} @ ${chain.name}`
       )
       return { blockNumber, blockTimestamp }
@@ -38,7 +38,7 @@ async function _load(chain: Chain): Promise<Result> {
     blockNumber,
     blockTimestamp,
   })
-  console.log(`[Pin] New Block ${blockNumber} @ ${chain.name}`)
+  console.info(`[Pin] New Block ${blockNumber} @ ${chain.name}`)
 
   return { blockNumber, blockTimestamp }
 }

@@ -35,7 +35,7 @@ export default async function loadTopDelegates({
     strategies,
     totalSupply,
   })
-  console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
+  console.info(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
 
   return result
 }

@@ -31,7 +31,7 @@ export default async function loadScores({
     strategies,
     addresses,
   })
-  console.log(`[Scores] ${space}, done in ${timerEnd(start)}ms`)
+  console.info(`[Scores] ${space}, done in ${timerEnd(start)}ms`)
 
   assert(addresses.length <= Object.keys(scores).length)
   return scores
@@ -72,7 +72,7 @@ async function _load({
     return { scores }
   }
 
-  console.log(`[Scores] missing ${missing.length} entries`)
+  console.info(`[Scores] missing ${missing.length} entries`)
   const nextScores = await loadRawScores({
     chain,
     blockNumber,
@@ -127,7 +127,7 @@ async function cachePut(
     update: { key, value, updatedAt: new Date(Date.now()) },
   })
 
-  console.log(`[Scores] Cache Put ${key.slice(0, 18)}`)
+  console.info(`[Scores] Cache Put ${key.slice(0, 18)}`)
 
   return { scores }
 }

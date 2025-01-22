@@ -34,7 +34,7 @@ export default async function loadDelegationDAGs({
   const forward = delegationDAG
   const reverse = inverse(delegationDAG)
 
-  console.log(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
+  console.info(`[${LOG_PREFIX}] ${space}, done in ${timerEnd(start)}ms`)
   return { forward, reverse }
 }
 

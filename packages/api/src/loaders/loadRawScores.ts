@@ -99,7 +99,7 @@ async function loadWithRetry({
       throw e
     }
 
-    console.log(`[Scores] ${space} ${addresses.length}, retry`)
+    console.warn(`[Scores] ${space} ${addresses.length}, retry`)
 
     const args = {
       chain,

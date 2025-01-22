@@ -18,7 +18,7 @@ export default async function loadBlock(
 
   const { blockNumber, blockTimestamp } = await _load(chain, blockTag)
 
-  console.log(
+  console.info(
     `[${LOG_PREFIX}] ${blockNumber} @ ${chain.name}, done in ${timerEnd(start)}ms`
   )
   return { blockNumber, blockTimestamp }
