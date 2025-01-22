@@ -1,36 +1,46 @@
 import { Chain, keccak256, toBytes } from 'viem'
+
+import { timerEnd, timerStart } from '../fns/timer'
 import { cacheGet, cachePut } from './cache'
 import createClient from './createClient'
 import loadBlock from './loadBlock'
 
-export default async function loadPin(
-  chain: Chain
-): Promise<{ blockNumber: number; blockTimestamp: number }> {
+type Result = { blockNumber: number; blockTimestamp: number }
+const LOG_PREFIX = 'Pin'
+
+export default async function loadPin(chain: Chain): Promise<Result> {
+  const start = timerStart()
+
+  const result = await _load(chain)
+  console.log(`[${LOG_PREFIX}] done in ${timerEnd(start)}ms`)
+
+  return result
+}
+
+async function _load(chain: Chain): Promise<Result> {
   const key = cacheKey({ chain })
+
   {
-    const { blockNumber, blockTimestamp } = (await cacheGet(key)) || {
-      blockNumber: 0,
-      blockTimestamp: 0,
-    }
+    const { blockNumber, blockTimestamp }: Result =
+      (await cacheGet(key)) || (await loadCandidateBlock(chain))
+
     if (blockAgeInMinutes(blockTimestamp) < 15 /* 15 minutes */) {
-      console.log(`[Pin] Using block ${blockNumber} @ ${chain.name}`)
+      console.log(
+        `[${LOG_PREFIX}] Reusing Block ${blockNumber} @ ${chain.name}`
+      )
       return { blockNumber, blockTimestamp }
     }
-
-    console.log(`[Pin] Outdated ${blockNumber} @ ${chain.name}`)
   }
 
-  {
-    const { blockNumber, blockTimestamp } = await loadCandidateBlock(chain)
-    await cachePut(key, {
-      chainId: chain.id,
-      blockNumber,
-      blockTimestamp,
-    })
-    console.log(`[Pin] New block ${blockNumber} @ ${chain.name}`)
+  const { blockNumber, blockTimestamp } = await loadCandidateBlock(chain)
+  await cachePut(key, {
+    chainId: chain.id,
+    blockNumber,
+    blockTimestamp,
+  })
+  console.log(`[Pin] New Block ${blockNumber} @ ${chain.name}`)
 
-    return { blockNumber, blockTimestamp }
-  }
+  return { blockNumber, blockTimestamp }
 }
 
 function cacheKey({ chain }: { chain: Chain }) {
