@@ -85,7 +85,7 @@ async function loadWithRetry({
   addresses: string[]
 }): Promise<Scores> {
   try {
-    const results = await snapshot.utils.getScores(
+    const results: Scores[] = await snapshot.utils.getScores(
       space,
       strategies,
       String(chain.id),
@@ -93,7 +93,7 @@ async function loadWithRetry({
       blockNumber
     )
 
-    return ensureLowerCaseAddresses(merge(...results))
+    return merge(...results.map(ensureLowerCaseAddresses))
   } catch (e) {
     if (addresses.length < 100) {
       throw e
