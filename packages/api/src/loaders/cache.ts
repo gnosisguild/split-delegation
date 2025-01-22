@@ -7,7 +7,7 @@ export async function cacheGet(
   const hit = await prisma.cache.findUnique({ where: { key } })
   if (hit) {
     if (logPrefix) {
-      console.log(`[${logPrefix}] Cache Hit ${key.slice(0, 18)}`)
+      console.info(`[${logPrefix}] Cache Hit ${key.slice(0, 18)}`)
     }
     return JSON.parse(hit.value)
   }
@@ -24,7 +24,7 @@ export async function cachePut(key: string, value: any, logPrefix?: string) {
   })
 
   if (logPrefix) {
-    console.log(`[${logPrefix}] Cache Put ${key.slice(0, 18)}`)
+    console.info(`[${logPrefix}] Cache Put ${key.slice(0, 18)}`)
   }
 }
 
@@ -37,7 +37,7 @@ export async function cachePrune(cutoff: Date) {
     },
   })
 
-  console.log(
+  console.info(
     `[Prune] Deleted ${deletedItems} Cache Entries out of ${allItems}`
   )
 }
