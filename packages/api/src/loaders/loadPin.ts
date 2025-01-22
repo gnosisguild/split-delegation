@@ -34,7 +34,7 @@ async function _load(chain: Chain): Promise<Result> {
 
   const { blockNumber, blockTimestamp } = await loadCandidateBlock(chain)
   await cachePut(key, {
-    chainId: chain.id,
+    chain: chain.id,
     blockNumber,
     blockTimestamp,
   })
