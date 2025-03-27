@@ -1,15 +1,15 @@
 import prisma from '../../prisma/singleton'
 
-export async function cacheGet(
+export async function cacheGet<T>(
   key: string,
   logPrefix?: string
-): Promise<any | null> {
+): Promise<T | null> {
   const hit = await prisma.cache.findUnique({ where: { key } })
   if (hit) {
     if (logPrefix) {
       console.info(`[${logPrefix}] Cache Hit ${key.slice(0, 18)}`)
     }
-    return JSON.parse(hit.value)
+    return JSON.parse(hit.value) as T
   }
   return null
 }
