@@ -10,7 +10,6 @@ import delegatorTree, {
 import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import reachable from '../../../../src/fns/graph/reachable'
 
-import loadBlockFinality from '../../../../src/loaders/loadBlockFinality'
 import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
 
@@ -87,16 +86,6 @@ export const POST = async (req: Request) => {
         error: `Block Not Found "${blockTag}" @ ${chain.name}`,
       }),
       { status: 404, headers }
-    )
-  }
-
-  const isFinal = await loadBlockFinality(chain, blockNumber)
-  if (!isFinal) {
-    return new Response(
-      JSON.stringify({
-        error: `Block"${blockNumber}" @ ${chain.name} is too recent`,
-      }),
-      { status: 400, headers }
     )
   }
 
