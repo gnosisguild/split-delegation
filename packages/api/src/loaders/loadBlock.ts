@@ -29,7 +29,7 @@ async function _load(
   blockTag: BlockTag | number
 ): Promise<Result> {
   let result = isBlockNumber(blockTag)
-    ? await cacheGet(
+    ? await cacheGet<{ blockNumber: number; blockTimestamp: number }>(
         cacheKey({ chain, blockNumber: Number(blockTag) }),
         LOG_PREFIX
       )
