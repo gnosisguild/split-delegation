@@ -5,6 +5,7 @@ import {
   orderByPower,
 } from '../../../../src/calculations/delegateStats'
 
+import loadBlockFinality from '../../../../src/loaders/loadBlockFinality'
 import loadTopDelegates from '../../../../src/loaders/loadTopDelegates'
 import resolveBlockTag, {
   networkToChain,
@@ -21,6 +22,9 @@ export const POST = async (req: Request) => {
   const limit = Number(searchParams.get('limit')) || 100
   const offset = Number(searchParams.get('offset')) || 0
   const orderBy = searchParams.get('by')
+  const finalizedOnly = ['true', 'yes'].includes(
+    searchParams.get('finalized_only') || ''
+  )
 
   const {
     strategy: {
@@ -60,6 +64,18 @@ export const POST = async (req: Request) => {
       }),
       { status: 404, headers }
     )
+  }
+
+  if (finalizedOnly) {
+    const isFinal = await loadBlockFinality(chain, blockNumber)
+    if (!isFinal) {
+      return new Response(
+        JSON.stringify({
+          error: `Block"${blockNumber}" @ ${chain.name} is too recent`,
+        }),
+        { status: 400, headers }
+      )
+    }
   }
 
   if (orderBy != 'count' && orderBy != 'power') {

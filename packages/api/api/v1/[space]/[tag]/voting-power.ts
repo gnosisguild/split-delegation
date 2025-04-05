@@ -21,6 +21,9 @@ export const POST = async (req: Request) => {
   const searchParams = new URL(req.url || '').searchParams
   const space = searchParams.get('space') as string
   const blockTag = searchParams.get('tag') as BlockTag
+  const finalizedOnly = ['true', 'yes'].includes(
+    searchParams.get('finalized_only') || ''
+  )
 
   const {
     strategy: {
@@ -56,14 +59,16 @@ export const POST = async (req: Request) => {
     )
   }
 
-  const isFinal = await loadBlockFinality(chain, blockNumber)
-  if (!isFinal) {
-    return new Response(
-      JSON.stringify({
-        error: `Block"${blockNumber}" @ ${chain.name} is too recent`,
-      }),
-      { status: 400, headers }
-    )
+  if (finalizedOnly) {
+    const isFinal = await loadBlockFinality(chain, blockNumber)
+    if (!isFinal) {
+      return new Response(
+        JSON.stringify({
+          error: `Block"${blockNumber}" @ ${chain.name} is too recent`,
+        }),
+        { status: 400, headers }
+      )
+    }
   }
 
   let dags = await loadDelegationDAGs({
