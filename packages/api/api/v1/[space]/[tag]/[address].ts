@@ -10,6 +10,7 @@ import delegatorTree, {
 import inputsFor from '../../../../src/fns/delegations/inputsFor'
 import reachable from '../../../../src/fns/graph/reachable'
 
+import loadBlockFinality from '../../../../src/loaders/loadBlockFinality'
 import loadDelegationDAGs from '../../../../src/loaders/loadDelegationDAGs'
 import loadScores from '../../../../src/loaders/loadScores'
 
@@ -40,6 +41,9 @@ export const POST = async (req: Request) => {
   const space = searchParams.get('space') as string
   const blockTag = searchParams.get('tag') as BlockTag
   let address = searchParams.get('address') as string
+  const finalizedOnly = ['true', 'yes'].includes(
+    searchParams.get('finalized_only') || ''
+  )
 
   const {
     strategy: {
@@ -87,6 +91,18 @@ export const POST = async (req: Request) => {
       }),
       { status: 404, headers }
     )
+  }
+
+  if (finalizedOnly) {
+    const isFinal = await loadBlockFinality(chain, blockNumber)
+    if (!isFinal) {
+      return new Response(
+        JSON.stringify({
+          error: `Block"${blockNumber}" @ ${chain.name} is too recent`,
+        }),
+        { status: 400, headers }
+      )
+    }
   }
 
   const dags = await loadDelegationDAGs({

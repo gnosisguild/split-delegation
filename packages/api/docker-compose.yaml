@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   db:
     image: postgres:16-alpine
@@ -8,7 +7,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=delegate-registry
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
 volumes:
