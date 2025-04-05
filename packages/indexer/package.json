@@ -15,23 +15,23 @@
     "postinstall": "prisma generate"
   },
   "devDependencies": {
-    "@subsquid/cli": "3.0.3",
-    "@tsconfig/node21": "^21.0.3",
+    "@subsquid/cli": "3.0.4",
+    "@tsconfig/node21": "^21.0.4",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
-    "cspell": "^8.17.2",
+    "@types/node": "^22.14.0",
+    "cspell": "^8.18.1",
     "jest": "^29.7.0",
-    "prettier": "3.4.2",
+    "prettier": "3.5.3",
     "rimraf": "6.0.1",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.3"
+    "ts-jest": "^29.3.1",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@prisma/client": "6.2.1",
-    "@subsquid/evm-processor": "1.27.0",
+    "@prisma/client": "6.5.0",
+    "@subsquid/evm-processor": "1.27.1",
     "dotenv": "^16.4.7",
-    "prisma": "6.2.1",
-    "viem": "^2.22.8"
+    "prisma": "6.5.0",
+    "viem": "^2.25.0"
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
